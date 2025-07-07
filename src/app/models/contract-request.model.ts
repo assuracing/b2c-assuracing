@@ -1,0 +1,40 @@
+export interface ContractRequest {
+  selectedCircuit: string;
+  nbrjour: number;
+  datedebutroulage: string;
+  codeProduit: string[];
+  c: {
+    adresse: string;
+    complementadresse: string;
+    autre: string;
+    civilite: string;
+    codepostal: string;
+    dateinscription: string;
+    dateNaissance: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    login: string;
+    nom: string;
+    telFixe: string;
+    telPortable: string;
+    ville: string;
+    numeroPermisA: string;
+    cacmPermisA: string;
+    licencePermisA: string;
+    numeroPermisB: string;
+    ffsaPermisB: string;
+  };
+  marque: string;
+  modele: string;
+  typevehicule: string;
+  immatriculation: string;
+  param_n_serie: string;
+  param_n_chassis: string;
+  montantganrantie: number;
+  apporteurId: number;
+  annual: boolean;
+  clientEntId: number;
+  dateinscriptionRoulage: string;
+  language: string;
+}

@@ -1,0 +1,36 @@
+.guarantee-choice-container {
+    margin-top: 5%;
+  display: flex;;
+  flex-direction: column;
+  align-items: center;
+    justify-content: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.btn {
+    margin: 10px 0;
+    height: 50px;
+    width: 100%;
+    max-width: 400px;
+    min-height: 44px;
+    
+    @media (max-width: 768px) {
+        margin: 8px 0;
+        height: 48px;
+        font-size: 14px;
+    }
+    
+    @media (max-width: 480px) {
+        margin: 6px 0;
+        height: 44px;
+        font-size: 13px;
+    }
+}
+
+h2 {
+    margin-bottom: 50px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}

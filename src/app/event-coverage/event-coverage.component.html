@@ -1,0 +1,131 @@
+
+<mat-horizontal-stepper linear #stepper>
+    <mat-step [stepControl]="trackdayForm">
+        <form [formGroup]="trackdayForm">
+          <app-trackday 
+            [form]="trackdayForm" 
+            [circuits]="circuits" 
+            [isLoadingCircuits]="isLoadingCircuits">
+          </app-trackday>
+          <div class="mt-4">
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button matStepperNext [disabled]="!trackdayForm.valid">Continuer</button>
+          </div>
+        </form>
+    </mat-step>
+
+    <mat-step [stepControl]="coverageOptionsForm">
+      <ng-template matStepLabel>Garanties</ng-template>
+      <form [formGroup]="coverageOptionsForm">
+        <app-event-coverage-options 
+  [form]="coverageOptionsForm"
+  [eventType]="trackdayForm.get('eventType')?.value"
+  [role]="trackdayForm.get('role')?.value">
+</app-event-coverage-options>
+        <div class="mt-4">
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button [disabled]="!coverageOptionsForm.valid" (click)="onContinueGuaranteeStep(stepper)">Continuer</button>
+        </div>
+      </form>
+    </mat-step>
+  
+    <mat-step [stepControl]="personalForm">
+      <ng-template matStepLabel>Vos informations</ng-template>
+      <div *ngIf="step2Page === 1">
+        <form [formGroup]="personalForm">
+          <app-personal-info [form]="personalForm"></app-personal-info>
+          <div class="mt-4">
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button matStepperNext [disabled]="!personalForm.valid">Continuer</button>
+          </div>
+        </form>
+      </div>
+  
+      <div *ngIf="step2Page === 2 && isMinor()">
+        <form [formGroup]="RepresentativeLegalForm">
+          <app-representative-legal [form]="RepresentativeLegalForm"></app-representative-legal>
+          <div class="mt-4">
+            <button mat-button (click)="step2Page = 1">Retour</button>
+            <button mat-button matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
+          </div>
+        </form>
+      </div>
+    </mat-step>
+  
+    <mat-step [stepControl]="vehicleForm">
+      <ng-template matStepLabel>Vos Risques</ng-template>
+      <form [formGroup]="vehicleForm">
+        <app-vehicle-info 
+          [form]="vehicleForm" 
+          (vehicleAdded)="handleVehicleAdded($event)">
+        </app-vehicle-info>
+        <div class="mt-4">
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button matStepperNext [disabled]="!vehicleForm.valid">Continuer</button>
+        </div>
+      </form>
+    </mat-step>
+  
+    <mat-step [stepControl]="summaryForm">
+      <ng-template matStepLabel>Resumé</ng-template>
+      <div class="summary-container" *ngIf="summaryForm?.valid">
+        <h2>Résumé</h2>
+        <div class="summary-section">
+          <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
+          <p><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
+          <p><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
+          <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
+        </div>
+
+        <div class="summary-section">
+            <div class="vehicle-info">
+              <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
+            </div>
+        </div>
+
+        <div class="summary-section">
+          <div class="vehicle-info">
+            <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+          </div>
+      </div>
+        
+        <div class="summary-section">
+            <div class="vehicle-info">
+              <p><strong>Véhicule:</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
+            </div>
+          </div>
+
+        </div>
+      <div class="coverage-summary">
+        <p>{{formatCoverageSummary()}}</p>
+      </div>
+
+      <div class="signature-section">
+        <p>Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
+          <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
+        </p>
+        <p>code vérification </p>
+      </div>
+  
+      <div class="mt-4">
+        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button matStepperNext [disabled]="!acceptTerms">Paiement</button>
+      </div>
+    </mat-step>
+  
+    <mat-step [stepControl]="paymentForm">
+      <ng-template matStepLabel>Paiement</ng-template>
+      <form [formGroup]="paymentForm">
+        <app-payment [form]="paymentForm"></app-payment>
+        <div class="mt-4">
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button (click)="onSubmit()">Valider</button>
+        </div>
+      </form>
+    </mat-step>
+
+  </mat-horizontal-stepper>
+  

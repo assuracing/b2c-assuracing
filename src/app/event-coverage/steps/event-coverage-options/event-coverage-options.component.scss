@@ -1,0 +1,325 @@
+.coverage-options-form {
+  .total-prime {
+    margin-bottom: 20px;
+    h3 {
+      font-size: 1.5rem;
+      color: #333;
+    }
+  }
+
+  .iai-options {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .date-group {
+      margin-bottom: 15px;
+    }
+
+    .reservation-amount {
+      margin-bottom: 15px;
+    }
+  }
+
+  .risques {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .risk-group {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .mat-slide-toggle {
+        margin-bottom: 10px;
+      }
+
+      .risk-details {
+        padding: 10px 0;
+        border-top: 1px solid #eee;
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            margin-bottom: 8px;
+            color: #666;
+          }
+        }
+
+        p {
+          margin-top: 10px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .description {
+          margin-bottom: 15px;
+          color: #666;
+          font-size: 0.9rem;
+        }
+
+        .protection-levels {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: 15px;
+
+          .level-option {
+            flex: 1 1 200px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: #f0f0f0;
+            }
+
+            &.selected {
+              background: #e3f2fd;
+              border-color: #2196f3;
+            }
+
+            .level-number {
+              font-weight: bold;
+              color: #333;
+              margin-bottom: 10px;
+              text-align: center;
+            }
+
+            .coverage-details {
+              margin-bottom: 10px;
+
+              .coverage-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px;
+
+                .label {
+                  color: #666;
+                }
+
+                .amount {
+                  font-weight: bold;
+                  color: #333;
+                }
+              }
+            }
+
+            .price {
+              text-align: right;
+              font-weight: bold;
+              color: #2196f3;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .protection-pilote {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .risk-group {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .mat-slide-toggle {
+        margin-bottom: 10px;
+      }
+
+      .risk-details {
+        padding: 10px 0;
+        border-top: 1px solid #eee;
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            margin-bottom: 8px;
+            color: #666;
+          }
+        }
+
+        p {
+          margin-top: 10px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .description {
+          margin-bottom: 15px;
+          color: #666;
+          font-size: 0.9rem;
+        }
+
+        .protection-levels {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: 15px;
+
+          .level-option {
+            flex: 1 1 200px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: #f0f0f0;
+            }
+
+            &.selected {
+              background: #e3f2fd;
+              border-color: #2196f3;
+            }
+
+            .level-number {
+              font-weight: bold;
+              color: #333;
+              margin-bottom: 10px;
+              text-align: center;
+            }
+
+            .coverage-details {
+              margin-bottom: 10px;
+
+              .coverage-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px;
+
+                .label {
+                  color: #666;
+                }
+
+                .amount {
+                  font-weight: bold;
+                  color: #333;
+                }
+              }
+            }
+
+            .price {
+              text-align: right;
+              font-weight: bold;
+              color: #2196f3;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .mat-slide-toggle {
+    margin-bottom: 15px;
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+
+  .responsabilite-recours {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .risk-group {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .mat-slide-toggle {
+        margin-bottom: 10px;
+      }
+
+      .risk-details {
+        padding: 10px 0;
+        border-top: 1px solid #eee;
+
+        .responsabilite-civile {
+          margin-bottom: 1rem;
+
+          .inclus {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+          }
+
+          .inclus-toggle {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+          }
+        }
+
+        .defense-recours {
+          .prime {
+            color: #03a9f4;
+            font-weight: bold;
+            margin-top: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+.info-icon {
+  font-size: 14px;
+  margin-left: 5px;
+  cursor: help;
+  color: #6c757d;
+  
+  @media (max-width: 768px) {
+    font-size: 12px;
+    margin-left: 3px;
+  }
+}
+
+.toggle-unavailable {
+  color: #e53935;
+  font-size: 0.85em;
+  margin-left: 8px;
+  vertical-align: middle;
+}

@@ -1,0 +1,151 @@
+
+<mat-horizontal-stepper linear #stepper>
+  <mat-step [stepControl]="coverageForm">
+    <ng-template matStepLabel>Vos garanties</ng-template>
+    <div *ngIf="step1Page === 1">
+    <h2>A partir de 190 €</h2>
+
+    <p><strong>Valable 1 an</strong> <br> La licence Motors League à destination des pilotes comprend : </p>
+    <ul>
+        <li>La garantie RC du véhicule hors circulation <span class="info-icon">(entreposage, convoyage, chargement, déchargement)</span><mat-icon class="info-icon" matTooltip="La garantie RC du véhicule hors circulation est acquise uniquement pour les licenciés de nationalité française.">info</mat-icon></li>
+        <li>Votre protection juridique « Sports Mécaniques » <mat-icon class="info-icon" matTooltip="La garantie protection juridique est acquise uniquement pour les licenciés de nationalité française.">info</mat-icon></li>
+        <li>Votre protection corporelle
+            <ul>
+                <li>Garantie Décès</li>
+                <li>Garantie Invalidité</li>
+                <li>Frais Médicaux</li>
+                <li>Assistance Médicale</li>
+                <li>Rapatriement</li>
+            </ul>
+        </li>
+    </ul>
+
+    <p><strong>Les garanties d'assurance sont acquises sur tout circuit Homologué en France, UE, UK, Suisse pour tout évènement
+    Hors compétition (sauf kartings et mini-motos)</strong><mat-icon class="info-icon" matTooltip="Les garanties RC et protection juridique sont acquises uniquement pour les licenciés de nationalité française.">info</mat-icon></p>
+
+    <p>Les + auprès des organisateurs et circuits partenaires :</p>
+
+    <ul>
+        <li> <strong>1 Reconditionnement d'Airbag par an</strong> (150 €)</li>
+        <li> <strong>1 Garantie « Satombalo »</strong> d'une valeur de 150 € (en cas de journée pluvieuse : 100% remboursés en cas d'annulation de participation 70% remboursés en cas de roulage)</li>
+        <li> <strong>Abonnement QuickRacing Premium</strong></li>
+    </ul>
+
+        <button mat-button (click)="step1Page = 2">Continuer</button>
+    </div>
+
+    <form *ngIf="step1Page === 2" [formGroup]="coverageForm">
+        <app-coverage-options [form]="coverageForm"></app-coverage-options>
+        
+        <div class="mt-4">
+        <button mat-button (click)="step1Page = 1">Retour</button>
+        <button mat-button matStepperNext [disabled]="!coverageForm.valid">Continuer</button>
+        </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="personalForm">
+    <ng-template matStepLabel>Vos informations</ng-template>
+    <div *ngIf="step2Page === 1">
+      <form [formGroup]="personalForm">
+        <app-personal-info [form]="personalForm"></app-personal-info>
+        <div class="mt-4">
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button (click)="goToNextStep()" [disabled]="!personalForm.valid">Continuer</button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="step2Page === 2 && isMinor()">
+      <form [formGroup]="RepresentativeLegalForm">
+        <app-representative-legal [form]="RepresentativeLegalForm"></app-representative-legal>
+        <div class="mt-4">
+          <button mat-button (click)="step2Page = 1">Retour</button>
+          <button mat-button matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
+        </div>
+      </form>
+    </div>
+  </mat-step>
+
+  <mat-step [stepControl]="vehicleForm">
+    <ng-template matStepLabel>Vos Risques</ng-template>
+    <form [formGroup]="vehicleForm">
+      <app-vehicle-info 
+        [form]="vehicleForm" 
+        (vehicleAdded)="handleVehicleAdded($event)"
+        (vehicleRemoved)="onVehicleRemoved($event)">
+      </app-vehicle-info>
+      <div class="mt-4">
+        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button (click)="saveVehicle()" matStepperNext [disabled]="!vehicleForm.valid">Enregistrer et continuer</button>  
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="summaryForm">
+    <ng-template matStepLabel>Resumé</ng-template>
+    <div class="summary-container">
+      <h3>Informations personnelles</h3>
+      <div class="summary-section">
+        <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
+        <p><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
+        <p><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
+        <p><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
+        <p><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
+        <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
+      </div>
+
+      <h3>Véhicules</h3>
+      <div class="summary-section">
+        <div *ngFor="let vehicle of vehicles; let i = index" class="vehicle-summary">
+          <div class="vehicle-info">
+            <p>
+              <strong>Véhicule {{i + 1}}</strong> : {{vehicle.type}} - {{vehicle.brand}} - {{vehicle.model}} - 
+              <span *ngIf="vehicle.identificationNumber === 'immat'">{{vehicle.immatNumber}}</span>
+              <span *ngIf="vehicle.identificationNumber === 'chassis'">{{vehicle.chassisNumber}}</span>
+              <span *ngIf="vehicle.identificationNumber === 'serie'">{{vehicle.serieNumber}}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Permis de conduire</h3>
+      <div class="summary-section">
+        <p><strong>Titre de conduite:</strong> {{vehicleForm.get('titreConduite')?.value}}</p>
+        <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+      </div>
+
+      <div class="summary-section">
+        <p>Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
+        <p>(décès {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death) : '--'}} €,
+          invalidité {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability) : '--'}} €)</p>
+        <p>La prime annuelle est de {{getLevelPrice(coverageForm.get('coverageLevel')?.value) ? formatNumber(getLevelPrice(coverageForm.get('coverageLevel')?.value)) : '--'}} €</p>
+      </div>
+      
+      <div class="signature-section">
+        <p>Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
+          <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
+        </p>
+        <p>code vérification </p>
+      </div>
+
+      <div class="mt-4">
+        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button matStepperNext [disabled]="!acceptTerms">Paiement</button>
+      </div>
+    </div>
+  </mat-step>
+
+  <mat-step [stepControl]="paymentForm">
+    <ng-template matStepLabel>Paiement</ng-template>
+    <form [formGroup]="paymentForm">
+      <app-payment [form]="paymentForm"></app-payment>
+      <div class="mt-4">
+        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button (click)="onSubmit()">Valider</button>
+      </div>
+    </form>
+  </mat-step>
+
+</mat-horizontal-stepper>

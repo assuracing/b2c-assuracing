@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<p><strong> Je choisis mes niveaux de couverture en cas de décès ou d'invalidité :</strong><mat-icon class="info-icon" matTooltip="Les garanties RC et protection juridique sont ">info</mat-icon></p>
+  <div class="coverage-buttons">
+    <button
+      type="button"
+      class="coverage-option"
+      [class.selected]="form.get('coverageLevel')?.value === 1"
+      (click)="selectLevel(1)">
+      <div class="level">Niveau 1</div>
+      <div class="coverage-details">
+        <span>Décès : {{formatNumber(coverageAmounts[1].death)}} €</span>
+        <span>Invalidité : {{formatNumber(coverageAmounts[1].disability)}} €</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="coverage-option"
+      [class.selected]="form.get('coverageLevel')?.value === 2"
+      (click)="selectLevel(2)">
+      <div class="level">Niveau 2</div>
+      <div class="coverage-details">
+        <span>Décès : {{formatNumber(coverageAmounts[2].death)}} €</span>
+        <span>Invalidité : {{formatNumber(coverageAmounts[2].disability)}} €</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="coverage-option"
+      [class.selected]="form.get('coverageLevel')?.value === 3"
+      (click)="selectLevel(3)">
+      <div class="level">Niveau 3</div>
+      <div class="coverage-details">
+        <span>Décès : {{formatNumber(coverageAmounts[3].death)}} €</span>
+        <span>Invalidité : {{formatNumber(coverageAmounts[3].disability)}} €</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="coverage-option"
+      [class.selected]="form.get('coverageLevel')?.value === 4"
+      (click)="selectLevel(4)">
+      <div class="level">Niveau 4</div>
+      <div class="coverage-details">
+        <span>Décès : {{formatNumber(coverageAmounts[4].death)}} €</span>
+        <span>Invalidité : {{formatNumber(coverageAmounts[4].disability)}} €</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="coverage-option"
+      [class.selected]="form.get('coverageLevel')?.value === 5"
+      (click)="selectLevel(5)">
+      <div class="level">Niveau 5</div>
+      <div class="coverage-details">
+        <span>Décès : {{formatNumber(coverageAmounts[5].death)}} €</span>
+        <span>Invalidité : {{formatNumber(coverageAmounts[5].disability)}} €</span>
+      </div>
+    </button>
+
+    
+<div class="pricing-section">
+    <div class="current-price">
+      <span class="price-label">Tarif</span>
+      <span class="price-amount">
+        {{ selectedPrice !== null ? selectedPrice + ' €' : '-- €' }}
+      </span>
+    </div>
+
+    <div class="partner-code">
+      <label for="partnerCode">Code partenaire</label>
+      <input type="text" id="partnerCode" name="partnerCode" placeholder="Entrez votre code">
+    </div>
+  </div>
+</div>

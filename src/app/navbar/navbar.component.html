@@ -1,0 +1,35 @@
+<nav id="my-first" class="navbar navbar-expand-lg navbar-light bg-light" #navbarRef>
+  <ul>
+    <a href=""><img src="images/assuracing.png" width="50%" alt="Logo assuracing"></a>
+    
+    <li class="burger" (click)="toggleMenu()">
+      <i class="material-icons">{{ isMenuOpen ? "close" : "menu" }}</i>
+    </li>
+
+    <li class="menu" [class.is-open]="isMenuOpen">
+      <a href="" class="menu-item" style="display: flex; align-items: center; gap: 8px;">
+        <mat-icon>home</mat-icon> Accueil
+      </a>
+
+      <div class="dropdown-wrapper" (click)="toggleLangueDropdown()" tabindex="0">
+        <a class="menu-item" style="display: flex; align-items: center; gap: 8px;">
+          <mat-icon>flag</mat-icon> Langue
+        </a>
+        <div class="dropdown" *ngIf="isLangueDropdownOpen">
+          <a class="dropdown-item" (click)="changerLangue('fr')">Français</a>
+          <a class="dropdown-item" (click)="changerLangue('en')">Anglais</a>
+        </div>
+      </div>
+
+      <div class="dropdown-wrapper" (click)="toggleCompteDropdown()" tabindex="0">
+        <a class="menu-item" style="display: flex; align-items: center; gap: 8px;">
+          <mat-icon>person</mat-icon> Compte
+        </a>
+        <div class="dropdown" *ngIf="isCompteDropdownOpen">
+          <a class="dropdown-item" *ngIf="authService.isLoggedIn()" (click)="authService.logout()">Se déconnecter</a>
+          <a class="dropdown-item" *ngIf="!authService.isLoggedIn()" href="/login">S'authentifier</a>
+        </div>
+      </div>
+    </li>
+  </ul>
+</nav>

@@ -1,0 +1,172 @@
+<form [formGroup]="form" class="coverage-options-form">
+  <div class="total-prime">
+    <h3>Total : {{ totalPrime | currency:'EUR' }}</h3>
+  </div>
+
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IAI') && (!activeSection || activeSection === 'iai' || validatedSections['iai'])">
+    <div class="risk-group">
+      <ng-container *ngIf="!validatedSections['iai'] && !wasIAIValidated">
+        <mat-slide-toggle labelPosition="before" style="margin-bottom: 20px;" [checked]="activeSection === 'iai'" (change)="onToggleChange('iai', $event.checked)">
+          Garantie I A I (Intempéries, Annulation & Interruption)
+        </mat-slide-toggle>
+      </ng-container>
+
+      <ng-container *ngIf="validatedSections['iai'] || wasIAIValidated">
+        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('iai')">close</mat-icon>
+          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('iai')">
+            Garantie I A I (Intempéries, Annulation & Interruption)
+            <mat-icon color="primary">shopping_cart</mat-icon>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getIAIAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div *ngIf="activeSection === 'iai'" class="iai-options">
+      <div class="date-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Date d'inscription à l'événement</mat-label>
+          <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate">
+          <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
+          <mat-datepicker #inscriptionDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="reservation-amount">
+        <mat-form-field appearance="outline">
+          <mat-label>Montant de la réservation (€)</mat-label>
+          <input matInput type="number" formControlName="reservationAmount">
+        </mat-form-field>
+      </div>
+
+      <div class="risques">
+        <div class="risk-group">
+          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isIaiModeAnnulation">Risques Intempéries</mat-slide-toggle>
+          <small *ngIf="isIaiModeAnnulation" class="toggle-unavailable">Non disponible pour votre sélection</small>
+          <div class="risk-details">
+            <ul>
+              <li>100% en cas d'annulation</li>
+              <li>70% en cas de roulage sous la pluie</li>
+            </ul>
+            <p>Prime : {{ PRIME_RATES.intemperies }}€</p>
+          </div>
+        </div>
+
+        <div class="risk-group">
+          <mat-slide-toggle labelPosition="before" formControlName="annulation">Risques Annulation</mat-slide-toggle>
+          <div class="risk-details">
+            <ul>
+              <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
+              <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
+              <li>80% autres motifs de santé</li>
+            </ul>
+            <p>Prime : {{ PRIME_RATES.annulation }}€</p>
+          </div>
+        </div>
+
+        <div class="risk-group">
+          <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isIaiModeAnnulation">Risques Interruption</mat-slide-toggle>
+          <small *ngIf="isIaiModeAnnulation" class="toggle-unavailable">Non disponible pour votre sélection</small>
+          <div class="risk-details">
+            <ul>
+              <li>50% en cas de chute lors du roulage</li>
+            </ul>
+            <p>Prime : {{ PRIME_RATES.interruption }}€</p>  
+          </div>
+        </div>
+      </div>
+
+      <button mat-flat-button color="primary" (click)="validateSection('iai')">Valider</button>
+    </div>
+  </div>
+
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IA') && (!activeSection || activeSection === 'protectionPilote' || validatedSections['protectionPilote'])">
+    <div class="risk-group">
+      <ng-container *ngIf="!validatedSections['protectionPilote'] && !wasProtectionPiloteValidated">
+        <mat-slide-toggle labelPosition="before" [checked]="activeSection === 'protectionPilote'" (change)="onToggleChange('protectionPilote', $event.checked)">
+          Protection Corporelle
+        </mat-slide-toggle>
+      </ng-container>
+
+      <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
+        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
+          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('protectionPilote')">
+            Protection Corporelle
+            <mat-icon color="primary">shopping_cart</mat-icon>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getProtectionPiloteAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="risk-details" *ngIf="activeSection === 'protectionPilote'">
+        <p class="description">
+          La garantie corporelle la plus complète du marché
+          <mat-icon class="info-icon" matTooltip="Notre Protection corporelle pilote comprend les garanties suivantes :&#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+            info
+          </mat-icon>
+        </p>
+
+        <div class="protection-levels">
+          <div *ngFor="let level of [1, 2, 3, 4, 5]" 
+               class="level-option"
+               [class.selected]="form.get('protectionPilote')?.value === level"
+               (click)="onProtectionLevelChange(level)">
+            <div class="level-number">Niveau {{ level }}</div>
+            <div class="coverage-details">
+              <div class="coverage-item">
+                <span class="label">Décès :</span>
+                <span class="amount">{{ PROTECTION_LEVELS[level].death | number }} €</span>
+              </div>
+              <div class="coverage-item">
+                <span class="label">Invalidité :</span>
+                <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
+              </div>
+            </div>
+            <div class="price">{{ PROTECTION_LEVELS[level].price }}€</div>
+          </div>
+        </div>
+
+        <button mat-flat-button color="primary" (click)="validateSection('protectionPilote')">Valider</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('PJ') && (!activeSection || activeSection === 'responsabiliteRecours' || validatedSections['responsabiliteRecours'])">
+    <div class="risk-group">
+      <ng-container *ngIf="!validatedSections['responsabiliteRecours'] && !wasResponsabiliteRecoursValidated">
+        <mat-slide-toggle labelPosition="before" [checked]="activeSection === 'responsabiliteRecours'" (change)="onToggleChange('responsabiliteRecours', $event.checked)">
+          Garantie Responsabilité / Recours
+        </mat-slide-toggle>
+      </ng-container>
+
+      <ng-container *ngIf="wasResponsabiliteRecoursValidated && !activeSection">
+        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
+          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('responsabiliteRecours')">
+            Garantie Responsabilité / Recours
+            <mat-icon color="primary">shopping_cart</mat-icon>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getResponsabiliteRecoursAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="risk-details" *ngIf="activeSection === 'responsabiliteRecours'">
+        <div class="responsabilite-civile">
+          <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true">Responsabilité Civile participants</mat-slide-toggle>
+          <p class="inclus" style="font-weight: normal; font-size: 12px; color: #1976d2; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
+        </div>
+        <div class="defense-recours">
+          <mat-slide-toggle labelPosition="before" formControlName="defenseRecours">Défense Recours - Protection Juridique</mat-slide-toggle>
+          <div class="risk-details">
+            <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
+            <p class="prime">Prime : 14€</p>
+          </div>
+        </div>
+
+        <button mat-flat-button color="primary" (click)="validateSection('responsabiliteRecours')">Valider</button>
+      </div>
+    </div>
+  </div>
+</form>

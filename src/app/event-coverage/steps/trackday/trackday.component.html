@@ -1,0 +1,86 @@
+<form [formGroup]="form" class="login-form">
+  <div class="form-group">
+    <mat-form-field
+      appearance="outline">
+      <mat-label>Type d'événement</mat-label>
+      <mat-select formControlName="eventType">
+        <mat-option value="training">Roulage entrainement</mat-option>
+        <mat-option value="competition">Compétition</mat-option>
+        <mat-option value="coaching">Coaching</mat-option>
+        <mat-option value="stage">Stage de pilotage</mat-option>
+        <mat-option value="other">Autre</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field 
+      appearance="outline">
+      <mat-label>Circuit</mat-label>
+      <mat-select formControlName="circuit">
+        <mat-option *ngIf="isLoadingCircuits" disabled>
+          Chargement des circuits...
+        </mat-option>
+        <mat-option *ngFor="let circuit of circuits" [value]="circuit.id">
+          {{circuit.nom}}
+        </mat-option>
+        <mat-option value="autre">Autre</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="organizer-group">
+      <mat-form-field 
+        appearance="outline">
+        <mat-label>Organisateur</mat-label>
+        <mat-select formControlName="organizer">
+          <mat-option *ngIf="isLoadingOrganizers" disabled>
+            Chargement des organisateurs...
+          </mat-option>
+          <mat-option *ngFor="let organizer of organizers" [value]="organizer.id">
+            {{organizer.lastName}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox formControlName="unreferencedOrganizer">Ou organisateur non référencé</mat-checkbox>
+
+    </div>
+
+    <mat-form-field 
+      appearance="outline">
+      <mat-label>Date de l'événement</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="eventDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <div class="duration-group">
+      <mat-label>Durée de roulage ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
+      <mat-slider [min]="1" [max]="5" [step]="1" thumbLabel>
+        <input matSliderThumb formControlName="duration" />
+      </mat-slider>
+    </div>
+    
+
+    <div class="role-group">
+      <mat-form-field 
+        appearance="outline">
+        <mat-label>Vous êtes</mat-label>
+        <mat-select formControlName="role" (selectionChange)="onRoleChange($event)">
+          <mat-option value="pilote">Pilote</mat-option>
+          <mat-option value="passager">Passager</mat-option>
+          <mat-option value="mecanicien">Mécanicien</mat-option>
+          <mat-option value="photographe">Photographe-Vidéaste</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="isPilot" class="vehicle-group">
+        <mat-form-field 
+          appearance="outline">
+          <mat-label>Votre véhicule</mat-label>
+          <mat-select formControlName="vehicleType">
+            <mat-option value="moto">Moto</mat-option>
+            <mat-option value="auto">Auto</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</form>

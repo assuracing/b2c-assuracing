@@ -1,0 +1,156 @@
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.info-icon {
+  font-size: 14px;
+  margin-left: 5px;
+  cursor: help;
+  color: #6c757d;
+  
+  @media (max-width: 768px) {
+    font-size: 12px;
+    margin-left: 3px;
+  }
+}
+
+.summary-container {
+  padding: 1rem;
+  
+  h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .summary-section {
+    margin-bottom: 0.2rem;
+    
+    .vehicle-summary {
+      margin: 3px 0;
+      padding: 3px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      
+      .vehicle-info {
+        margin-bottom: 2px;
+        
+        p {
+          margin: 2px 0;
+          color: #333;
+          font-size: 1.1em;
+          
+          span {
+            color: #000;
+          }
+        }
+      }
+      
+      .identification-info {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e9ecef;
+        
+        p {
+          margin: 5px 0;
+          color: #333;
+          
+          strong {
+            color: #000;
+          }
+        }
+      }
+    }
+    
+    p {
+      margin-bottom: 0.5rem;
+      
+      strong {
+        color: #666;
+      }
+    }
+  }
+  
+  .signature-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    
+    p {
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.mat-stepper-header {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin-top: 2rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid #eee !important;
+}
+
+.mt-4 {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid #eee !important;
+}
+
+.mat-button:not(.mat-calendar-button):not(.coverage-option) {
+  min-width: 120px !important;
+  height: 40px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  transition: all 0.2s ease !important;
+  
+  &:disabled {
+    background-color: #e9ecef !important;
+    color: #adb5bd !important;
+    border-color: #d1d3d4 !important;
+    opacity: 1 !important;
+  }
+}
+
+.mat-stepper-button-previous,
+button:first-child:not(.mat-calendar-button):not(.coverage-option) {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  border: 1px solid #dee2e6 !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #e9ecef !important;
+    border-color: #d1d3d4 !important;
+  }
+  
+  &:disabled {
+    background-color: #f8f9fa !important;
+    color: #adb5bd !important;
+    border-color: #dee2e6 !important;
+  }
+}
+
+.mat-stepper-button-next,
+button:last-child:not(.mat-calendar-button):not(.coverage-option) {
+  background-color: #007bff !important;
+  color: white !important;
+  border: 1px solid #007bff !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
+  }
+  
+  &:disabled {
+    background-color: #ced4da !important;
+    color: #adb5bd !important;
+    border-color: #adb5bd !important;
+  }
+}

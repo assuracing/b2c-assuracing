@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<div class="accueil-container">
+
+    <div *ngIf="!userService.isLoggedIn()" class="options">
+
+      <h2>Bienvenue sur notre plateforme</h2>
+      <div class="carte" (click)="goToLogin()">
+        <h3>Déjà client ?</h3>
+        <p>Connectez-vous</p>
+      </div>
+
+      <div class="carte" (click)="goToGuaranteeChoice()">
+        <h3>Nouveau client ?</h3>
+        <p>Démarrez ici</p>
+      </div>
+  </div>
+
+    <div>
+    <p *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER')">Vous êtes connecté en tant qu'utilisateur.</p>
+    <p *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_ADMIN')">Vous êtes connecté en tant qu'administrateur.</p>
+  </div>
+
+  <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER')">
+    <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
+    <button class="btn btn-test">
+      Souscrire un nouveau contrat
+    </button>
+  </div>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<h2 style="display: flex; justify-content: center;">Parcs véhicule</h2>
+
+<div *ngIf="vehicles.length > 0" class="vehicles-list">
+  <h3>Véhicules ajoutés</h3>
+  <div class="vehicle-list">
+    <div *ngFor="let vehicle of vehicles; let i = index" class="vehicle-card">
+      <div class="vehicle-info">
+        <p>
+          <strong>Véhicule {{i + 1}}</strong> : {{vehicle.type}} - {{vehicle.brand}} - {{vehicle.model}} - 
+          <span *ngIf="vehicle.identificationNumber === 'immat'">{{vehicle.immatNumber}}</span>
+          <span *ngIf="vehicle.identificationNumber === 'chassis'">{{vehicle.chassisNumber}}</span>
+          <span *ngIf="vehicle.identificationNumber === 'serie'">{{vehicle.serieNumber}}</span>
+          <button mat-icon-button color="warn" (click)="removeVehicle(i)" matTooltip="Supprimer ce véhicule">
+            <mat-icon style="color: red;">delete</mat-icon>
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="form">
+
+<div class="login-form">
+
+    <h3> Premier véhicule </h3>
+    <div class="form-group">
+        <label for="type">Type véhicule</label>
+        <input formControlName="type" type="text" id="type" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="brand">Marque</label>
+        <input formControlName="brand" type="text" id="brand" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="model">Modèle</label>
+        <input formControlName="model" type="text" id="model" class="form-control" required>
+    </div>
+
+    <div class="radio">
+        <label> <strong>Numéro d'identification</strong></label>
+        <div class="radio-group">
+            <label for="immat">Immatriculation</label>
+            <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
+        </div>
+        <div class="radio-group">
+            <label for="chassis">Nº chassis</label>
+            <input type="radio" id="chassis" formControlName="identificationNumber" value="chassis">
+        </div>
+        <div class="radio-group">
+            <label for="serie">Nº série</label>
+            <input type="radio" id="serie" formControlName="identificationNumber" value="serie">
+        </div>
+    </div>
+
+    <!-- Conditional fields based on selection -->
+    <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'immat'">
+        <label for="immatNumber">Immatriculation</label>
+        <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" required>
+    </div>
+
+    <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'chassis'">
+        <label for="chassisNumber">Nº chassis</label>
+        <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" required>
+    </div>
+
+    <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'serie'">
+        <label for="serieNumber">Nº série</label>
+        <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="titreConduite">Titre de conduite</label>
+        <input formControlName="titreConduite" type="text" id="titreConduite" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="titreNumber">Nº titre</label>
+        <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" required>
+    </div>
+
+    <div class="button-group">
+        <button mat-button (click)="onSaveVehicle()" [disabled]="!form.valid">Enregistrer et ajouter un véhicule</button>
+    </div>
+
+</div>
+
+</form>
