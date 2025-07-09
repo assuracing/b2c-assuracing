@@ -26,13 +26,25 @@
 
     <h3> Premier véhicule </h3>
     <div class="form-group">
-        <label for="type">Type véhicule</label>
-        <input formControlName="type" type="text" id="type" class="form-control" required>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Type véhicule</mat-label>
+        <mat-select formControlName="type" required>
+          <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
+            {{type.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <div class="form-group">
-        <label for="brand">Marque</label>
-        <input formControlName="brand" type="text" id="brand" class="form-control" required>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Marque</mat-label>
+        <mat-select formControlName="brand" required>
+          <mat-option *ngFor="let brand of getFilteredBrands()" [value]="brand">
+            {{brand}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <div class="form-group">
@@ -41,8 +53,8 @@
     </div>
 
     <div class="radio">
-        <label> <strong>Numéro d'identification</strong></label>
-        <div class="radio-group">
+      <label> <strong>Numéro d'identification</strong> <mat-icon class="info-icon" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
+      <div class="radio-group">
             <label for="immat">Immatriculation</label>
             <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
         </div>
@@ -56,7 +68,6 @@
         </div>
     </div>
 
-    <!-- Conditional fields based on selection -->
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'immat'">
         <label for="immatNumber">Immatriculation</label>
         <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" required>
@@ -73,8 +84,14 @@
     </div>
 
     <div class="form-group">
-        <label for="titreConduite">Titre de conduite</label>
-        <input formControlName="titreConduite" type="text" id="titreConduite" class="form-control" required>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Titre de conduite</mat-label>
+        <mat-select formControlName="titreConduite" required>
+          <mat-option *ngFor="let license of getFilteredLicenseTypes()" [value]="license.value">
+            {{license.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <div class="form-group">

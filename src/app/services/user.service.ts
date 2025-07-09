@@ -10,6 +10,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  id: number;
 }
 
 @Injectable({
@@ -22,7 +23,6 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getAccount(): Observable<User> {
-    console.log('Fetching user account information');
     const token = localStorage.getItem('auth_token');
     const headers = {
       'Authorization': `Bearer ${token}`
@@ -30,6 +30,27 @@ export class UserService {
     return this.http.get<User>('http://localhost:8080/api/account', { headers }).pipe(
       tap(user => this.userSubject.next(user))
     );
+  }
+
+  private adherentIdSubject = new BehaviorSubject<number | null>(null);
+  adherentId$ = this.adherentIdSubject.asObservable();
+
+  getAdherentId() : Observable<number> {
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    return this.http.get<number>('http://localhost:8080/api/adherents/by-user/' + this.userSubject.value?.id, { headers }).pipe(
+      tap(adherentId => this.adherentIdSubject.next(adherentId))
+    );
+  }
+
+  getAdherentInfo() : Observable<User> {
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    return this.http.get<User>('http://localhost:8080/api/adherents/' + this.adherentIdSubject.value, { headers });
   }
 
   checkEmail(email: string, login: string): Observable<boolean> {
@@ -57,6 +78,26 @@ export class UserService {
 
   getToken(): string | null {
     return localStorage.getItem('auth_token');
+  }
+
+  sendVerificationEmail(email: string): Observable<void> {
+    return this.http.post<void>('http://localhost:8080/api/sendVerificationCode', { email });
+  }
+
+  verifyCode(email: string, code: string): Observable<void> {
+    return this.http.post<void>('http://localhost:8080/api/verifyCode', { email, code });
+  }
+
+  resetPassword(key: string, newPassword: string): Observable<void> {
+    return this.http.post<void>('http://localhost:8080/api/account/reset-password/finish', { key, newPassword });
+  }
+
+  getAllContracts(): Observable<any> {
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    return this.http.get<any>('http://localhost:8080/api/getAllContrats', { headers });
   }
 
 }

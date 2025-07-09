@@ -27,7 +27,7 @@
       <div class="date-group">
         <mat-form-field appearance="outline">
           <mat-label>Date d'inscription à l'événement</mat-label>
-          <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate">
+          <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate" [max]="today">
           <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
           <mat-datepicker #inscriptionDate></mat-datepicker>
         </mat-form-field>
@@ -42,8 +42,10 @@
 
       <div class="risques">
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isIaiModeAnnulation">Risques Intempéries</mat-slide-toggle>
-          <small *ngIf="isIaiModeAnnulation" class="toggle-unavailable">Non disponible pour votre sélection</small>
+          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
+          <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
+            Non disponible à moins de 3 semaines de l'événement
+          </small>
           <div class="risk-details">
             <ul>
               <li>100% en cas d'annulation</li>
@@ -54,7 +56,10 @@
         </div>
 
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="annulation">Risques Annulation</mat-slide-toggle>
+          <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate">Risques Annulation</mat-slide-toggle>
+          <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
+            Non disponible à moins de 3 semaines de l'événement
+          </small>
           <div class="risk-details">
             <ul>
               <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
@@ -66,8 +71,7 @@
         </div>
 
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isIaiModeAnnulation">Risques Interruption</mat-slide-toggle>
-          <small *ngIf="isIaiModeAnnulation" class="toggle-unavailable">Non disponible pour votre sélection</small>
+          <mat-slide-toggle labelPosition="before" formControlName="interruption">Risques Interruption</mat-slide-toggle>
           <div class="risk-details">
             <ul>
               <li>50% en cas de chute lors du roulage</li>

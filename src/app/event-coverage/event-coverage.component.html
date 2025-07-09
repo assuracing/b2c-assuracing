@@ -18,10 +18,11 @@
       <ng-template matStepLabel>Garanties</ng-template>
       <form [formGroup]="coverageOptionsForm">
         <app-event-coverage-options 
-  [form]="coverageOptionsForm"
-  [eventType]="trackdayForm.get('eventType')?.value"
-  [role]="trackdayForm.get('role')?.value">
-</app-event-coverage-options>
+          [form]="coverageOptionsForm"
+          [eventType]="trackdayForm.get('eventType')?.value"
+          [role]="trackdayForm.get('role')?.value"
+          [disableIntempAnnul]="isEventDateLessThan3Weeks">
+        </app-event-coverage-options>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
           <button mat-button [disabled]="!coverageOptionsForm.valid" (click)="onContinueGuaranteeStep(stepper)">Continuer</button>
@@ -33,10 +34,10 @@
       <ng-template matStepLabel>Vos informations</ng-template>
       <div *ngIf="step2Page === 1">
         <form [formGroup]="personalForm">
-          <app-personal-info [form]="personalForm"></app-personal-info>
+          <app-personal-info [form]="personalForm" [nationalities]="nationalities"></app-personal-info>
           <div class="mt-4">
             <button mat-button matStepperPrevious>Retour</button>
-            <button mat-button matStepperNext [disabled]="!personalForm.valid">Continuer</button>
+            <button mat-button (click)="goToNextStep()" [disabled]="!personalForm.valid">Continuer</button>
           </div>
         </form>
       </div>
@@ -46,13 +47,13 @@
           <app-representative-legal [form]="RepresentativeLegalForm"></app-representative-legal>
           <div class="mt-4">
             <button mat-button (click)="step2Page = 1">Retour</button>
-            <button mat-button matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
+            <button mat-button (click)="sendVerificationEmail()" matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
           </div>
         </form>
       </div>
     </mat-step>
   
-    <mat-step [stepControl]="vehicleForm">
+    <mat-step *ngIf="trackdayForm.get('role')?.value !== 'passager'" [stepControl]="vehicleForm">
       <ng-template matStepLabel>Vos Risques</ng-template>
       <form [formGroup]="vehicleForm">
         <app-vehicle-info 
@@ -68,7 +69,7 @@
   
     <mat-step [stepControl]="summaryForm">
       <ng-template matStepLabel>Resumé</ng-template>
-      <div class="summary-container" *ngIf="summaryForm?.valid">
+      <div class="summary-container">
         <h2>Résumé</h2>
         <div class="summary-section">
           <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
@@ -107,13 +108,23 @@
           {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
-        <p>code vérification </p>
       </div>
-  
-      <div class="mt-4">
-        <button mat-button matStepperPrevious>Retour</button>
-        <button mat-button matStepperNext [disabled]="!acceptTerms">Paiement</button>
-      </div>
+
+      <p style="color: red;" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+
+      <form [formGroup]="summaryForm">
+        <mat-form-field *ngIf="isMinor()">
+          <mat-label>Code de vérification</mat-label>
+          <input matInput type="text" formControlName="verificationCode">
+        </mat-form-field>
+
+        <div class="mt-4">
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+          <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
+        </div>
+      </form>
+
     </mat-step>
   
     <mat-step [stepControl]="paymentForm">

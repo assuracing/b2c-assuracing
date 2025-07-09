@@ -46,18 +46,20 @@ export class EmailExistsDialogComponent {
       const dialogRef = this.dialog.open(LoginComponent, { width: '400px' });
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
-          const token = this.userService.getToken();
-          if (token) {
-            this.http.get<any>('http://localhost:8080/api/account', {
-              headers: { 'Authorization': `Bearer ${token}` }
-            }).subscribe((account) => {
-              this.dialogRef.close({ email: account.email });
-            });
-          } else {
-            this.http.get<any>('http://localhost:8080/api/account').subscribe((account) => {
-              this.dialogRef.close({ email: account.email });
-            });
-          }
+          this.userService.getAccount().subscribe(() => {
+            const token = this.userService.getToken();
+            if (token) {
+              this.http.get<any>('http://localhost:8080/api/account', {
+                headers: { 'Authorization': `Bearer ${token}` }
+              }).subscribe((account) => {
+                this.dialogRef.close({ email: account.email });
+              });
+            } else {
+              this.http.get<any>('http://localhost:8080/api/account').subscribe((account) => {
+                this.dialogRef.close({ email: account.email });
+              });
+            }
+          });
         }
       });
     }, 0);

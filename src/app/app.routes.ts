@@ -7,6 +7,9 @@ import { YearlyGuaranteeComponent } from './yearly-guarantee/yearly-guarantee.co
 import { MotorsLeagueComponent } from './motors-league/motors-league.component';
 import { EventCoverageComponent } from './event-coverage/event-coverage.component';
 import { PaymentConfirmComponent } from './payment-confirm/payment-confirm.component';
+import { UserProfilInfoComponent } from './user-profil-info/user-profil-info.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { UserContractsComponent } from './user-contracts/user-contracts.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -16,5 +19,8 @@ export const routes: Routes = [
     { path: 'yearly-guarantee', component: YearlyGuaranteeComponent },
     { path: 'motors-league', component: MotorsLeagueComponent },
     { path: 'event-coverage', component: EventCoverageComponent },
-    { path: 'payment-confirm', component: PaymentConfirmComponent }
+    { path: 'payment-confirm', component: PaymentConfirmComponent },
+    { path: 'user-contracts', component: UserContractsComponent },
+    { path: 'user-profil-info', component: UserProfilInfoComponent },
+    { path: 'reset-password', component: ResetPasswordComponent }
 ];

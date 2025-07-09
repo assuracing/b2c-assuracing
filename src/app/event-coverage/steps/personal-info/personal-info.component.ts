@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 import { UserService } from '../../../services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,17 +17,43 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatError } from '@angular/material/form-field';
 
 @Component({
+  standalone: true,
   selector: 'app-personal-info',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatIconModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatDatepickerModule, MatNativeDateModule, MatIconModule],
   templateUrl: './personal-info.component.html',
   styleUrls: ['./personal-info.component.scss', '../../../app.component.scss'],
 })
 export class PersonalInfoComponent {
   @Input() form!: FormGroup;
+@Input() nationalities: string[] = [];
 
   constructor(private fb: FormBuilder, private userService: UserService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   private checkEmailSub?: Subscription;
+
+  ngOnInit() {
+    this.userService.user$.subscribe(user => {
+      this.updateLockFields(user);
+    });
+    window.addEventListener('storage', () => this.updateLockFields(this.userService.getUser()));
+  }
+
+  updateLockFields(userParam?: any) {
+    const isLogged = this.userService.isLoggedIn();
+    const user = userParam || this.userService.getUser();
+    if (isLogged && user) {
+      if (this.form.get('email')?.value !== user.email) this.form.get('email')?.setValue(user.email);
+      if (this.form.get('firstname')?.value !== user.firstName) this.form.get('firstname')?.setValue(user.firstName);
+      if (this.form.get('lastname')?.value !== user.lastName) this.form.get('lastname')?.setValue(user.lastName);
+      this.form.get('email')?.disable({ emitEvent: false });
+      this.form.get('firstname')?.disable({ emitEvent: false });
+      this.form.get('lastname')?.disable({ emitEvent: false });
+    } else {
+      this.form.get('email')?.enable({ emitEvent: false });
+      this.form.get('firstname')?.enable({ emitEvent: false });
+      this.form.get('lastname')?.enable({ emitEvent: false });
+    }
+  }
 
   onEmailBlur() {
     const email = this.emailControl?.value;
@@ -43,7 +71,6 @@ export class PersonalInfoComponent {
             disableClose: true
           });
             dialogRef.afterClosed().subscribe((result) => {
-              console.log("result", result);
               if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
                 this.emailControl?.setValue('');
               } else if (result && typeof result === 'object' && result.email) {

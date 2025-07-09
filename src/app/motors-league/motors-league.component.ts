@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { PersonalInfoComponent } from '../steps/personal-info/personal-info.component';
+import { PersonalInfoComponent } from '../event-coverage/steps/personal-info/personal-info.component';
 import { VehicleInfoComponent } from '../steps/vehicle-info/vehicle-info.component';
 import { CoverageOptionsComponent } from '../steps/coverage-options/coverage-options.component';
 import { PaymentComponent } from '../steps/payment/payment.component';
@@ -17,14 +17,23 @@ import { RepresentativeLegalComponent } from "../steps/representative-legal/repr
 import { VehicleService } from '../services/vehicle.service';
 import { Subscription } from 'rxjs';
 import { ContractService } from '../services/contract.service';
+import { UserService } from '../services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 
 @Component({
+  standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss']
 })
 export class MotorsLeagueComponent implements OnInit, OnDestroy {
+  public nationalities: string[] = [
+    'Française','Allemande','Autrichienne','Belge','Britannique','Bulgare','Chypriote','Croate','Danoise','Espagnole','Estonienne','Finlandaise','Grecque','Hongroise','Irlandaise','Italienne','Lettonne','Lituanienne','Luxembourgeoise','Maltaise','Néerlandaise','Polonaise','Portugaise','Roumaine','Slovaque','Slovène','Suédoise','Suisse','Tchèque'
+  ];
   @ViewChild(CoverageOptionsComponent) coverageOptions!: CoverageOptionsComponent;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   @ViewChild(MatStepper) stepper!: MatStepper;
@@ -37,6 +46,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   summaryForm!: FormGroup;
   step1Page: number = 1;
   step2Page: number = 1;
+  
   vehicles: any[] = [];
   acceptTerms: boolean = false;
   private subscription?: Subscription;
@@ -44,7 +54,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private userService: UserService,
+    private matSnackBar: MatSnackBar
   ) {
     this.initializeForms();
   }
@@ -61,32 +73,34 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
+  
   formatNumber(value: number | null | undefined): string {
     if (value === undefined || value === null || typeof value !== 'number') return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 
-  handleVehicleAdded(vehicle: any) {
-    this.vehicleService.addVehicle(vehicle);
-    console.log('Véhicule ajouté:', vehicle);
+  formatPermisType(type: string): string {
+    const types: { [key: string]: string } = {
+      'permis_a': 'Permis A',
+      'permis_b': 'Permis B',
+      'casm': 'CASM',
+      'licence_ffsa': 'Licence FFSA'
+    };
+    return types[type] || type;
   }
 
-  onVehicleAdded(vehicle: any) {
-    // Cette méthode n'est plus utilisée
-    console.log('Véhicule ajouté:', vehicle);
+  handleVehicleAdded(vehicle: any) {
+    this.vehicleService.addVehicle(vehicle);
   }
 
   onVehicleRemoved(vehicle: any) {
     const index = this.vehicles.findIndex(v => v.immatNumber === vehicle.immatNumber);
     if (index > -1) {
       this.vehicleService.removeVehicle(index);
-      console.log('Véhicule supprimé:', vehicle);
     }
   }
 
   updateSummary() {
-    // Mettre à jour le résumé avec la liste des véhicules
     this.summaryForm.patchValue({
       vehicles: this.vehicles
     });
@@ -117,6 +131,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
   private initializeForms() {
     this.summaryForm = this.fb.group({
+      verificationCode: ['', Validators.required]
     });
     this.personalForm = this.fb.group({
       civility: ['', Validators.required],
@@ -229,37 +244,46 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
   getCoverageAmounts(level: number | null): { death: number; disability: number } | undefined {
     if (!level || !this.coverageOptions) return undefined;
-    return this.coverageOptions.coverageAmounts[level];
+    const levelData = this.coverageOptions.PROTECTION_LEVELS[level];
+    if (!levelData) return undefined;
+    return { death: levelData.death, disability: levelData.disability };
   }
 
   getLevelPrice(level: number | null): number | undefined {
     if (!level || !this.coverageOptions) return undefined;
-    return this.coverageOptions.levelPrices[level];
+    const levelData = this.coverageOptions.PROTECTION_LEVELS[level];
+    return levelData ? levelData.price : undefined;
   }
 
   onSubmit(): void {
     const forms = [this.personalForm, this.vehicleForm, this.coverageForm];
     const allFormsValid = forms.every(form => form?.valid);
-  
+
+    if (this.isMinor()) {
+      if (!this.summaryForm.valid) {
+        this.summaryForm.markAllAsTouched();
+        return;
+      }
+    }
+
     if (!allFormsValid) {
-      console.log('Form is invalid');
       forms.forEach(form => form.markAllAsTouched());
       return;
     }
-  
+
     const contractData = {
       personalInfo: this.personalForm.value,
       vehicleInfo: this.vehicleForm.value,
       coverageInfo: this.coverageForm.value,
       representativeInfo: this.isMinor() ? this.RepresentativeLegalForm.value : null
     };
-  
+
     this.contractService.createContratB2C(contractData).subscribe({
       next: (response) => {
         const orderId = response?.orderId;
         const email = this.personalForm.get('email')?.value;
         const paymentUrl = `http://localhost:8080/paymentconfirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
-  
+
         window.location.href = paymentUrl;
       },
       error: (err) => {
@@ -275,4 +299,41 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       this.stepper.next();
     }
   }
-}
+
+  sendVerificationEmail(): void {
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.stepper.next();
+        this.matSnackBar.open('Code de verification envoyé, ce code devra etre renseigné à la dernière étape', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      },
+      error: (err) => {
+        console.error('Erreur lors de l envoi du code de verification', err);
+      }
+    });
+  }
+
+  verifyCode(): void {
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    const code = this.summaryForm.get('verificationCode')?.value;
+    this.userService.verifyCode(email, code).subscribe({
+      next: () => {
+        this.stepper.next();
+        this.matSnackBar.open('Code de verification validé', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      },
+      error: (err) => {
+        this.matSnackBar.open('Code de verification invalide', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+        console.error('Erreur lors de la validation du code de verification', err);
+      }
+    });
+  }
+} 

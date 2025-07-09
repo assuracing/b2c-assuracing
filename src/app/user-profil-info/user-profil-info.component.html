@@ -1,0 +1,13 @@
+<div *ngIf="adherentInfo; else loading">
+  <h2>Mon profil</h2>
+  <ul class="user-info-list">
+    <li><strong>Nom :</strong> {{ adherentInfo.nom }}</li>
+    <li><strong>Prénom :</strong> {{ adherentInfo.prenom }}</li>
+    <li><strong>Adresse :</strong> {{ adherentInfo.adresse }}</li>
+    <li><strong>Email :</strong> {{ adherentInfo.user?.login }}</li>
+    <li><strong>Numéro de téléphone :</strong> {{ adherentInfo.telPortable }}</li>
+  </ul>
+</div>
+<ng-template #loading>
+  <p>Chargement des informations...</p>
+</ng-template>

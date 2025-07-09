@@ -42,8 +42,58 @@ interface ProtectionLevel {
   styleUrls: ['./event-coverage-options.component.scss']
 })
 export class EventCoverageOptionsComponent {
+  today = new Date();
+  annulationDisabledByInscriptionDate = false;
+
   private _eventType: string = '';
+  private _disableIntempAnnul = false;
   @Input()
+  set disableIntempAnnul(val: boolean) {
+    this._disableIntempAnnul = val;
+    if (this.form) {
+      if (val) {
+        this.form.get('intemperies')?.disable({ emitEvent: false });
+        this.form.get('annulation')?.disable({ emitEvent: false });
+      } else {
+        this.form.get('intemperies')?.enable({ emitEvent: false });
+        this.form.get('annulation')?.enable({ emitEvent: false });
+      }
+    }
+  }
+
+  ngOnInit() {
+    this.form.get('inscriptionDate')?.valueChanges.subscribe(date => {
+      this.checkAnnulationAvailability(date);
+    });
+    this.checkAnnulationAvailability(this.form.get('inscriptionDate')?.value);
+  }
+
+  checkAnnulationAvailability(inscriptionDate: any) {
+      if (!inscriptionDate) {
+      this.annulationDisabledByInscriptionDate = false;
+      this.form.get('annulation')?.enable({ emitEvent: false });
+      return;
+    }
+    const date = new Date(inscriptionDate);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    if (diffInDays > 14) {
+      this.annulationDisabledByInscriptionDate = true;
+      this.form.get('annulation')?.disable({ emitEvent: false });
+    } else if (diffInDays < 0) {
+      this.annulationDisabledByInscriptionDate = true;
+      this.form.get('annulation')?.disable({ emitEvent: false });
+    } else {
+      this.annulationDisabledByInscriptionDate = false;
+      this.form.get('annulation')?.enable({ emitEvent: false });
+    }
+  }
+
+  get disableIntempAnnul() {
+    return this._disableIntempAnnul;
+  }  @Input()
   set eventType(val: string) {
     this._eventType = val;
     this.updateGaranties();
@@ -62,8 +112,6 @@ export class EventCoverageOptionsComponent {
     return this._role;
   }
 
-  isIaiModeAnnulation: boolean = false;
-
   allowedGaranties: string[] = [];
 
   isOnlyAnnulationAllowed(): boolean {
@@ -74,24 +122,24 @@ export class EventCoverageOptionsComponent {
   GARANTIES_MAP: any = {
     training: {
       pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['Annulation', 'IA', 'PJ'],
+      passager: ['IA', 'PJ'],
       mecanicien: ['IA', 'PJ'],
       photographe: ['IA', 'PJ'] 
     },
     coaching: {
       pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['Annulation', 'IA', 'PJ'],
+      passager: ['IA', 'PJ'],
       mecanicien: ['IA', 'PJ'],
       photographe: ['IA', 'PJ']
     },
     stage: {
       pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['Annulation', 'IA', 'PJ'],
+      passager: ['IA', 'PJ'],
       mecanicien: ['IA', 'PJ'],
       photographe: ['IA', 'PJ']
     },
     competition: {
-      pilote: ['Annulation', 'IA', 'RC', 'PJ', 'Dommages'],
+      pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
       passager: ['IA', 'PJ'],
       mecanicien: ['IA', 'PJ'],
       photographe: ['IA', 'PJ']
@@ -109,18 +157,6 @@ export class EventCoverageOptionsComponent {
 
     if (this.allowedGaranties.includes('Annulation')) {
       this.allowedGaranties.push('IAI');
-    }
-
-    this.isIaiModeAnnulation = this.isOnlyAnnulationAllowed();
-
-    if (this.form) {
-      if (this.isIaiModeAnnulation) {
-        this.form.get('intemperies')?.disable({ emitEvent: false });
-        this.form.get('interruption')?.disable({ emitEvent: false });
-      } else {
-        this.form.get('intemperies')?.enable({ emitEvent: false });
-        this.form.get('interruption')?.enable({ emitEvent: false });
-      }
     }
   }
 

@@ -82,6 +82,10 @@ export class TrackdayComponent {
     return this.form.get('role')?.value === 'pilote';
   }
 
+  get isPassenger() {
+    return this.form.get('role')?.value === 'passager';
+  }
+
   onRoleChange(event: any) {
     const role = event.value;
     if (role !== 'pilote') {

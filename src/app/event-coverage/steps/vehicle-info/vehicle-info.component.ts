@@ -26,7 +26,7 @@ interface Circuit {
 @Component({
   selector: 'app-vehicle-info',
   templateUrl: './vehicle-info.component.html',
-  styleUrls: ['./vehicle-info.component.scss', '../../../app.component.scss'],
+  styleUrls: ['./vehicle-info.component.scss', '../../../app.component.scss', '../../../motors-league/motors-league.component.scss'],
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule]
 })
 export class VehicleInfoComponent implements OnInit, OnDestroy {

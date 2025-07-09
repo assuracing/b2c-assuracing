@@ -48,7 +48,7 @@
     <ng-template matStepLabel>Vos informations</ng-template>
     <div *ngIf="step2Page === 1">
       <form [formGroup]="personalForm">
-        <app-personal-info [form]="personalForm"></app-personal-info>
+        <app-personal-info [form]="personalForm" [nationalities]="nationalities"></app-personal-info>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
           <button mat-button (click)="goToNextStep()" [disabled]="!personalForm.valid">Continuer</button>
@@ -61,7 +61,7 @@
         <app-representative-legal [form]="RepresentativeLegalForm"></app-representative-legal>
         <div class="mt-4">
           <button mat-button (click)="step2Page = 1">Retour</button>
-          <button mat-button matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
+          <button mat-button (click)="sendVerificationEmail()" matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
         </div>
       </form>
     </div>
@@ -111,8 +111,14 @@
 
       <h3>Permis de conduire</h3>
       <div class="summary-section">
-        <p><strong>Titre de conduite:</strong> {{vehicleForm.get('titreConduite')?.value}}</p>
-        <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+        <ng-container *ngIf="vehicles && vehicles.length > 0; else noVehicle">
+          <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicles[vehicles.length - 1]?.titreConduite) || '--'}}</p>
+          <p><strong>Numéro de permis:</strong> {{vehicles[vehicles.length - 1]?.titreNumber || '--'}}</p>
+        </ng-container>
+        <ng-template #noVehicle>
+          <p><strong>Titre de conduite:</strong> --</p>
+          <p><strong>Numéro de permis:</strong> --</p>
+        </ng-template>
       </div>
 
       <div class="summary-section">
@@ -127,12 +133,20 @@
           {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
-        <p>code vérification </p>
-      </div>
+        
+        <p style="color: red;" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
-      <div class="mt-4">
-        <button mat-button matStepperPrevious>Retour</button>
-        <button mat-button matStepperNext [disabled]="!acceptTerms">Paiement</button>
+        <form [formGroup]="summaryForm">
+          <mat-form-field *ngIf="isMinor()">
+            <mat-label>Code de vérification</mat-label>
+            <input matInput type="text" formControlName="verificationCode">
+          </mat-form-field>
+
+          <div class="mt-4">
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+          </div>
+        </form>
       </div>
     </div>
   </mat-step>

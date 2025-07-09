@@ -62,7 +62,6 @@ toggleCompteDropdown() {
 }
 
   changerLangue(lang: string) {
-    console.log('Langue choisie :', lang);
     this.isLangueDropdownOpen = false;
   }
 

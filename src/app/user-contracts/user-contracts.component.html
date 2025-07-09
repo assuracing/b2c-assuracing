@@ -1,0 +1,22 @@
+<table>
+    <thead>
+        <tr>
+            <th>Date de roulage</th>
+            <th>Date d'effet du contrat</th>
+            <th>Entreprise</th>
+            <th>Contrat</th>
+            <th>Circuit</th>
+            <th>Validé</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let contract of contracts">
+            <td>{{ contract.dateAdhesion }}</td>
+            <td>{{ contract.dateSaisie }}</td>
+            <td>{{ contract.adherentnomCliententreprise }}</td>
+            <td>{{ contract.nomcontrat }}</td>
+            <td>{{ contract.circuit }}</td>
+            <td>{{ contract.valide}}</td>
+        </tr>
+    </tbody>
+</table>

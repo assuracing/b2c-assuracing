@@ -25,8 +25,6 @@ export class AuthService {
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('http://localhost:8080/api/authenticate', { username, password }).pipe(
       tap((res) => {
-        console.log('Login successful, token:', res.id_token);
-        console.log('is login ?:', this.isLoggedIn());
         localStorage.setItem(this.tokenKey, res.id_token);
         this.isAuthenticatedSubject.next(true);
       })
@@ -44,11 +42,11 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return this.getToken() !== null;
   }
 
   isLoggedOut(): boolean {
-    return !this.isLoggedIn();
+    return this.getToken() === null;
   }
 
   resetPassword(email: string): Observable<any> {

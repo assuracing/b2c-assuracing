@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
@@ -27,6 +27,8 @@ import { PaymentComponent } from '../steps/payment/payment.component';
 import { MatStepper } from '@angular/material/stepper';
 import { EventCoverageOptionsComponent } from "./steps/event-coverage-options/event-coverage-options.component";
 import { HttpClient } from '@angular/common/http';
+import { UserService } from '../services/user.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface Circuit {
   id: number;
@@ -103,16 +105,51 @@ interface ContractResponse {
     TrackdayComponent,
     PaymentComponent,
     EventCoverageOptionsComponent,
+    MatSnackBarModule,
+    MatCheckboxModule,
 ],
   templateUrl: './event-coverage.component.html',
   styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss']
 })
 export class EventCoverageComponent {
+  public nationalities: string[] = [
+  'Française',
+  'Allemande',
+  'Autrichienne',
+  'Belge',
+  'Britannique',
+  'Bulgare',
+  'Chypriote',
+  'Croate',
+  'Danoise',
+  'Espagnole',
+  'Estonienne',
+  'Finlandaise',
+  'Grecque',
+  'Hongroise',
+  'Irlandaise',
+  'Italienne',
+  'Lettonne',
+  'Lituanienne',
+  'Luxembourgeoise',
+  'Maltaise',
+  'Néerlandaise',
+  'Polonaise',
+  'Portugaise',
+  'Roumaine',
+  'Slovaque',
+  'Slovène',
+  'Suédoise',
+  'Suisse',
+  'Tchèque'
+];
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private contractService: ContractService,
     private http: HttpClient,
+    private userService: UserService,
+    private matSnackBar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router
   ) {
@@ -156,7 +193,7 @@ export class EventCoverageComponent {
   private vehicleData: any = null;
 
   circuits: Circuit[] = [];
-  isLoadingCircuits = true;
+  isLoadingCircuits = true; 
 
   private loadCircuits() {
     this.http.get<Circuit[]>('http://localhost:8080/api/circuits').subscribe(
@@ -176,6 +213,11 @@ export class EventCoverageComponent {
   }
 
   private initializeForms() {
+
+    this.summaryForm = this.fb.group({
+      verificationCode: ['', Validators.required]
+    });
+
     this.trackdayForm = this.fb.group({
       eventType: [''],
       circuit: [''],
@@ -234,7 +276,7 @@ export class EventCoverageComponent {
       city: [''],
       birthdate: [''],
       nationality: '',
-      country: ''
+      country: '',
     });
 
     this.vehicleForm = this.fb.group({
@@ -273,7 +315,6 @@ export class EventCoverageComponent {
       coverageLevel: ['']
     });
 
-
     this.RepresentativeLegalForm = this.fb.group({
       representativeLastname: [''],
       representativeFirstname: [''],
@@ -285,9 +326,14 @@ export class EventCoverageComponent {
       expiration: [''],
       cvc: ['']
     });
+  }
 
-    this.summaryForm = this.fb.group({
-    });
+  goToNextStep(): void {
+    if (this.isMinor()) {
+      this.step2Page = 2;
+    } else {
+      this.stepper.next();
+    }
   }
 
   isMinor(): boolean {
@@ -361,7 +407,6 @@ export class EventCoverageComponent {
     const allFormsValid = forms.every(form => form?.valid);
   
     if (!allFormsValid) {
-      console.log('Form is invalid');
       forms.forEach(form => form.markAllAsTouched());
       return;
     }
@@ -370,13 +415,6 @@ export class EventCoverageComponent {
     const personalData = this.personalForm.value;
     const vehicleData = this.vehicleForm.value;
     const coverageData = this.coverageOptionsForm.value;
-
-    console.log("trackdayData", trackdayData);
-    console.log("personalData", personalData);
-    console.log("vehicleData", vehicleData);
-    console.log("coverageData", coverageData);
-
-    console.log("trackday role", trackdayData.role);
     
     const formatISODate = (date: string): string => {
       if (!date) return '';
@@ -442,7 +480,6 @@ export class EventCoverageComponent {
   handleVehicleAdded(vehicle: any) {
     this.vehicle = vehicle;
     this.vehicleData = vehicle;
-    console.log('Véhicule ajouté:', vehicle);
   }
 
   saveVehicle() {
@@ -529,5 +566,53 @@ export class EventCoverageComponent {
     return `Vous avez sélectionné les garanties : ${selectedGuarantees.join(', et ')}
     pour votre événement du ${formattedDate} de ${duration} jour(s) à : ${circuit}.
     La prime totale est de ${totalPrime} €`;
+  }
+
+  
+  sendVerificationEmail(): void {
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.stepper.next();
+        this.matSnackBar.open('Code de verification envoyé, ce code devra etre renseigné à la dernière étape', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      },
+      error: (err) => {
+        console.error('Erreur lors de l envoi du code de verification', err);
+      }
+    });
+  }
+
+  verifyCode(): void {
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    const code = this.summaryForm.get('verificationCode')?.value;
+    this.userService.verifyCode(email, code).subscribe({
+      next: () => {
+        this.stepper.next();
+        this.matSnackBar.open('Code de verification validé', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      },
+      error: (err) => {
+        this.matSnackBar.open('Code de verification invalide', 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+        console.error('Erreur lors de la validation du code de verification', err);
+      }
+    });
+  }
+
+  get isEventDateLessThan3Weeks(): boolean {
+    const eventDateValue = this.trackdayForm.get('eventDate')?.value;
+    if (!eventDateValue) return false;
+    const eventDate = new Date(eventDateValue);
+    const now = new Date();
+    const diffInMs = eventDate.getTime() - now.getTime();
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    return diffInDays < 21;
   }
 }

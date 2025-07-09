@@ -48,3 +48,15 @@
         }
     }
 }
+
+.info-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: help;
+    color: #6c757d;
+    
+    @media (max-width: 768px) {
+      font-size: 12px;
+      margin-left: 3px;
+    }
+  }
