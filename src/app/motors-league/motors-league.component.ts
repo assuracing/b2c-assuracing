@@ -23,6 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -59,7 +60,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private userService: UserService,
     private matSnackBar: MatSnackBar,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    private router: Router
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -76,6 +78,10 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  goToYearlyGuarantee(): void {
+    this.router.navigate(['/yearly-guarantee']);
   }
   
   formatNumber(value: number | null | undefined): string {

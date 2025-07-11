@@ -8,7 +8,7 @@
             [isLoadingCircuits]="isLoadingCircuits">
           </app-trackday>
           <div class="mt-4">
-            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button (click)="goToEventOrMotorsLeaguePage()" matStepperPrevious>Retour</button>
             <button mat-button (click)="goToCoverageChoicesStep()" [disabled]="!trackdayForm.valid">Continuer</button>
           </div>
         </form>
