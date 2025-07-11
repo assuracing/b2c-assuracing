@@ -51,7 +51,7 @@
               <li>100% en cas d'annulation</li>
               <li>70% en cas de roulage sous la pluie</li>
             </ul>
-            <p>Prime : {{ PRIME_RATES.intemperies }}€</p>
+            <p>Prime : {{ (intemperiesPrice || PRIME_RATES.intemperies) | number:'1.2-2' }}€</p>
           </div>
         </div>
 
@@ -66,7 +66,7 @@
               <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
               <li>80% autres motifs de santé</li>
             </ul>
-            <p>Prime : {{ PRIME_RATES.annulation }}€</p>
+            <p>Prime : {{ (annulationPrice || PRIME_RATES.annulation) | number:'1.2-2' }}€</p>
           </div>
         </div>
 
@@ -76,7 +76,7 @@
             <ul>
               <li>50% en cas de chute lors du roulage</li>
             </ul>
-            <p>Prime : {{ PRIME_RATES.interruption }}€</p>  
+            <p>Prime : {{ (interruptionPrice || PRIME_RATES.interruption) | number:'1.2-2' }}€</p>  
           </div>
         </div>
       </div>
@@ -162,10 +162,25 @@
           <p class="inclus" style="font-weight: normal; font-size: 12px; color: #1976d2; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
         </div>
         <div class="defense-recours">
-          <mat-slide-toggle labelPosition="before" formControlName="defenseRecours">Défense Recours - Protection Juridique</mat-slide-toggle>
+          <mat-slide-toggle 
+            labelPosition="before" 
+            formControlName="defenseRecours"
+            (change)="onDefenseRecoursToggle($event)"
+            [disabled]="isCalculatingPrice">
+            Défense Recours - Protection Juridique
+            <mat-spinner *ngIf="isCalculatingPrice" diameter="20" style="display: inline-block; margin-left: 8px;"></mat-spinner>
+          </mat-slide-toggle>
           <div class="risk-details">
             <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
-            <p class="prime">Prime : 14€</p>
+            <p class="prime">
+              Prime : 
+              <span *ngIf="!isCalculatingPrice">
+                {{ (defenseRecoursPrice || PRIME_RATES.defenseRecours) | number:'1.2-2' }}€
+              </span>
+              <span *ngIf="isCalculatingPrice">
+                Calcul en cours...
+              </span>
+            </p>
           </div>
         </div>
 

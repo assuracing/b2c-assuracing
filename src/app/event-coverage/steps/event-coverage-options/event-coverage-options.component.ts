@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ResetGuaranteeDialogComponent } from './reset-guarantee-dialog.component';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ContractService } from '../../../services/contract.service';
 
 interface ProtectionLevel {
   death: number;
@@ -36,16 +39,32 @@ interface ProtectionLevel {
     MatSlideToggleModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './event-coverage-options.component.html',
   styleUrls: ['./event-coverage-options.component.scss']
 })
 export class EventCoverageOptionsComponent {
+  @Input() isCalculatingPrice: boolean = false;
+  @Input() defenseRecoursPrice: number | null = null;
+  @Input() annulationPrice: number | null = null;
+  @Input() interruptionPrice: number | null = null;
+  @Input() intemperiesPrice: number | null = null;
+  @Input() garantiePrices: { [key: string]: number } = {};
+  @Input() form!: FormGroup;
+  @Input() circuit!: string;
+  @Input() eventDate!: string;
+  @Input() duration!: number;
+  @Output() defenseRecoursChange = new EventEmitter<{isChecked: boolean, garantieType: string}>();
+  
+  // Propriétés privées pour eventType et role
+  private _eventType: string = '';
+  private _role: string = '';
+
   today = new Date();
   annulationDisabledByInscriptionDate = false;
 
-  private _eventType: string = '';
   private _disableIntempAnnul = false;
   @Input()
   set disableIntempAnnul(val: boolean) {
@@ -102,7 +121,6 @@ export class EventCoverageOptionsComponent {
     return this._eventType;
   }
 
-  private _role: string = '';
   @Input()
   set role(val: string) {
     this._role = val;
@@ -160,14 +178,17 @@ export class EventCoverageOptionsComponent {
     }
   }
 
-  readonly PRIME_RATES = {
-    intemperies: 10,
-    annulation: 9,
-    interruption: 3,
-    protectionPilote: 0,
-    defenseRecours: 14,
-    responsabiliteRecours: 14
-  } as const;
+  get PRIME_RATES() {
+    return {
+      protectionPilote: 0,
+      defenseRecours: this.garantiePrices['DEFENSE_RECOURS'] || 35.00,
+      iai: this.garantiePrices['IAI'] || 0.00,
+      annulation: this.garantiePrices['ANNULATION'] || 9.00,
+      interruption: this.garantiePrices['INTERRUPTION'] || 3.00,
+      intemperies: this.garantiePrices['INTEMPERIES'] || 10.00,
+      responsabiliteRecours: this.garantiePrices['DEFENSE_RECOURS'] || 14.00
+    };
+  }
 
   readonly PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
     1: { death: 7600, disability: 18500, price: 15 },
@@ -176,8 +197,6 @@ export class EventCoverageOptionsComponent {
     4: { death: 150000, disability: 200000, price: 85 },
     5: { death: 200000, disability: 300000, price: 120 }
   } as const;
-
-  @Input() form!: FormGroup;
 
   activeSection: 'iai' | 'protectionPilote' | 'responsabiliteRecours' | null = null;
   validatedSections: { [key: string]: boolean } = {
@@ -190,7 +209,7 @@ export class EventCoverageOptionsComponent {
   wasProtectionPiloteValidated = false;
   wasResponsabiliteRecoursValidated = false;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private contractService: ContractService) {
     this.initializeForms();
   }
 
@@ -353,5 +372,33 @@ export class EventCoverageOptionsComponent {
 
     if (section === 'iai') this.form.patchValue({ iai: true });
     if (section === 'responsabiliteRecours') this.form.patchValue({ responsabiliteRecours: true });
+  }
+
+  onDefenseRecoursToggle(event: any): void {
+    this.defenseRecoursChange.emit({
+      isChecked: event.checked,
+      garantieType: 'DEFENSE_RECOURS'
+    });
+  }
+
+  onIaiToggle(event: any): void {
+    this.defenseRecoursChange.emit({
+      isChecked: event.checked,
+      garantieType: 'IAI'
+    });
+  }
+
+  onProtectionPiloteToggle(event: any): void {
+    this.defenseRecoursChange.emit({
+      isChecked: event.checked,
+      garantieType: 'PROTECTION_PILOTE'
+    });
+  }
+
+  onResponsabiliteRecoursToggle(event: any): void {
+    this.defenseRecoursChange.emit({
+      isChecked: event.checked,
+      garantieType: 'RESPONSABILITE_RECURS'
+    });
   }
 }

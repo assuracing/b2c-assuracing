@@ -56,6 +56,7 @@ export class TrackdayComponent {
   @Input() isLoadingCircuits: boolean = true;
   organizers: Organizer[] = [];
   isLoadingOrganizers = true;
+  today = new Date();
 
   constructor(
     private fb: FormBuilder,

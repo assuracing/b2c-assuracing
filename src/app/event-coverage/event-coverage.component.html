@@ -9,7 +9,7 @@
           </app-trackday>
           <div class="mt-4">
             <button mat-button matStepperPrevious>Retour</button>
-            <button mat-button matStepperNext [disabled]="!trackdayForm.valid">Continuer</button>
+            <button mat-button (click)="goToCoverageChoicesStep()" [disabled]="!trackdayForm.valid">Continuer</button>
           </div>
         </form>
     </mat-step>
@@ -17,12 +17,14 @@
     <mat-step [stepControl]="coverageOptionsForm">
       <ng-template matStepLabel>Garanties</ng-template>
       <form [formGroup]="coverageOptionsForm">
-        <app-event-coverage-options 
-          [form]="coverageOptionsForm"
-          [eventType]="trackdayForm.get('eventType')?.value"
-          [role]="trackdayForm.get('role')?.value"
-          [disableIntempAnnul]="isEventDateLessThan3Weeks">
-        </app-event-coverage-options>
+        <app-event-coverage-options [garantiePrices]="garantiePrices" 
+        [form]="coverageOptionsForm"
+        [eventType]="trackdayForm.get('eventType')?.value"
+        [role]="trackdayForm.get('role')?.value"
+        [disableIntempAnnul]="isEventDateLessThan3Weeks"
+        [isCalculatingPrice]="isCalculatingPrice"
+        [defenseRecoursPrice]="defenseRecoursPrice">
+      </app-event-coverage-options>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
           <button mat-button [disabled]="!coverageOptionsForm.valid" (click)="onContinueGuaranteeStep(stepper)">Continuer</button>
@@ -121,7 +123,7 @@
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
           <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
-          <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
+          <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms || !summaryForm.valid">Paiement</button>
         </div>
       </form>
 

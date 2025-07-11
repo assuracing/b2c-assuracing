@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
 import { CommonModule } from '@angular/common';
-import { MatStepperModule } from '@angular/material/stepper';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -14,21 +17,18 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
 import { VehicleInfoComponent } from './steps/vehicle-info/vehicle-info.component';
 import { PersonalInfoComponent } from './steps/personal-info/personal-info.component';
 import { RepresentativeLegalComponent } from '../steps/representative-legal/representative-legal.component';
-import { VehicleService } from '../services/vehicle.service';
 import { TrackdayComponent } from './steps/trackday/trackday.component';
-import { Subscription } from 'rxjs';
-import { ContractService } from '../services/contract.service';
 import { PaymentComponent } from '../steps/payment/payment.component';
-import { MatStepper } from '@angular/material/stepper';
 import { EventCoverageOptionsComponent } from "./steps/event-coverage-options/event-coverage-options.component";
-import { HttpClient } from '@angular/common/http';
+import { VehicleService } from '../services/vehicle.service';
+import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface Circuit {
   id: number;
@@ -107,7 +107,17 @@ interface ContractResponse {
     EventCoverageOptionsComponent,
     MatSnackBarModule,
     MatCheckboxModule,
-],
+    MatStepperModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatIconModule,
+    MatTooltipModule,
+  ],
   templateUrl: './event-coverage.component.html',
   styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss']
 })
@@ -187,13 +197,22 @@ export class EventCoverageComponent {
   acceptTerms: boolean = false
   isSubmitted: boolean = false
   isLoading: boolean = false
-  error: string | null = null
+  error: string | null = null;
   subscriptions: Subscription[] = [];
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   private vehicleData: any = null;
 
   circuits: Circuit[] = [];
-  isLoadingCircuits = true; 
+  isLoadingCircuits = true;
+  
+  isCalculatingPrice = false;
+  defenseRecoursPrice: number | null = null;
+  annulationPrice: number | null = null;
+  interruptionPrice: number | null = null;
+  intemperiesPrice: number | null = null;
+  priceCalculationError: string | null = null;
+  priceDetails: (PrixDTO & { totalTTC: number }) | null = null;
+  totalTTC: number = 0;
 
   private loadCircuits() {
     this.http.get<Circuit[]>('http://localhost:8080/api/circuits').subscribe(
@@ -328,12 +347,31 @@ export class EventCoverageComponent {
     });
   }
 
+  GARANTIE_CODES = {
+    DEFENSE_RECOURS: 310,
+    ANNULATION: 309,
+    INTERRUPTION: 308,
+    INTEMPERIES: 307,
+  };
+
+  garantiePrices: { [key: string]: number } = {};
+
   goToNextStep(): void {
     if (this.isMinor()) {
       this.step2Page = 2;
     } else {
       this.stepper.next();
     }
+  }
+
+  goToCoverageChoicesStep(): void {
+    console.log("goToCoverageChoicesStep");
+    Object.keys(this.GARANTIE_CODES).forEach(key => console.log(key));
+    Object.keys(this.GARANTIE_CODES).forEach((garantie : string) => {
+      console.log(garantie);
+      this.calculateGarantiePrice(this.GARANTIE_CODES[garantie as keyof typeof this.GARANTIE_CODES]);
+    })
+    this.stepper.next();
   }
 
   isMinor(): boolean {
@@ -400,6 +438,70 @@ export class EventCoverageComponent {
         representativeEmail: this.RepresentativeLegalForm?.get('representativeEmail')?.value
       } : null
     };
+  }
+
+  calculatePrice(): void {
+    if (this.isCalculatingPrice) return;
+    
+    const trackdayData = this.trackdayForm.value;
+    const vehicleData = this.vehicleForm.value;
+    const coverageData = this.coverageOptionsForm.value;
+    
+    if (!trackdayData || !vehicleData || !coverageData) {
+      this.priceCalculationError = 'Veuillez remplir tous les champs obligatoires';
+      return;
+    }
+    
+    this.isCalculatingPrice = true;
+    this.priceCalculationError = null;
+    
+    const priceData = {
+      selectedCircuit: trackdayData.circuit,
+      nbrjour: trackdayData.duration,
+      datedebutroulage: trackdayData.eventDate ? new Date(trackdayData.eventDate).toISOString() : null,
+      annual: false,
+      c: { id: null },
+      codeProduit: this.getSelectedProducts(coverageData).map(Number),
+      dateinscriptionRoulage: new Date().toISOString(),
+      immatriculation: vehicleData.immatNumber || "",
+      marque: vehicleData.brand || "",
+      modele: vehicleData.model || "",
+      montantganrantie: coverageData.protectionPilote || 0,
+      param_n_chassis: vehicleData.chassisNumber || "",
+      param_n_serie: vehicleData.serieNumber || "",
+      typevehicule: trackdayData.vehicleType || "moto"
+    };
+    
+    this.contractService.calculatePrice(priceData).subscribe({
+      next: (response) => {
+        const totalTTC = (response.prixProduitCompagnieTTC || 0) + 
+                         (response.fraisDeCourtage || 0);
+        
+        this.priceDetails = {
+          ...response,
+          totalTTC: totalTTC
+        };
+        
+        this.isCalculatingPrice = false;
+        
+        this.matSnackBar.open(`Prix calculé avec succès : ${totalTTC.toFixed(2)} €`, 'Fermer', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      },
+    });
+  }
+  
+  private getSelectedProducts(coverageData: any): string[] {
+    const products: string[] = [];
+    
+    if (coverageData.intemperies) products.push('INTEMP');
+    if (coverageData.annulation) products.push('ANNUL');
+    if (coverageData.interruption) products.push('INTER');
+    if (coverageData.protectionPilote > 0) products.push('PROTECT');
+    if (coverageData.defenseRecours) products.push('DEFENSE');
+    
+    return products.length > 0 ? products : ['DEFAULT'];
   }
 
   onSubmit(): void {
@@ -568,7 +670,50 @@ export class EventCoverageComponent {
     La prime totale est de ${totalPrime} €`;
   }
 
-  
+  private calculateGarantiePrice(codeProduit: number): void {
+    this.isCalculatingPrice = true;
+      
+    const priceData = {
+      selectedCircuit: this.trackdayForm.get('circuit')?.value,
+      nbrjour: this.trackdayForm.get('duration')?.value,
+      datedebutroulage: this.trackdayForm.get('eventDate')?.value,
+      annual: false,
+      c: { id: null },
+      codeProduit: [codeProduit],
+      dateinscriptionRoulage: this.trackdayForm.get('inscriptionDate')?.value,
+      immatriculation: "",
+      marque: "",
+      modele: "",
+      montantganrantie: this.coverageOptionsForm.get('reservationAmount')?.value || 0,
+      param_n_chassis: "",
+      param_n_serie: "",
+      typevehicule: "moto"
+    };
+
+    console.log(`Envoi de la requête pour la garantie ${codeProduit}...`, priceData);
+    
+    const garantieKey = Object.entries(this.GARANTIE_CODES).find(
+      ([key, value]) => value === codeProduit
+    )?.[0];
+    
+    if (!garantieKey) {
+      console.error('Code produit non trouvé dans GARANTIE_CODES:', codeProduit);
+      this.isCalculatingPrice = false;
+      return;
+    }
+
+    this.contractService.calculatePrice(priceData).subscribe({
+      next: (response) => {
+        console.log('Réponse du serveur:', response);
+        const prix = response.prixProduitCompagnieTTC + response.fraisDeCourtage;
+        
+        this.garantiePrices[garantieKey] = prix;
+        
+        this.isCalculatingPrice = false;
+      },
+    });
+  }
+
   sendVerificationEmail(): void {
     const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
     this.userService.sendVerificationEmail(email).subscribe({
@@ -614,5 +759,5 @@ export class EventCoverageComponent {
     const diffInMs = eventDate.getTime() - now.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     return diffInDays < 21;
-  }
+}
 }
