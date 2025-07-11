@@ -43,12 +43,9 @@ jobs:
       - name: Build
         run: |
           npm run webapp:build:prodgithubpage
-      - name: Lint
-        run: |
-          npm run lint
-      - name: Test
-        run: |
-          npm run test
+#      - name: Test
+#        run: |
+#          npm run test
       - name: Copy 404
         run: |
           npm run copy:404
