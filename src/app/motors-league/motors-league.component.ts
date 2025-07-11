@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Inject } from '@angular/core';
+import { EnvironmentService } from '../core/services/environment.service';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepper } from '@angular/material/stepper';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -50,14 +51,17 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   vehicles: any[] = [];
   acceptTerms: boolean = false;
   private subscription?: Subscription;
+  private apiUrl: string;
 
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private contractService: ContractService,
     private userService: UserService,
-    private matSnackBar: MatSnackBar
+    private matSnackBar: MatSnackBar,
+    private envService: EnvironmentService
   ) {
+    this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
   }
 
@@ -282,7 +286,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       next: (response) => {
         const orderId = response?.orderId;
         const email = this.personalForm.get('email')?.value;
-        const paymentUrl = `http://localhost:8080/paymentconfirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
+        const paymentUrl = `${this.apiUrl}/paymentconfirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
 
         window.location.href = paymentUrl;
       },

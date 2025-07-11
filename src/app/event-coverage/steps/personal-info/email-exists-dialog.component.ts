@@ -7,7 +7,8 @@ import { Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../../../login/login.component';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from '../../../services/user.service'; 
+import { UserService } from '../../../services/user.service';
+import { EnvironmentService } from '../../../core/services/environment.service'; 
 
 @Component({
   selector: 'app-email-exists-dialog',
@@ -29,12 +30,17 @@ export class EmailExistsDialogComponent {
   @Output() wrongEmailEvent = new EventEmitter<void>();
   @Output() loginSuccessEvent = new EventEmitter<string>();
 
+  private apiUrl: string;
+
   constructor(
     private dialogRef: MatDialogRef<EmailExistsDialogComponent>,
     private dialog: MatDialog,
     private http: HttpClient,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private envService: EnvironmentService
+  ) {
+    this.apiUrl = this.envService.apiUrl;
+  }
 
   wrongEmail() {
     this.wrongEmailEvent.emit();
@@ -49,13 +55,13 @@ export class EmailExistsDialogComponent {
           this.userService.getAccount().subscribe(() => {
             const token = this.userService.getToken();
             if (token) {
-              this.http.get<any>('http://localhost:8080/api/account', {
+              this.http.get<any>(`${this.apiUrl}/api/account`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               }).subscribe((account) => {
                 this.dialogRef.close({ email: account.email });
               });
             } else {
-              this.http.get<any>('http://localhost:8080/api/account').subscribe((account) => {
+              this.http.get<any>(`${this.apiUrl}/api/account`).subscribe((account) => {
                 this.dialogRef.close({ email: account.email });
               });
             }

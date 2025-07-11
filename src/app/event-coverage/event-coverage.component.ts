@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { EnvironmentService } from '../core/services/environment.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -153,6 +154,8 @@ export class EventCoverageComponent {
   'Suisse',
   'Tchèque'
 ];
+  private apiUrl: string;
+
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
@@ -161,8 +164,10 @@ export class EventCoverageComponent {
     private userService: UserService,
     private matSnackBar: MatSnackBar,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private envService: EnvironmentService
   ) {
+    this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
     this.loadCircuits();
   }
@@ -215,7 +220,7 @@ export class EventCoverageComponent {
   totalTTC: number = 0;
 
   private loadCircuits() {
-    this.http.get<Circuit[]>('http://localhost:8080/api/circuits').subscribe(
+    this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
         this.circuits = circuits;
         this.isLoadingCircuits = false;
@@ -569,7 +574,7 @@ export class EventCoverageComponent {
       next: (response) => {
         const orderId = response?.transactionUID;
         const email = this.personalForm.get('email')?.value;
-        const paymentUrl = `http://localhost:4200/payment-confirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
+        const paymentUrl = `${this.envService.appUrl}/payment-confirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
   
         window.location.href = paymentUrl;
       },
