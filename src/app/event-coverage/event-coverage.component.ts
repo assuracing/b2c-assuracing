@@ -379,6 +379,11 @@ export class EventCoverageComponent {
     this.stepper.next();
   }
 
+  goToEventOrMotorsLeaguePage(): void {
+    console.log("goToEventOrMotorsLeaguePage");
+    this.router.navigate(['/guarantee-choice']);
+  }
+
   isMinor(): boolean {
     const birthDate = this.personalForm.get('birthdate')?.value;
     if (!birthDate) return false;

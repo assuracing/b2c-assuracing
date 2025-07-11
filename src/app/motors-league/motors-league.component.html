@@ -31,7 +31,10 @@
         <li> <strong>Abonnement QuickRacing Premium</strong></li>
     </ul>
 
+      <div class="mt-4">
+        <button mat-button (click)="goToYearlyGuarantee()">Retour</button>
         <button mat-button (click)="step1Page = 2">Continuer</button>
+      </div>
     </div>
 
     <form *ngIf="step1Page === 2" [formGroup]="coverageForm">
