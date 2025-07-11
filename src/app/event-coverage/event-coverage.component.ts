@@ -353,13 +353,28 @@ export class EventCoverageComponent {
   }
 
   GARANTIE_CODES = {
-    DEFENSE_RECOURS: 310,
-    ANNULATION: 309,
-    INTERRUPTION: 308,
-    INTEMPERIES: 307,
+    RC : 1,
+    DEFENSE_RECOURS: 350,
+    ANNULATION: 351,
+    INTEMPERIES: 352,
+    INTERRUPTION: 353,
   };
 
   garantiePrices: { [key: string]: number } = {};
+
+  calculateIAIPrices() {
+    const amount = this.coverageOptionsForm.get('reservationAmount')?.value;
+    if (amount && amount > 0) {
+      ['INTEMPERIES', 'ANNULATION', 'INTERRUPTION'].forEach(garantie => {
+        this.calculateGarantiePrice(this.GARANTIE_CODES[garantie as keyof typeof this.GARANTIE_CODES]);
+      });
+    } else {
+      ['INTEMPERIES', 'ANNULATION', 'INTERRUPTION'].forEach(garantie => {
+        delete this.garantiePrices[garantie];
+      });
+      this.garantiePrices = { ...this.garantiePrices }; 
+    }
+  }
 
   goToNextStep(): void {
     if (this.isMinor()) {
@@ -370,17 +385,13 @@ export class EventCoverageComponent {
   }
 
   goToCoverageChoicesStep(): void {
-    console.log("goToCoverageChoicesStep");
-    Object.keys(this.GARANTIE_CODES).forEach(key => console.log(key));
-    Object.keys(this.GARANTIE_CODES).forEach((garantie : string) => {
-      console.log(garantie);
+    ['RC', 'DEFENSE_RECOURS'].forEach((garantie : string) => {
       this.calculateGarantiePrice(this.GARANTIE_CODES[garantie as keyof typeof this.GARANTIE_CODES]);
     })
     this.stepper.next();
   }
 
   goToEventOrMotorsLeaguePage(): void {
-    console.log("goToEventOrMotorsLeaguePage");
     this.router.navigate(['/guarantee-choice']);
   }
 

@@ -57,8 +57,12 @@ export class EventCoverageOptionsComponent {
   @Input() eventDate!: string;
   @Input() duration!: number;
   @Output() defenseRecoursChange = new EventEmitter<{isChecked: boolean, garantieType: string}>();
+  @Output() reservationAmountChanged = new EventEmitter<void>();
+
+  onReservationAmountChange() {
+    this.reservationAmountChanged.emit();
+  }
   
-  // Propriétés privées pour eventType et role
   private _eventType: string = '';
   private _role: string = '';
 
@@ -180,14 +184,18 @@ export class EventCoverageOptionsComponent {
 
   get PRIME_RATES() {
     return {
-      protectionPilote: 0,
-      defenseRecours: this.garantiePrices['DEFENSE_RECOURS'] || 35.00,
-      iai: this.garantiePrices['IAI'] || 0.00,
-      annulation: this.garantiePrices['ANNULATION'] || 9.00,
-      interruption: this.garantiePrices['INTERRUPTION'] || 3.00,
-      intemperies: this.garantiePrices['INTEMPERIES'] || 10.00,
-      responsabiliteRecours: this.garantiePrices['DEFENSE_RECOURS'] || 14.00
+      protectionPilote: this.garantiePrices['PROTECTION_PILOTE'],
+      defenseRecours: this.garantiePrices['DEFENSE_RECOURS'],
+      iai: this.garantiePrices['IAI'],
+      annulation: this.garantiePrices['ANNULATION'],
+      interruption: this.garantiePrices['INTERRUPTION'],
+      intemperies: this.garantiePrices['INTEMPERIES'],
+      responsabiliteRecours: this.garantiePrices['DEFENSE_RECOURS']
     };
+  }
+
+  formatPrice(price: number | undefined): string {
+    return price !== undefined ? price.toFixed(2) + '€' : '-- € ';
   }
 
   readonly PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {

@@ -23,6 +23,7 @@
         [role]="trackdayForm.get('role')?.value"
         [disableIntempAnnul]="isEventDateLessThan3Weeks"
         [isCalculatingPrice]="isCalculatingPrice"
+        (reservationAmountChanged)="calculateIAIPrices()"
         [defenseRecoursPrice]="defenseRecoursPrice">
       </app-event-coverage-options>
         <div class="mt-4">
