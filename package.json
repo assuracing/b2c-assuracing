@@ -8,7 +8,7 @@
     "clean-www": "rimraf target/classes/static/app/{src,target/}",
     "cleanup": "rimraf target/classes/static/",
     "copy:404": "cp target/classes/static/index.html target/classes/static/404.html",
-    "webapp:build:prodgithubpage": "npm run clean-www && FRONT_URL=https://correctexam.github.io/corrigeExamFront/ SERVER_API_URL=https://api.gradescope.barais.fr/ ng build --configuration production --base-href=/",
+    "webapp:build:prodgithubpage": "npm run clean-www && FRONT_URL=https://b2c.assuracing.com SERVER_API_URL=https://app.assuracing.com/ ng build --configuration production --base-href=/",
     "deploy": "ng deploy --base-href=/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

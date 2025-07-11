@@ -40,12 +40,6 @@ jobs:
         if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: |
           npm ci
-#      - name: Copy patch primeng
-#        run: |
-#          cp ./src/main/resources/primeng-galleria.mjs ./node_modules/primeng/fesm2022/primeng-galleria.mjs
-#      - name: Copy second patch primeng
-#        run: |
-#          cp ./src/main/resources/primeng-tooltip.mjs ./node_modules/primeng/fesm2022/primeng-tooltip.mjs
       - name: Build
         run: |
           npm run webapp:build:prodgithubpage
@@ -59,7 +53,7 @@ jobs:
         run: |
           npm run copy:404
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
