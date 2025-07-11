@@ -33,12 +33,16 @@
         </mat-form-field>
       </div>
 
-      <div class="reservation-amount">
-        <mat-form-field appearance="outline">
-          <mat-label>Montant de la réservation (€)</mat-label>
-          <input matInput type="number" formControlName="reservationAmount">
-        </mat-form-field>
-      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Montant de la réservation (€)</mat-label>
+        <input 
+          matInput 
+          type="number" 
+          formControlName="reservationAmount"
+          (input)="onReservationAmountChange()"
+          min="0"
+          step="0.01">
+      </mat-form-field>
 
       <div class="risques">
         <div class="risk-group">
@@ -51,7 +55,7 @@
               <li>100% en cas d'annulation</li>
               <li>70% en cas de roulage sous la pluie</li>
             </ul>
-            <p>Prime : {{ (intemperiesPrice || PRIME_RATES.intemperies) | number:'1.2-2' }}€</p>
+            <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
           </div>
         </div>
 
@@ -66,7 +70,7 @@
               <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
               <li>80% autres motifs de santé</li>
             </ul>
-            <p>Prime : {{ (annulationPrice || PRIME_RATES.annulation) | number:'1.2-2' }}€</p>
+            <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
           </div>
         </div>
 
@@ -76,7 +80,7 @@
             <ul>
               <li>50% en cas de chute lors du roulage</li>
             </ul>
-            <p>Prime : {{ (interruptionPrice || PRIME_RATES.interruption) | number:'1.2-2' }}€</p>  
+            <p>Prime : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
           </div>
         </div>
       </div>
@@ -168,22 +172,12 @@
             (change)="onDefenseRecoursToggle($event)"
             [disabled]="isCalculatingPrice">
             Défense Recours - Protection Juridique
-            <mat-spinner *ngIf="isCalculatingPrice" diameter="20" style="display: inline-block; margin-left: 8px;"></mat-spinner>
           </mat-slide-toggle>
           <div class="risk-details">
             <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
-            <p class="prime">
-              Prime : 
-              <span *ngIf="!isCalculatingPrice">
-                {{ (defenseRecoursPrice || PRIME_RATES.defenseRecours) | number:'1.2-2' }}€
-              </span>
-              <span *ngIf="isCalculatingPrice">
-                Calcul en cours...
-              </span>
-            </p>
+            <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
           </div>
         </div>
-
         <button mat-flat-button color="primary" (click)="validateSection('responsabiliteRecours')">Valider</button>
       </div>
     </div>
