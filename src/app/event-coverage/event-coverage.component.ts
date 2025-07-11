@@ -353,10 +353,10 @@ export class EventCoverageComponent {
   }
 
   GARANTIE_CODES = {
-    DEFENSE_RECOURS: 310,
-    ANNULATION: 309,
-    INTERRUPTION: 308,
-    INTEMPERIES: 307,
+    DEFENSE_RECOURS: 350,
+    ANNULATION: 351,
+    INTEMPERIES: 352,
+    INTERRUPTION: 353,
   };
 
   garantiePrices: { [key: string]: number } = {};
