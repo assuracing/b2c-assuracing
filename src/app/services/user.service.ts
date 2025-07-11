@@ -1,8 +1,8 @@
-// account.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { EnvironmentService } from '../core/services/environment.service';
 
 export interface User {
   authorities: any;
@@ -20,14 +20,21 @@ export class UserService {
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  private apiUrl: string;
+
+  constructor(
+    private http: HttpClient,
+    private envService: EnvironmentService
+  ) {
+    this.apiUrl = this.envService.apiUrl;
+  }
 
   getAccount(): Observable<User> {
     const token = localStorage.getItem('auth_token');
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<User>('http://localhost:8080/api/account', { headers }).pipe(
+    return this.http.get<User>(`${this.apiUrl}/api/account`, { headers }).pipe(
       tap(user => this.userSubject.next(user))
     );
   }
@@ -40,7 +47,7 @@ export class UserService {
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<number>('http://localhost:8080/api/adherents/by-user/' + this.userSubject.value?.id, { headers }).pipe(
+    return this.http.get<number>(`${this.apiUrl}/api/adherents/by-user/` + this.userSubject.value?.id, { headers }).pipe(
       tap(adherentId => this.adherentIdSubject.next(adherentId))
     );
   }
@@ -50,11 +57,11 @@ export class UserService {
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<User>('http://localhost:8080/api/adherents/' + this.adherentIdSubject.value, { headers });
+    return this.http.get<User>(`${this.apiUrl}/api/adherents/` + this.adherentIdSubject.value, { headers });
   }
 
   checkEmail(email: string, login: string): Observable<boolean> {
-    return this.http.post<boolean>('http://localhost:8080/api/checkemail', { email, login });
+    return this.http.post<boolean>(`${this.apiUrl}/api/checkemail`, { email, login });
   }
 
   hasRole(role: string): boolean {
@@ -81,15 +88,15 @@ export class UserService {
   }
 
   sendVerificationEmail(email: string): Observable<void> {
-    return this.http.post<void>('http://localhost:8080/api/sendVerificationCode', { email });
+    return this.http.post<void>(`${this.apiUrl}/api/sendVerificationCode`, { email });
   }
 
   verifyCode(email: string, code: string): Observable<void> {
-    return this.http.post<void>('http://localhost:8080/api/verifyCode', { email, code });
+    return this.http.post<void>(`${this.apiUrl}/api/verifyCode`, { email, code });
   }
 
   resetPassword(key: string, newPassword: string): Observable<void> {
-    return this.http.post<void>('http://localhost:8080/api/account/reset-password/finish', { key, newPassword });
+    return this.http.post<void>(`${this.apiUrl}/api/account/reset-password/finish`, { key, newPassword });
   }
 
   getAllContracts(): Observable<any> {
@@ -97,7 +104,7 @@ export class UserService {
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<any>('http://localhost:8080/api/getAllContrats', { headers });
+    return this.http.get<any>(`${this.apiUrl}/api/getAllContrats`, { headers });
   }
 
 }

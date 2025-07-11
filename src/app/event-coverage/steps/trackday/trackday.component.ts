@@ -10,6 +10,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { EnvironmentService } from '../../../core/services/environment.service';
 
 interface Circuit {
   id: number;
@@ -58,16 +59,20 @@ export class TrackdayComponent {
   isLoadingOrganizers = true;
   today = new Date();
 
+  private apiUrl: string;
+
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private envService: EnvironmentService
   ) {
+    this.apiUrl = this.envService.apiUrl;
     registerLocaleData(fr);
     this.loadOrganizers();
   }
 
   private loadOrganizers() {
-    this.http.get<Organizer[]>('http://localhost:8080/api/allapporteurs').subscribe(
+    this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
         this.organizers = organizers.filter(org => org.lastName !== "VAX CONSEILS");
         this.isLoadingOrganizers = false;

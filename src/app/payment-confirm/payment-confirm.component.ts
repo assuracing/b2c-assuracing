@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { EnvironmentService } from '../core/services/environment.service';
 
 @Component({
   selector: 'app-payment-confirm',
@@ -32,7 +33,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class PaymentConfirmComponent implements OnInit {
   frameUrl: SafeResourceUrl = '';
 
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
+  constructor(
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    private envService: EnvironmentService
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -40,7 +45,7 @@ export class PaymentConfirmComponent implements OnInit {
       const email = params['email'];
       const language = params['language'];
 
-      const rawUrl = `http://localhost:8080/paymentconfirm?orderid=${orderid}&email=${email}&language=${language}`;
+      const rawUrl = `${this.envService.apiUrl}/paymentconfirm?orderid=${orderid}&email=${email}&language=${language}`;
       this.frameUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
     });
   }

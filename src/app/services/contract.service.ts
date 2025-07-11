@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EnvironmentService } from '../core/services/environment.service';
 
 export interface PrixDTO {
   prixProduitCompagnieTTC: number;
@@ -16,9 +17,15 @@ export interface PrixDTO {
   providedIn: 'root'
 })
 export class ContractService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private envService: EnvironmentService
+  ) {
+    this.apiUrl = `${this.envService.apiUrl}/api`;
+    console.log(this.apiUrl);
+  }
 
   createContratB2C(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/createContractB2C`, data);
