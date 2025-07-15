@@ -25,6 +25,45 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 
+interface Contract {
+  selectedCircuit: string;
+  nbrjour: number;
+  datedebutroulage: string;
+  codeProduit: string[];
+  c: {
+    adresse: string;
+    complementadresse: string;
+    civilite: string;
+    codepostal: string;
+    dateinscription : string;
+    dateNaissance: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    nom: string;
+    telPortable: string;
+    ville: string;
+    numeroPermisA: string;
+    cacmPermisA: string;
+    licencePermisA: string;
+    numeroPermisB: string;
+    ffsaPermisB: string;
+  };
+  marque: string;
+  modele: string;
+  typevehicule: string;
+  immatriculation: string;
+  param_n_serie: string;
+  param_n_chassis: string;
+  montantganrantie: number;
+  apporteurId: number;
+  annual: boolean;
+  clientEntId: number;
+  dateinscriptionRoulage: string;
+  language: string;
+}
+
+
 @Component({
   standalone: true,
   selector: 'app-motors-league',
@@ -208,21 +247,23 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     });
   }
 
-  isMinor(): boolean {
-  const birthdate = this.personalForm.get('birthdate')?.value;
-  if (!birthdate) return false;
-
-  const today = new Date();
-  const birth = new Date(birthdate);
-  const age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    return (age - 1) < 18;
+  calculateAge(birthDate: Date): number {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
   }
 
-  return age < 18;
-}
+  isMinor(): boolean {
+    const birthDate = this.personalForm.get('birthdate')?.value;
+    if (!birthDate) return false;
+    const age = this.calculateAge(birthDate);
+    return age < 18;
+  }
 
   getSummaryData(): any {
     return {
@@ -281,14 +322,52 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const contractData = {
-      personalInfo: this.personalForm.value,
-      vehicleInfo: this.vehicleForm.value,
-      coverageInfo: this.coverageForm.value,
-      representativeInfo: this.isMinor() ? this.RepresentativeLegalForm.value : null
+    const formatISODate = (date: string): string => {
+      if (!date) return '';
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+      return d.toISOString().split('T')[0];
     };
 
-    this.contractService.createContratB2C(contractData).subscribe({
+    const contract: Contract = {
+      selectedCircuit: 'France, Union Européenne',
+      nbrjour: 0,
+      datedebutroulage: formatISODate(new Date().toISOString()),
+      codeProduit: ["354"],
+      c: {
+        adresse: this.personalForm.get('address')?.value,
+        complementadresse: this.personalForm.get('addressComplement')?.value,
+        civilite: this.personalForm.get('civility')?.value,
+        codepostal: this.personalForm.get('postalCode')?.value,
+        dateinscription: formatISODate(new Date().toISOString()),
+        dateNaissance: formatISODate(this.personalForm.get('birthdate')?.value),
+        email: this.personalForm.get('email')?.value,
+        firstName: this.personalForm.get('firstname')?.value,
+        lastName: this.personalForm.get('lastname')?.value,
+        nom: this.personalForm.get('lastname')?.value,
+        telPortable: this.personalForm.get('phone')?.value,
+        ville: this.personalForm.get('city')?.value,
+        numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || 'NC',
+        cacmPermisA: this.vehicleForm.get('cacmPermisA')?.value || 'NC',
+        licencePermisA: this.vehicleForm.get('licencePermisA')?.value || 'NC',
+        numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || 'NC',
+        ffsaPermisB: this.vehicleForm.get('ffsaPermisB')?.value || 'NC',
+      },
+      marque: this.vehicleForm.get('brand')?.value || 'NC',
+      modele: this.vehicleForm.get('model')?.value || 'NC',
+      typevehicule: this.vehicleForm.get('type')?.value,
+      immatriculation: this.vehicleForm.get('immatNumber')?.value || 'NC',
+      param_n_serie: this.vehicleForm.get('serieNumber')?.value || 'NC',
+      param_n_chassis: this.vehicleForm.get('chassisNumber')?.value || 'NC',
+      montantganrantie: 0,
+      apporteurId: 5, 
+      annual: true,
+      clientEntId: 1,
+      dateinscriptionRoulage: formatISODate(new Date().toISOString()),
+      language: 'fr'
+    };
+
+    this.contractService.createContratB2C(contract).subscribe({
       next: (response) => {
         const orderId = response?.orderId;
         const email = this.personalForm.get('email')?.value;
