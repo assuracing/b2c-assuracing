@@ -63,7 +63,6 @@ interface Contract {
   language: string;
 }
 
-
 @Component({
   standalone: true,
   selector: 'app-motors-league',
