@@ -44,7 +44,7 @@ interface Contract {
   selectedCircuit: string;
   nbrjour: number;
   datedebutroulage: string;
-  codeProduit: string[];
+  codeProduit: number[];
   c: {
     adresse: string;
     complementadresse: string;
@@ -513,16 +513,16 @@ export class EventCoverageComponent {
     });
   }
   
-  private getSelectedProducts(coverageData: any): string[] {
-    const products: string[] = [];
+  private getSelectedProducts(coverageData: any): number[] {
+    const products: number[] = [];
     
-    if (coverageData.intemperies) products.push('INTEMP');
-    if (coverageData.annulation) products.push('ANNUL');
-    if (coverageData.interruption) products.push('INTER');
-    if (coverageData.protectionPilote > 0) products.push('PROTECT');
-    if (coverageData.defenseRecours) products.push('DEFENSE');
+    if (coverageData.intemperies) products.push(this.GARANTIE_CODES.INTEMPERIES);
+    if (coverageData.annulation) products.push(this.GARANTIE_CODES.ANNULATION);
+    if (coverageData.interruption) products.push(this.GARANTIE_CODES.INTERRUPTION);
+    if (coverageData.protectionPilote) products.push(this.GARANTIE_CODES.RC); 
+    if (coverageData.defenseRecours) products.push(this.GARANTIE_CODES.DEFENSE_RECOURS);
     
-    return products.length > 0 ? products : ['DEFAULT'];
+    return products;
   }
 
   onSubmit(): void {
@@ -552,7 +552,7 @@ export class EventCoverageComponent {
       selectedCircuit: selectedCircuit,
       nbrjour: trackdayData.duration,
       datedebutroulage: formatISODate(trackdayData.eventDate),
-      codeProduit: ['CODE_TEST'],
+      codeProduit: this.getSelectedProducts(coverageData),
       c: {
         adresse: personalData.address,
         complementadresse: personalData.addressComplement,
