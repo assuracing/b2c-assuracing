@@ -708,7 +708,7 @@ export class EventCoverageComponent {
       montantganrantie: this.coverageOptionsForm.get('reservationAmount')?.value || 0,
       param_n_chassis: "",
       param_n_serie: "",
-      typevehicule: "moto"
+      typevehicule: this.trackdayForm.get('vehicleType')?.value || "moto"
     };
 
     console.log(`Envoi de la requête pour la garantie ${codeProduit}...`, priceData);
