@@ -147,7 +147,8 @@
 
           <div class="mt-4">
             <button mat-button matStepperPrevious>Retour</button>
-            <button mat-button (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+            <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+            <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
           </div>
         </form>
       </div>
