@@ -19,6 +19,7 @@
       <form [formGroup]="coverageOptionsForm">
         <app-event-coverage-options [garantiePrices]="garantiePrices" 
         [form]="coverageOptionsForm"
+        [trackdayForm]="trackdayForm"
         [eventType]="trackdayForm.get('eventType')?.value"
         [role]="trackdayForm.get('role')?.value"
         [disableIntempAnnul]="isEventDateLessThan3Weeks"

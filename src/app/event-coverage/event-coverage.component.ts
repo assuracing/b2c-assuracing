@@ -205,6 +205,7 @@ export class EventCoverageComponent {
   error: string | null = null;
   subscriptions: Subscription[] = [];
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
+  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions!: EventCoverageOptionsComponent;
   private vehicleData: any = null;
 
   circuits: Circuit[] = [];
@@ -358,6 +359,16 @@ export class EventCoverageComponent {
     ANNULATION: 351,
     INTEMPERIES: 352,
     INTERRUPTION: 353,
+    PROTECTION_1: 340,  
+    PROTECTION_2: 341, 
+    PROTECTION_3: 342, 
+    PROTECTION_4: 343, 
+    PROTECTION_5: 344, 
+    PROTECTION_1_COMP: 345, 
+    PROTECTION_2_COMP: 346, 
+    PROTECTION_3_COMP: 347,
+    PROTECTION_4_COMP: 348,  
+    PROTECTION_5_COMP: 349
   };
 
   garantiePrices: { [key: string]: number } = {};
@@ -385,9 +396,14 @@ export class EventCoverageComponent {
   }
 
   goToCoverageChoicesStep(): void {
-    ['RC', 'DEFENSE_RECOURS'].forEach((garantie : string) => {
+    ['RC', 'DEFENSE_RECOURS'].forEach((garantie: string) => {
       this.calculateGarantiePrice(this.GARANTIE_CODES[garantie as keyof typeof this.GARANTIE_CODES]);
-    })
+    });
+    
+    if (this.eventCoverageOptions) {
+      this.eventCoverageOptions.initializeProtectionPrices();
+    }
+    
     this.stepper.next();
   }
 
@@ -519,8 +535,19 @@ export class EventCoverageComponent {
     if (coverageData.intemperies) products.push(this.GARANTIE_CODES.INTEMPERIES);
     if (coverageData.annulation) products.push(this.GARANTIE_CODES.ANNULATION);
     if (coverageData.interruption) products.push(this.GARANTIE_CODES.INTERRUPTION);
-    if (coverageData.protectionPilote) products.push(this.GARANTIE_CODES.RC); 
     if (coverageData.defenseRecours) products.push(this.GARANTIE_CODES.DEFENSE_RECOURS);
+    
+    const protectionLevel = coverageData.protectionPilote;
+    if (protectionLevel && protectionLevel > 0) {
+      const isCompetition = this.trackdayForm?.get('eventType')?.value === 'competition';
+      const protectionCode = isCompetition
+        ? this.GARANTIE_CODES[`PROTECTION_${protectionLevel}_COMP` as keyof typeof this.GARANTIE_CODES]
+        : this.GARANTIE_CODES[`PROTECTION_${protectionLevel}` as keyof typeof this.GARANTIE_CODES];
+      
+      if (protectionCode) {
+        products.push(protectionCode);
+      }
+    }
     
     return products;
   }

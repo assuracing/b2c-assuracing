@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ResetGuaranteeDialogComponent } from './reset-guarantee-dialog.component';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContractService } from '../../../services/contract.service';
+import { Subject, takeUntil } from 'rxjs';
 
 interface ProtectionLevel {
   death: number;
@@ -198,13 +199,15 @@ export class EventCoverageOptionsComponent {
     return price !== undefined ? price.toFixed(2) + '€' : '-- € ';
   }
 
-  readonly PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
+  PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
     1: { death: 7600, disability: 18500, price: 15 },
     2: { death: 25000, disability: 37500, price: 38 },
     3: { death: 100000, disability: 150000, price: 60 },
     4: { death: 150000, disability: 200000, price: 85 },
     5: { death: 200000, disability: 300000, price: 120 }
-  } as const;
+  };
+
+  private destroy$ = new Subject<void>();
 
   activeSection: 'iai' | 'protectionPilote' | 'responsabiliteRecours' | null = null;
   validatedSections: { [key: string]: boolean } = {
@@ -245,8 +248,65 @@ export class EventCoverageOptionsComponent {
     });
   }
 
+  @Input() trackdayForm!: FormGroup;
+  
+  public initializeProtectionPrices(): void {
+    if (!this.trackdayForm) {
+      console.error('trackdayForm is not defined');
+      return;
+    }
+
+    const priceData = {
+      nbrjour: this.trackdayForm.get('duration')?.value || 1,
+      datedebutroulage: this.trackdayForm.get('eventDate')?.value || new Date().toISOString(),
+      annual: false,
+      c: { id: null },
+      dateinscriptionRoulage: new Date().toISOString(),
+      immatriculation: "",
+      marque: "",
+      modele: "",
+      montantganrantie: 0,
+      param_n_chassis: "",
+      param_n_serie: "",
+      typevehicule: this.trackdayForm.get('vehicleType')?.value || "moto"
+    };
+
+    const isCompetition = this.eventType === 'competition';
+    
+    const levelToProductCode: { [key: number]: number } = isCompetition 
+      ? { 1: 345, 2: 346, 3: 347, 4: 348, 5: 349 }
+      : { 1: 340, 2: 341, 3: 342, 4: 343, 5: 344 };
+
+    Object.keys(levelToProductCode).forEach(level => {
+      const levelNum = parseInt(level);
+      const productCode = levelToProductCode[levelNum];
+      
+      const data = { ...priceData, codeProduit: [productCode] };
+      
+      this.contractService.calculatePrice(data).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        next: (response: any) => {
+          if (response) {
+            const montant = (response.prixProduitCompagnieTTC || 0) + 
+                          (response.fraisDeCourtage || 0);
+            this.PROTECTION_LEVELS[levelNum].price = montant;
+          }
+        },
+        error: (err: any) => {
+          console.error(`Erreur lors du calcul du prix pour le niveau ${levelNum}`, err);
+        }
+      });
+    });
+  }
+
   getProtectionLevelPrice(level: number): number {
     return this.PROTECTION_LEVELS[level]?.price || 0;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onProtectionLevelChange(level: number): void {
