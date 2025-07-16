@@ -205,6 +205,7 @@ export class EventCoverageComponent {
   error: string | null = null;
   subscriptions: Subscription[] = [];
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
+  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions!: EventCoverageOptionsComponent;
   private vehicleData: any = null;
 
   circuits: Circuit[] = [];
@@ -385,9 +386,14 @@ export class EventCoverageComponent {
   }
 
   goToCoverageChoicesStep(): void {
-    ['RC', 'DEFENSE_RECOURS'].forEach((garantie : string) => {
+    ['RC', 'DEFENSE_RECOURS'].forEach((garantie: string) => {
       this.calculateGarantiePrice(this.GARANTIE_CODES[garantie as keyof typeof this.GARANTIE_CODES]);
-    })
+    });
+    
+    if (this.eventCoverageOptions) {
+      this.eventCoverageOptions.initializeProtectionPrices();
+    }
+    
     this.stepper.next();
   }
 
