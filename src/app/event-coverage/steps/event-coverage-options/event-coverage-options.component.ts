@@ -82,8 +82,7 @@ export class EventCoverageOptionsComponent {
     this.form.get('inscriptionDate')?.valueChanges.subscribe(date => {
       this.checkAnnulationAvailability(date);
     });
-    this.checkAnnulationAvailability(this.form.get('inscriptionDate')?.value);
-
+  
     if (this.trackdayForm) {
       this.trackdayForm.get('organizer')?.valueChanges.pipe(
         takeUntil(this.destroy$)
@@ -94,7 +93,7 @@ export class EventCoverageOptionsComponent {
           this.resetProductAvailability();
         }
       });
-
+  
       const currentOrganizerId = this.trackdayForm.get('organizer')?.value;
       if (currentOrganizerId) {
         this.checkProductsAvailability(currentOrganizerId);
@@ -105,14 +104,23 @@ export class EventCoverageOptionsComponent {
   checkAnnulationAvailability(inscriptionDate: any) {
     if (!inscriptionDate) {
       this.annulationDisabledByInscriptionDate = true;
-    } else {
-      const today = new Date();
-      const inscription = new Date(inscriptionDate);
-      const diffTime = Math.abs(inscription.getTime() - today.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      this.annulationDisabledByInscriptionDate = diffDays < 21 || inscription < today;
+      this.updateFormControlsAvailability();
+      return;
     }
+  
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
+    const inscription = new Date(inscriptionDate);
+    inscription.setHours(0, 0, 0, 0);
+  
+    const dateLimite = new Date(today);
+    dateLimite.setDate(today.getDate() - 14);
+  
+    const isInTwoWeeksWindow = inscription >= dateLimite && inscription <= today;
+  
+    this.annulationDisabledByInscriptionDate = !isInTwoWeeksWindow;
+  
     this.updateFormControlsAvailability();
   }
 
