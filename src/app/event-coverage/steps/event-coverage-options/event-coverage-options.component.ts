@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ResetGuaranteeDialogComponent } from './reset-guarantee-dialog.component';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContractService } from '../../../services/contract.service';
-import { Subject, takeUntil } from 'rxjs';
+import { OrganizerService } from '../../../services/organizer.service';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 
 interface ProtectionLevel {
   death: number;
@@ -74,15 +75,7 @@ export class EventCoverageOptionsComponent {
   @Input()
   set disableIntempAnnul(val: boolean) {
     this._disableIntempAnnul = val;
-    if (this.form) {
-      if (val) {
-        this.form.get('intemperies')?.disable({ emitEvent: false });
-        this.form.get('annulation')?.disable({ emitEvent: false });
-      } else {
-        this.form.get('intemperies')?.enable({ emitEvent: false });
-        this.form.get('annulation')?.enable({ emitEvent: false });
-      }
-    }
+    this.updateFormControlsAvailability();
   }
 
   ngOnInit() {
@@ -90,29 +83,37 @@ export class EventCoverageOptionsComponent {
       this.checkAnnulationAvailability(date);
     });
     this.checkAnnulationAvailability(this.form.get('inscriptionDate')?.value);
+
+    if (this.trackdayForm) {
+      this.trackdayForm.get('organizer')?.valueChanges.pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(organizerId => {
+        if (organizerId) {
+          this.checkProductsAvailability(organizerId);
+        } else {
+          this.resetProductAvailability();
+        }
+      });
+
+      const currentOrganizerId = this.trackdayForm.get('organizer')?.value;
+      if (currentOrganizerId) {
+        this.checkProductsAvailability(currentOrganizerId);
+      }
+    }
   }
 
   checkAnnulationAvailability(inscriptionDate: any) {
-      if (!inscriptionDate) {
-      this.annulationDisabledByInscriptionDate = false;
-      this.form.get('annulation')?.enable({ emitEvent: false });
-      return;
-    }
-    const date = new Date(inscriptionDate);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-    if (diffInDays > 14) {
+    if (!inscriptionDate) {
       this.annulationDisabledByInscriptionDate = true;
-      this.form.get('annulation')?.disable({ emitEvent: false });
-    } else if (diffInDays < 0) {
-      this.annulationDisabledByInscriptionDate = true;
-      this.form.get('annulation')?.disable({ emitEvent: false });
     } else {
-      this.annulationDisabledByInscriptionDate = false;
-      this.form.get('annulation')?.enable({ emitEvent: false });
+      const today = new Date();
+      const inscription = new Date(inscriptionDate);
+      const diffTime = Math.abs(inscription.getTime() - today.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      this.annulationDisabledByInscriptionDate = diffDays < 21 || inscription < today;
     }
+    
+    this.updateFormControlsAvailability();
   }
 
   get disableIntempAnnul() {
@@ -220,7 +221,16 @@ export class EventCoverageOptionsComponent {
   wasProtectionPiloteValidated = false;
   wasResponsabiliteRecoursValidated = false;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog, private contractService: ContractService) {
+  isCheckingAvailability = false;
+  productAvailability: { [key: string]: boolean } = {};
+
+  constructor(
+    private fb: FormBuilder, 
+    private dialog: MatDialog, 
+    private contractService: ContractService,
+    private organizerService: OrganizerService,
+    private snackBar: MatSnackBar
+  ) {
     this.initializeForms();
   }
 
@@ -249,6 +259,7 @@ export class EventCoverageOptionsComponent {
   }
 
   @Input() trackdayForm!: FormGroup;
+  @Input() organizerId: string | null = null;
   
   public initializeProtectionPrices(): void {
     if (!this.trackdayForm) {
@@ -309,6 +320,98 @@ export class EventCoverageOptionsComponent {
     this.destroy$.complete();
   }
 
+  private checkProductsAvailability(organizerId: string): void {
+    if (!organizerId) {
+      this.resetProductAvailability();
+      return;
+    }
+
+    this.isCheckingAvailability = true;
+    const productKeys: (keyof typeof this.organizerService['PRODUCT_CODES'])[] = [
+      'DEFENSE_RECOURS',
+      'ANNULATION',
+      'INTEMPERIES',
+      'INTERRUPTION',
+      'PROTECTION_1',
+      'PROTECTION_2',
+      'PROTECTION_3',
+      'PROTECTION_4',
+      'PROTECTION_5',
+      'PROTECTION_1_COMP',
+      'PROTECTION_2_COMP',
+      'PROTECTION_3_COMP',
+      'PROTECTION_4_COMP',
+      'PROTECTION_5_COMP'
+    ];
+
+    this.organizerService.checkProductsAvailability(organizerId, productKeys)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (availability) => {
+          this.productAvailability = availability;
+          this.updateFormControlsAvailability();
+          this.isCheckingAvailability = false;
+        },
+        error: (error) => {
+          console.error('Erreur lors de la vérification de la disponibilité des produits:', error);
+          this.snackBar.open(
+            'Erreur lors de la vérification des options disponibles pour cet organisateur',
+            'Fermer',
+            { duration: 5000 }
+          );
+          this.isCheckingAvailability = false;
+          this.resetProductAvailability();
+        }
+      });
+  }
+
+  private updateFormControlsAvailability(): void {
+    const controls = this.form.controls;
+    
+    const defenseRecoursAvailable = this.productAvailability['DEFENSE_RECOURS'] !== false;
+    if (defenseRecoursAvailable) {
+      controls['defenseRecours'].enable();
+    } else {
+      controls['defenseRecours'].disable();
+      controls['defenseRecours'].setValue(false);
+    }
+
+    const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
+    if (annulationAvailable) {
+      controls['annulation'].enable();
+    } else {
+      controls['annulation'].disable();
+      controls['annulation'].setValue(false);
+    }
+
+    const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
+    if (intemperiesAvailable) {
+      controls['intemperies'].enable();
+    } else {
+      controls['intemperies'].disable();
+      controls['intemperies'].setValue(false);
+    }
+
+    const interruptionAvailable = this.productAvailability['INTERRUPTION'] !== false;
+    if (interruptionAvailable) {
+      controls['interruption'].enable();
+    } else {
+      controls['interruption'].disable();
+      controls['interruption'].setValue(false);
+    }
+  }
+
+  private resetProductAvailability(): void {
+    this.productAvailability = {};
+    Object.keys(this.form.controls).forEach(key => {
+      this.form.get(key)?.enable();
+    });
+  }
+
+  isProductUnavailable(productKey: string): boolean {
+    return this.productAvailability[productKey] === false;
+  }
+
   onProtectionLevelChange(level: number): void {
     const current = this.form.get('protectionPilote')?.value;
     this.form.patchValue({ protectionPilote: current === level ? 0 : level });
@@ -350,6 +453,7 @@ export class EventCoverageOptionsComponent {
         protectionPilote: section === 'protectionPilote' ? this.form.get('protectionPilote')?.value || 0 : this.form.get('protectionPilote')?.value,
         responsabiliteRecours: section === 'responsabiliteRecours'
       });
+      this.updateFormControlsAvailability();
     } else {
       this.activeSection = null;
       this.resetSection(section);

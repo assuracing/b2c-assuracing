@@ -17,16 +17,21 @@
     <mat-step [stepControl]="coverageOptionsForm">
       <ng-template matStepLabel>Garanties</ng-template>
       <form [formGroup]="coverageOptionsForm">
-        <app-event-coverage-options [garantiePrices]="garantiePrices" 
-        [form]="coverageOptionsForm"
-        [trackdayForm]="trackdayForm"
-        [eventType]="trackdayForm.get('eventType')?.value"
-        [role]="trackdayForm.get('role')?.value"
-        [disableIntempAnnul]="isEventDateLessThan3Weeks"
-        [isCalculatingPrice]="isCalculatingPrice"
-        (reservationAmountChanged)="calculateIAIPrices()"
-        [defenseRecoursPrice]="defenseRecoursPrice">
-      </app-event-coverage-options>
+        <app-event-coverage-options
+          [form]="coverageOptionsForm"
+          [circuit]="trackdayForm.get('circuit')?.value"
+          [eventDate]="trackdayForm.get('eventDate')?.value"
+          [duration]="trackdayForm.get('duration')?.value"
+          [isCalculatingPrice]="isCalculatingPrice"
+          [garantiePrices]="garantiePrices"
+          [trackdayForm]="trackdayForm"
+          [organizerId]="trackdayForm.get('organizer')?.value"
+          [eventType]="trackdayForm.get('eventType')?.value"
+          [role]="trackdayForm.get('role')?.value"
+          [disableIntempAnnul]="isEventDateLessThan3Weeks"
+          (reservationAmountChanged)="calculateIAIPrices()"
+          [defenseRecoursPrice]="defenseRecoursPrice">
+        </app-event-coverage-options>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
           <button mat-button [disabled]="!coverageOptionsForm.valid" (click)="onContinueGuaranteeStep(stepper)">Continuer</button>

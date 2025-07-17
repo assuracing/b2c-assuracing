@@ -46,8 +46,11 @@
 
       <div class="risques">
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
-          <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
+          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
+          <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
+            Non disponible pour cet organisateur
+          </small>
+          <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
             Non disponible à moins de 3 semaines de l'événement
           </small>
           <div class="risk-details">
@@ -60,8 +63,11 @@
         </div>
 
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate">Risques Annulation</mat-slide-toggle>
-          <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
+          <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
+          <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+            Non disponible pour cet organisateur
+          </small>
+          <small *ngIf="disableIntempAnnul && !isProductUnavailable('ANNULATION')" class="toggle-unavailable">
             Non disponible à moins de 3 semaines de l'événement
           </small>
           <div class="risk-details">
@@ -75,7 +81,10 @@
         </div>
 
         <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="interruption">Risques Interruption</mat-slide-toggle>
+          <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isProductUnavailable('INTERRUPTION')">Risques Interruption</mat-slide-toggle>
+          <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
+            Non disponible pour cet organisateur
+          </small>
           <div class="risk-details">
             <ul>
               <li>50% en cas de chute lors du roulage</li>
@@ -170,9 +179,12 @@
             labelPosition="before" 
             formControlName="defenseRecours"
             (change)="onDefenseRecoursToggle($event)"
-            [disabled]="isCalculatingPrice">
+            [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
             Défense Recours - Protection Juridique
           </mat-slide-toggle>
+          <small *ngIf="isProductUnavailable('DEFENSE_RECOURS')" class="toggle-unavailable">
+            Non disponible pour cet organisateur
+          </small>
           <div class="risk-details">
             <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
             <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
