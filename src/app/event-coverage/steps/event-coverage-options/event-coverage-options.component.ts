@@ -425,6 +425,10 @@ export class EventCoverageOptionsComponent {
     });
   }
 
+  isProductUnavailable(productKey: string): boolean {
+    return this.productAvailability[productKey] === false;
+  }
+
   onProtectionLevelChange(level: number): void {
     const current = this.form.get('protectionPilote')?.value;
     this.form.patchValue({ protectionPilote: current === level ? 0 : level });
