@@ -5,7 +5,8 @@
           <app-trackday 
             [form]="trackdayForm" 
             [circuits]="circuits" 
-            [isLoadingCircuits]="isLoadingCircuits">
+            [isLoadingCircuits]="isLoadingCircuits"
+            (organizerNameChange)="onOrganizerNameChange($event)">
           </app-trackday>
           <div class="mt-4">
             <button mat-button (click)="goToEventOrMotorsLeaguePage()" matStepperPrevious>Retour</button>

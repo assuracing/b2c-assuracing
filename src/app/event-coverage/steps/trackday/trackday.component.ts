@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -55,6 +55,7 @@ export class TrackdayComponent {
   @Input() form!: FormGroup;
   @Input() circuits: Circuit[] = [];
   @Input() isLoadingCircuits: boolean = true;
+  @Output() organizerNameChange = new EventEmitter<string>();
   organizers: Organizer[] = [];
   isLoadingOrganizers = true;
   today = new Date();
@@ -82,6 +83,13 @@ export class TrackdayComponent {
         this.isLoadingOrganizers = false;
       }
     );
+  }
+
+  onOrganizerChange(event: any) {
+    const selectedOrganizer = this.organizers.find(org => org.id === event.value);
+    if (selectedOrganizer) {
+      this.organizerNameChange.emit(selectedOrganizer.lastName);
+    }
   }
 
   get isPilot() {

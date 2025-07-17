@@ -36,26 +36,33 @@ export class OrganizerService {
     this.apiUrl = this.envService.apiUrl;
   }
 
-  isProductAvailable(organizerId: string, productKey: keyof typeof this.PRODUCT_CODES): Observable<boolean> {
+  isProductAvailable(organizerName: string, productKey: keyof typeof this.PRODUCT_CODES): Observable<boolean> {
     const productId = this.PRODUCT_CODES[productKey];
     if (!productId) {
       throw new Error(`Code produit invalide: ${productKey}`);
     }
 
-    return this.http.get<{id: string, nom: string}[]>(`${this.apiUrl}/api/allorganisateursclientent/${productId}`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/api/allorganisateursclientent/${productId}`).pipe(
       map(organizers => {
-        return organizers.some(org => org.id === organizerId);
+        return organizers.some(org => 
+          org.nom && organizerName && 
+          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
+        );
+      }),
+      catchError(err => {
+        console.error('Erreur lors de la vérification du produit', err);
+        return of(false);
       })
     );
   }
 
-  checkProductsAvailability(organizerId: string, productKeys: Array<keyof typeof this.PRODUCT_CODES>): Observable<Record<string, boolean>> {
-    if (!organizerId || productKeys.length === 0) {
+  checkProductsAvailability(organizerName: string, productKeys: Array<keyof typeof this.PRODUCT_CODES>): Observable<Record<string, boolean>> {
+    if (!organizerName || productKeys.length === 0) {
       return of({});
     }
 
     const checks = productKeys.map(productKey => 
-      this.isProductAvailable(organizerId, productKey).pipe(
+      this.isProductAvailable(organizerName, productKey).pipe(
         map(isAvailable => ({ [productKey]: isAvailable }))
       )
     );

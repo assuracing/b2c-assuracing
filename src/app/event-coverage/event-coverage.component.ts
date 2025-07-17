@@ -628,6 +628,13 @@ export class EventCoverageComponent {
     });
   }
 
+  onOrganizerNameChange(organizerName: string): void {
+    console.log('Organizer name changed:', organizerName);
+    if (this.eventCoverageOptions) {
+      this.eventCoverageOptions.checkProductsAvailability(organizerName);
+    }
+  }
+
   handleVehicleAdded(vehicle: any) {
     this.vehicle = vehicle;
     this.vehicleData = vehicle;

@@ -30,7 +30,7 @@
       <mat-form-field 
         appearance="outline">
         <mat-label>Organisateur</mat-label>
-        <mat-select formControlName="organizer">
+        <mat-select formControlName="organizer" (selectionChange)="onOrganizerChange($event)">
           <mat-option *ngIf="isLoadingOrganizers" disabled>
             Chargement des organisateurs...
           </mat-option>
