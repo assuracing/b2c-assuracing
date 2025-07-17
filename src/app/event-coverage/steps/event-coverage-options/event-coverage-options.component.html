@@ -64,11 +64,11 @@
 
         <div class="risk-group">
           <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
-          <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
-            Non disponible à moins de 3 semaines de l'événement
-          </small>
-          <small *ngIf="!disableIntempAnnul && isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+          <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
             Non disponible pour cet organisateur
+          </small>
+          <small *ngIf="disableIntempAnnul && !isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+            Non disponible à moins de 3 semaines de l'événement
           </small>
           <div class="risk-details">
             <ul>

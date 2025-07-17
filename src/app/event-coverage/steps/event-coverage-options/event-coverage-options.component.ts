@@ -75,15 +75,7 @@ export class EventCoverageOptionsComponent {
   @Input()
   set disableIntempAnnul(val: boolean) {
     this._disableIntempAnnul = val;
-    if (this.form) {
-      if (val) {
-        this.form.get('intemperies')?.disable({ emitEvent: false });
-        this.form.get('annulation')?.disable({ emitEvent: false });
-      } else {
-        this.form.get('intemperies')?.enable({ emitEvent: false });
-        this.form.get('annulation')?.enable({ emitEvent: false });
-      }
-    }
+    this.updateFormControlsAvailability();
   }
 
   ngOnInit() {
@@ -111,26 +103,17 @@ export class EventCoverageOptionsComponent {
   }
 
   checkAnnulationAvailability(inscriptionDate: any) {
-      if (!inscriptionDate) {
-      this.annulationDisabledByInscriptionDate = false;
-      this.form.get('annulation')?.enable({ emitEvent: false });
-      return;
-    }
-    const date = new Date(inscriptionDate);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-    if (diffInDays > 14) {
+    if (!inscriptionDate) {
       this.annulationDisabledByInscriptionDate = true;
-      this.form.get('annulation')?.disable({ emitEvent: false });
-    } else if (diffInDays < 0) {
-      this.annulationDisabledByInscriptionDate = true;
-      this.form.get('annulation')?.disable({ emitEvent: false });
     } else {
-      this.annulationDisabledByInscriptionDate = false;
-      this.form.get('annulation')?.enable({ emitEvent: false });
+      const today = new Date();
+      const inscription = new Date(inscriptionDate);
+      const diffTime = Math.abs(inscription.getTime() - today.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      this.annulationDisabledByInscriptionDate = diffDays < 21 || inscription < today;
     }
+    
+    this.updateFormControlsAvailability();
   }
 
   get disableIntempAnnul() {
@@ -393,7 +376,7 @@ export class EventCoverageOptionsComponent {
       controls['defenseRecours'].setValue(false);
     }
 
-    const annulationAvailable = this.productAvailability['ANNULATION'] !== false;
+    const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
     if (annulationAvailable) {
       controls['annulation'].enable();
     } else {
@@ -401,7 +384,7 @@ export class EventCoverageOptionsComponent {
       controls['annulation'].setValue(false);
     }
 
-    const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false;
+    const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
     if (intemperiesAvailable) {
       controls['intemperies'].enable();
     } else {
@@ -470,6 +453,7 @@ export class EventCoverageOptionsComponent {
         protectionPilote: section === 'protectionPilote' ? this.form.get('protectionPilote')?.value || 0 : this.form.get('protectionPilote')?.value,
         responsabiliteRecours: section === 'responsabiliteRecours'
       });
+      this.updateFormControlsAvailability();
     } else {
       this.activeSection = null;
       this.resetSection(section);
