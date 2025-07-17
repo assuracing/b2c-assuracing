@@ -320,7 +320,7 @@ export class EventCoverageOptionsComponent {
     this.destroy$.complete();
   }
 
-  private checkProductsAvailability(organizerId: string): void {
+  public checkProductsAvailability(organizerId: string): void {
     if (!organizerId) {
       this.resetProductAvailability();
       return;
