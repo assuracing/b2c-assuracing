@@ -64,12 +64,15 @@
 
         <div class="risk-group">
           <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
-          <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
-            Non disponible pour cet organisateur
-          </small>
-          <small *ngIf="disableIntempAnnul && !isProductUnavailable('ANNULATION')" class="toggle-unavailable">
-            Non disponible à moins de 3 semaines de l'événement
-          </small>
+            <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+              Non disponible pour cet organisateur
+            </small>
+            <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
+              Non disponible car la date du roulage est à moins de 3 semaines de l'événement
+            </small>
+            <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
+              Non disponible car la date d'inscription est à plus de 14 jours de l'événement
+            </small>
           <div class="risk-details">
             <ul>
               <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
