@@ -481,6 +481,7 @@ export class EventCoverageComponent {
     if (this.isCalculatingPrice) return;
     
     const trackdayData = this.trackdayForm.value;
+
     const vehicleData = this.vehicleForm.value;
     const coverageData = this.coverageOptionsForm.value;
     
@@ -606,9 +607,9 @@ export class EventCoverageComponent {
       param_n_serie: vehicleData.serieNumber || '',
       param_n_chassis: vehicleData.chassisNumber || '',
       montantganrantie: coverageData.protectionPilote,
-      apporteurId: 1,
+      apporteurId: trackdayData.organizer,
       annual: false,
-      clientEntId: trackdayData.organizer,
+      clientEntId: 1,
       dateinscriptionRoulage: formatISODate(coverageData.eventDate),
       language: 'fr'
     };
