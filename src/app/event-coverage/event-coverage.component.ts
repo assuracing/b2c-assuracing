@@ -606,7 +606,7 @@ export class EventCoverageComponent {
       immatriculation: vehicleData.immatNumber,
       param_n_serie: vehicleData.serieNumber || '',
       param_n_chassis: vehicleData.chassisNumber || '',
-      montantganrantie: coverageData.protectionPilote,
+      montantganrantie: coverageData.reservationAmount,
       apporteurId: trackdayData.organizer,
       annual: false,
       clientEntId: 1,
@@ -629,7 +629,6 @@ export class EventCoverageComponent {
   }
 
   onOrganizerNameChange(organizerName: string): void {
-    console.log('Organizer name changed:', organizerName);
     if (this.eventCoverageOptions) {
       this.eventCoverageOptions.checkProductsAvailability(organizerName);
     }
