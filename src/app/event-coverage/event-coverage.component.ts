@@ -606,7 +606,7 @@ export class EventCoverageComponent {
       immatriculation: vehicleData.immatNumber,
       param_n_serie: vehicleData.serieNumber || '',
       param_n_chassis: vehicleData.chassisNumber || '',
-      montantganrantie: coverageData.protectionPilote,
+      montantganrantie: coverageData.reservationAmount,
       apporteurId: trackdayData.organizer,
       annual: false,
       clientEntId: 1,
@@ -629,7 +629,6 @@ export class EventCoverageComponent {
   }
 
   onOrganizerNameChange(organizerName: string): void {
-    console.log('Organizer name changed:', organizerName);
     if (this.eventCoverageOptions) {
       this.eventCoverageOptions.checkProductsAvailability(organizerName);
     }
@@ -667,25 +666,6 @@ export class EventCoverageComponent {
     const coverageForm = this.coverageOptionsForm;
     const trackdayForm = this.trackdayForm;
     const selectedGuarantees: string[] = [];
-    const PRIME_RATES = {
-      intemperies: 10,
-      annulation: 9,
-      interruption: 3,
-      defenseRecours: 14,
-    } as const;
-
-    type ProtectionLevel = 1 | 2 | 3 | 4 | 5;
-
-    const getProtectionLevelPrice = (level: ProtectionLevel): number => {
-      const PROTECTION_LEVELS: Record<ProtectionLevel, number> = {
-        1: 15,
-        2: 38,
-        3: 60,
-        4: 85,
-        5: 120
-      };
-      return PROTECTION_LEVELS[level] || 0;
-    };
 
     if (coverageForm.get('intemperies')?.value) {
       selectedGuarantees.push('Intempéries');
@@ -708,12 +688,8 @@ export class EventCoverageComponent {
     const duration = trackdayForm.get('duration')?.value;
     const circuitId = trackdayForm.get('circuit')?.value;
     const circuit = this.circuits.find(c => c.id === circuitId)?.nom || 'Circuit non spécifié';
-    const intemperiesPrime = coverageForm.get('intemperies')?.value ? PRIME_RATES.intemperies : 0;
-    const annulationPrime = coverageForm.get('annulation')?.value ? PRIME_RATES.annulation : 0;
-    const interruptionPrime = coverageForm.get('interruption')?.value ? PRIME_RATES.interruption : 0;
-    const defenseRecoursPrime = coverageForm.get('defenseRecours')?.value ? PRIME_RATES.defenseRecours : 0;
-    const protectionPrime = coverageForm.get('protectionPilote')?.value ? getProtectionLevelPrice(coverageForm.get('protectionPilote')?.value as ProtectionLevel) : 0;
-    const totalPrime = intemperiesPrime + annulationPrime + interruptionPrime + protectionPrime + defenseRecoursPrime;
+    
+    const totalPrime = this.eventCoverageOptions?.totalPrime || 0;
 
     const formattedDate = new Date(eventDate).toLocaleDateString('fr-FR', {
       year: 'numeric',
