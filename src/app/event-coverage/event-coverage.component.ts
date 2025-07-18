@@ -606,7 +606,7 @@ export class EventCoverageComponent {
       immatriculation: vehicleData.immatNumber,
       param_n_serie: vehicleData.serieNumber || '',
       param_n_chassis: vehicleData.chassisNumber || '',
-      montantganrantie: coverageData.reservationAmount,
+      montantganrantie: coverageData.reservationAmount || 0,
       apporteurId: trackdayData.organizer,
       annual: false,
       clientEntId: 1,
