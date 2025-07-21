@@ -57,7 +57,7 @@
 
     <div class="form-group">
         <label for="addressComplement">Complément d'adresse</label>
-        <input formControlName="addressComplement" type="text" id="addressComplement" class="form-control" required>
+        <input formControlName="addressComplement" type="text" id="addressComplement" class="form-control">
         <div *ngIf="isInvalid('addressComplement')" class="error-message">
             {{ getErrorMessage('addressComplement') }}
         </div>
