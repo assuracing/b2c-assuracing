@@ -223,7 +223,15 @@ export class EventCoverageComponent {
   private loadCircuits() {
     this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
-        this.circuits = circuits;
+        this.circuits = circuits.sort((a, b) => {
+          const countryA = (a.pays === 'FR' || a.pays === 'France') ? 'FR' : a.pays;
+          const countryB = (b.pays === 'FR' || b.pays === 'France') ? 'FR' : b.pays;
+  
+          if (countryA === 'FR' && countryB !== 'FR') return -1;
+          if (countryA !== 'FR' && countryB === 'FR') return 1;
+          if (countryA === countryB) return a.nom.localeCompare(b.nom);
+          return countryA.localeCompare(countryB);
+        });
         this.isLoadingCircuits = false;
       },
       (error) => {
