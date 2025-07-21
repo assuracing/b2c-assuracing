@@ -12,9 +12,9 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field 
+    <mat-form-field style="width: 100%;"
       appearance="outline">
-      <mat-label>Circuit</mat-label>
+      <mat-label >Circuit</mat-label>
       <mat-select formControlName="circuit">
         <mat-option *ngIf="isLoadingCircuits" disabled>
           Chargement des circuits...
@@ -26,7 +26,7 @@
     </mat-form-field>
 
     <div style="margin-bottom: 20px;">
-      <mat-form-field 
+      <mat-form-field style="width: 100%;"
         appearance="outline">
         <mat-label>Organisateur</mat-label>
         <mat-select formControlName="organizer" (selectionChange)="onOrganizerChange($event)">
@@ -41,7 +41,7 @@
       <mat-checkbox formControlName="unreferencedOrganizer" (change)="onUnreferencedOrganizerChange($event.checked)">Ou organisateur non référencé</mat-checkbox>
     </div>
 
-    <mat-form-field 
+    <mat-form-field
       appearance="outline">
       <mat-label>Date de l'événement</mat-label>
       <input matInput [matDatepicker]="picker" [min]="today" formControlName="eventDate">
