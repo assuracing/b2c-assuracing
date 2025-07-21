@@ -28,14 +28,14 @@ export class PersonalInfoComponent {
   @Input() nationalities: string[] = [];
   
   countries: string[] = [
-    'Afghanistan', 'Afrique du Sud', 'Albanie', 'Algérie', 'Allemagne', 'Andorre', 'Angola', 'Antigua-et-Barbuda',
+    'France', 'Afghanistan', 'Afrique du Sud', 'Albanie', 'Algérie', 'Allemagne', 'Andorre', 'Angola', 'Antigua-et-Barbuda',
     'Arabie saoudite', 'Argentine', 'Arménie', 'Australie', 'Autriche', 'Azerbaïdjan', 'Bahamas', 'Bahreïn',
     'Bangladesh', 'Barbade', 'Belgique', 'Bélize', 'Bénin', 'Bhoutan', 'Biélorussie', 'Birmanie', 'Bolivie',
     'Bosnie-Herzégovine', 'Botswana', 'Brésil', 'Brunei', 'Bulgarie', 'Burkina Faso', 'Burundi', 'Cambodge',
     'Cameroun', 'Canada', 'Cap-Vert', 'Chili', 'Chine', 'Chypre', 'Colombie', 'Comores', 'Congo',
     'Corée du Nord', 'Corée du Sud', 'Costa Rica', 'Côte d\'Ivoire', 'Croatie', 'Cuba', 'Danemark', 'Djibouti',
     'Dominique', 'Égypte', 'Émirats arabes unis', 'Équateur', 'Érythrée', 'Espagne', 'Estonie', 'Eswatini',
-    'États-Unis', 'Éthiopie', 'Fidji', 'Finlande', 'France', 'Gabon', 'Gambie', 'Géorgie', 'Ghana', 'Grèce',
+    'États-Unis', 'Éthiopie', 'Fidji', 'Finlande', 'Gabon', 'Gambie', 'Géorgie', 'Ghana', 'Grèce',
     'Grenade', 'Guatemala', 'Guinée', 'Guinée équatoriale', 'Guinée-Bissau', 'Guyana', 'Haïti', 'Honduras',
     'Hongrie', 'Îles Marshall', 'Îles Salomon', 'Inde', 'Indonésie', 'Irak', 'Iran', 'Irlande', 'Islande',
     'Israël', 'Italie', 'Jamaïque', 'Japon', 'Jordanie', 'Kazakhstan', 'Kenya', 'Kirghizistan', 'Kiribati',
@@ -54,15 +54,44 @@ export class PersonalInfoComponent {
     'Ukraine', 'Uruguay', 'Vanuatu', 'Vatican', 'Venezuela', 'Viêt Nam', 'Yémen', 'Zambie', 'Zimbabwe'
   ];
 
-  constructor(private fb: FormBuilder, private userService: UserService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
-
+  filteredCountries: string[] = [];
+  private _allCountries: string[] = [];
   private checkEmailSub?: Subscription;
 
+  constructor(
+    private fb: FormBuilder, 
+    private userService: UserService, 
+    private dialog: MatDialog, 
+    private snackBar: MatSnackBar
+  ) {}
+
   ngOnInit() {
+    this._allCountries = [...this.countries];
+    this.filteredCountries = [...this.countries];
     this.userService.user$.subscribe(user => {
       this.updateLockFields(user);
     });
     window.addEventListener('storage', () => this.updateLockFields(this.userService.getUser()));
+  }
+
+  filterCountries(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredCountries = this._allCountries.filter(country => 
+      country.toLowerCase().includes(searchValue)
+    );
+    event.stopPropagation();
+  }
+
+  onPanelOpened(isOpen: boolean): void {
+    if (isOpen) {
+      this.filteredCountries = [...this._allCountries];
+      setTimeout(() => {
+        const searchInput = document.querySelector('.country-select-panel .search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      });
+    }
   }
 
   updateLockFields(userParam?: any) {

@@ -82,8 +82,17 @@
     <div class="form-group">
         <mat-form-field appearance="outline" class="w-100">
             <mat-label>Pays de résidence</mat-label>
-            <mat-select formControlName="country" id="country" required>
-                <mat-option *ngFor="let country of countries" [value]="country">{{ country }}</mat-option>
+            <mat-select formControlName="country" id="country" required
+                      panelClass="country-select-panel"
+                      (openedChange)="onPanelOpened($event)">
+                <div class="search-container">
+                    <input #searchInput class="search-input" placeholder="Rechercher un pays..." 
+                           (click)="$event.stopPropagation()" 
+                           (input)="filterCountries($event)">
+                </div>
+                <mat-option *ngFor="let country of filteredCountries" [value]="country">
+                    {{ country }}
+                </mat-option>
             </mat-select>
             <mat-error *ngIf="isInvalid('country')">
                 {{ getErrorMessage('country') }}
