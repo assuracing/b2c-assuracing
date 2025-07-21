@@ -1,6 +1,7 @@
 
 <mat-horizontal-stepper linear #stepper>
     <mat-step [stepControl]="trackdayForm">
+      <ng-template matStepLabel>Votre événement</ng-template>
         <form [formGroup]="trackdayForm">
           <app-trackday 
             [form]="trackdayForm" 
