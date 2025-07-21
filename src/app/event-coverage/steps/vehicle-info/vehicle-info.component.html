@@ -21,8 +21,11 @@
         <label for="brand"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Marque</mat-label>
-          <mat-select formControlName="brand" required>
-            <mat-option *ngFor="let brand of getFilteredBrands()" [value]="brand">
+          <mat-select formControlName="brand" required panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)">
+            <div class="search-container">
+              <input #brandSearchInput class="search-input" placeholder="Rechercher..." (click)="$event.stopPropagation()" (input)="filterBrands($event)">
+            </div>
+            <mat-option *ngFor="let brand of filteredBrands" [value]="brand">
               {{brand}}
             </mat-option>
           </mat-select>

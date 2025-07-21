@@ -25,7 +25,10 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
   @Output() vehicleRemoved = new EventEmitter<any>();
   vehicles: any[] = [];
   @ViewChild('stepper') stepper!: MatStepper;
+  @ViewChild('brandSearchInput') brandSearchInput!: any;
   private subscription?: Subscription;
+  filteredBrands: string[] = [];
+  private allBrands: string[] = [];
 
   vehicleTypes = [
     { value: 'auto', label: 'Auto' },
@@ -100,10 +103,8 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
 
   getFilteredBrands(): string[] {
     const type = this.form.get('type')?.value;
-    if (type === 'auto' || type === 'moto') {
-      return this.brands[type as 'auto' | 'moto'];
-    }
-    return [];
+    this.allBrands = this.brands[type as keyof typeof this.brands] || [];
+    return this.allBrands;
   }
 
   constructor(
@@ -118,11 +119,38 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
 
     this.form.get('type')?.valueChanges.subscribe(() => {
       this.form.get('brand')?.reset();
+      this.form.get('titreConduite')?.reset();
+      this.updateFilteredBrands();
     });
-    this.form.get('titreConduite')?.valueChanges.subscribe(() => {
-      this.form.get('titreNumber')?.reset();
-    });
+    this.updateFilteredBrands();
   }
+
+  updateFilteredBrands() {
+    this.filteredBrands = this.getFilteredBrands();
+  }
+
+  filterBrands(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    if (!filterValue) {
+      this.filteredBrands = this.allBrands;
+      return;
+    }
+    this.filteredBrands = this.allBrands.filter(brand => 
+      brand.toLowerCase().includes(filterValue)
+    );
+  }
+
+  onBrandPanelOpened(isOpen: boolean) {
+    if (isOpen) {
+      this.filteredBrands = [...this.allBrands];
+      setTimeout(() => {
+        if (this.brandSearchInput && this.brandSearchInput.nativeElement) {
+          this.brandSearchInput.nativeElement.focus();
+        }
+      }, 0);
+    }
+  }
+
 
   addVehicle() {
     if (this.form.valid) {

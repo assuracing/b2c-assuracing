@@ -12,33 +12,39 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field style="width: 100%;"
-      appearance="outline">
-      <mat-label >Circuit</mat-label>
-      <mat-select formControlName="circuit">
-        <mat-option *ngIf="isLoadingCircuits" disabled>
-          Chargement des circuits...
-        </mat-option>
-        <mat-option *ngFor="let circuit of circuits" [value]="circuit.id">
+    <mat-form-field appearance="outline" class="circuit-select-field">
+      <mat-label>Circuit</mat-label>
+      <mat-select [formControl]="getFormControl('circuit')" #singleSelect panelClass="circuit-select-panel" (openedChange)="onPanelOpened($event)">
+        <div class="search-container">
+          <input #searchInput class="search-input" placeholder="Rechercher un circuit..." (click)="$event.stopPropagation()" (input)="filterCircuits($event)">
+        </div>
+        <mat-option *ngFor="let circuit of filteredCircuits | async" [value]="circuit.nom">
           {{circuit.nom}}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <div style="margin-bottom: 20px;">
-      <mat-form-field style="width: 100%;"
-        appearance="outline">
+    <div class="organizer-field">
+      <mat-form-field appearance="outline" class="organizer-select-field">
         <mat-label>Organisateur</mat-label>
-        <mat-select formControlName="organizer" (selectionChange)="onOrganizerChange($event)">
+        <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
+          <div class="search-container">
+            <input #organizerSearchInput class="search-input" placeholder="Rechercher un organisateur..." (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
+          </div>
           <mat-option *ngIf="isLoadingOrganizers" disabled>
-            Chargement des organisateurs...
+            <mat-spinner diameter="20" class="spinner"></mat-spinner>
+            <span>Chargement des organisateurs...</span>
           </mat-option>
-          <mat-option *ngFor="let organizer of organizers" [value]="organizer.id">
+          <mat-option *ngFor="let organizer of filteredOrganizers | async" [value]="organizer.id">
             {{organizer.lastName}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-checkbox formControlName="unreferencedOrganizer" (change)="onUnreferencedOrganizerChange($event.checked)">Ou organisateur non référencé</mat-checkbox>
+      <mat-checkbox 
+        formControlName="unreferencedOrganizer" 
+        (change)="onUnreferencedOrganizerChange($event.checked)">
+        Ou organisateur non référencé
+      </mat-checkbox>
     </div>
 
     <mat-form-field

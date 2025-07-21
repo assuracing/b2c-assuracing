@@ -8,9 +8,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../../../core/services/environment.service';
+import { Observable, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 interface Circuit {
   id: number;
@@ -45,7 +50,10 @@ import fr from '@angular/common/locales/fr';
     MatCheckboxModule,
     MatDatepickerModule,
     MatSliderModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
+    MatIconModule
   ],
   templateUrl: './trackday.component.html',
   styleUrls: ['./trackday.component.scss', '../../../app.component.scss'],
@@ -53,13 +61,26 @@ import fr from '@angular/common/locales/fr';
 })
 export class TrackdayComponent {
   @Input() form!: FormGroup;
-  @Input() circuits: Circuit[] = [];
+  @Input() set circuits(value: Circuit[]) {
+    this._allCircuits = [...value];
+    this.filteredCircuits = of(value);
+  }
+  get circuits(): Circuit[] {
+    return this._allCircuits;
+  }
+  
   @Input() isLoadingCircuits: boolean = true;
   @Output() organizerNameChange = new EventEmitter<string>();
+  
+  private _allCircuits: Circuit[] = [];
+  private _allOrganizers: Organizer[] = [];
   organizers: Organizer[] = [];
   isLoadingOrganizers = true;
   today = new Date();
   unreferencedOrganizer: any = null;
+  
+  filteredCircuits: Observable<Circuit[]> = of([]);
+  filteredOrganizers: Observable<Organizer[]> = of([]);
 
   private apiUrl: string;
 
@@ -70,13 +91,17 @@ export class TrackdayComponent {
   ) {
     this.apiUrl = this.envService.apiUrl;
     registerLocaleData(fr);
+  }
+
+  ngOnInit(): void {
+    this.setupAutocomplete();
     this.loadOrganizers();
   }
 
   private loadOrganizers() {
     this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
-        this.organizers = organizers
+        const filteredOrganizers = organizers
           .filter(org => org.lastName !== "VAX CONSEILS")
           .sort((a, b) => {
             if (a.lastName === "!Organisateur non référencé") {
@@ -89,6 +114,9 @@ export class TrackdayComponent {
             }
             return a.lastName.localeCompare(b.lastName);
           });
+        this.organizers = [...filteredOrganizers];
+        this._allOrganizers = [...filteredOrganizers];
+        this.filteredOrganizers = of([...filteredOrganizers]);
         
         this.isLoadingOrganizers = false;
       },
@@ -99,26 +127,84 @@ export class TrackdayComponent {
     );
   }
 
-  onUnreferencedOrganizerChange(isChecked: boolean) {
-    if (isChecked && this.unreferencedOrganizer) {
-      this.form.get('organizer')?.setValue(this.unreferencedOrganizer.id);
-    } else if (!isChecked && this.form.get('organizer')?.value === this.unreferencedOrganizer?.id) {
-      this.form.get('organizer')?.setValue(null);
-    }
 
+
+  private setupAutocomplete() {
+    this._allCircuits = [...this.circuits];
+    this._allOrganizers = [...this.organizers];
+    this.filteredCircuits = of(this.circuits);
+    this.filteredOrganizers = of(this.organizers);
+    this.filteredOrganizers = of(this.organizers);
   }
 
-  onOrganizerChange(event: any) {
-    const selectedOrganizer = this.organizers.find(org => org.id === event.value);
+  onPanelOpened(isOpen: boolean): void {
+    if (isOpen) {
+      setTimeout(() => {
+        const searchInput = document.querySelector('.circuit-select-panel .search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      });
+    }
+  }
+
+  onOrganizerPanelOpened(isOpen: boolean): void {
+    if (isOpen) {
+      setTimeout(() => {
+        const searchInput = document.querySelector('.organizer-select-panel .search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      });
+    }
+  }
+
+  filterCircuits(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredCircuits = of(
+      this._allCircuits.filter(circuit => 
+        circuit.nom.toLowerCase().includes(searchValue)
+      )
+    );
+    
+    event.stopPropagation();
+  }
+
+  filterOrganizers(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredOrganizers = of(
+      this._allOrganizers.filter(organizer => 
+        organizer.lastName.toLowerCase().includes(searchValue)
+      )
+    );
+  }
+  
+  getFormControl(controlName: string): FormControl {
+    return this.form.get(controlName) as FormControl;
+  }
+
+  onOrganizerSelect(event: any) {
+    const selectedId = event.value;
+    const selectedOrganizer = this._allOrganizers.find(org => org.id === selectedId);
+    
     if (selectedOrganizer) {
       this.organizerNameChange.emit(selectedOrganizer.lastName);
       
-      if (selectedOrganizer.id !== this.unreferencedOrganizer?.id) {
-        this.form.get('unreferencedOrganizer')?.setValue(false, { emitEvent: false });
-      }
       if (selectedOrganizer.id === this.unreferencedOrganizer?.id) {
         this.form.get('unreferencedOrganizer')?.setValue(true, { emitEvent: false });
+      } else {
+        this.form.get('unreferencedOrganizer')?.setValue(false, { emitEvent: false });
       }
+    }
+  }
+
+  onUnreferencedOrganizerChange(isChecked: boolean) {
+    if (isChecked && this.unreferencedOrganizer) {
+      this.form.get('organizer')?.setValue(this.unreferencedOrganizer.id);
+      this.organizerNameChange.emit(this.unreferencedOrganizer.lastName);
+    } else if (!isChecked && this.form.get('organizer')?.value === this.unreferencedOrganizer?.id) {
+      this.form.get('organizer')?.setValue(null);
+      this.organizerNameChange.emit('');
     }
   }
   get isPilot() {
