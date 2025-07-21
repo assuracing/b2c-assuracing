@@ -51,7 +51,7 @@
     </mat-form-field>
 
     <div class="duration-group">
-      <mat-label>Durée de roulage ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
+      <mat-label>Durée événement ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
       <mat-slider [min]="1" [max]="5" [step]="1" thumbLabel>
         <input matSliderThumb formControlName="duration" />
       </mat-slider>
