@@ -223,7 +223,15 @@ export class EventCoverageComponent {
   private loadCircuits() {
     this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
-        this.circuits = circuits;
+        this.circuits = circuits.sort((a, b) => {
+          const countryA = (a.pays === 'FR' || a.pays === 'France') ? 'FR' : a.pays;
+          const countryB = (b.pays === 'FR' || b.pays === 'France') ? 'FR' : b.pays;
+  
+          if (countryA === 'FR' && countryB !== 'FR') return -1;
+          if (countryA !== 'FR' && countryB === 'FR') return 1;
+          if (countryA === countryB) return a.nom.localeCompare(b.nom);
+          return countryA.localeCompare(countryB);
+        });
         this.isLoadingCircuits = false;
       },
       (error) => {
@@ -252,18 +260,6 @@ export class EventCoverageComponent {
       duration: [1, [Validators.min(1), Validators.max(5)]],
       role: [''],
       vehicleType: ['']
-    });
-
-    this.trackdayForm.get('unreferencedOrganizer')?.valueChanges.subscribe((value) => {
-      if (value) {
-        this.trackdayForm.get('organizer')?.reset();
-      }
-    });
-
-    this.trackdayForm.get('organizer')?.valueChanges.subscribe((value) => {
-      if (value && this.trackdayForm.get('unreferencedOrganizer')?.value) {
-        this.trackdayForm.get('unreferencedOrganizer')?.setValue(false);
-      }
     });
 
     this.coverageOptionsForm = this.fb.group({
