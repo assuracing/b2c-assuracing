@@ -38,7 +38,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-checkbox formControlName="unreferencedOrganizer">Ou organisateur non référencé</mat-checkbox>
+      <mat-checkbox formControlName="unreferencedOrganizer" (change)="onUnreferencedOrganizerChange($event.checked)">Ou organisateur non référencé</mat-checkbox>
     </div>
 
     <mat-form-field 

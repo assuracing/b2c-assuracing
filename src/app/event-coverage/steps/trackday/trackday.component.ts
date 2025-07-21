@@ -59,6 +59,7 @@ export class TrackdayComponent {
   organizers: Organizer[] = [];
   isLoadingOrganizers = true;
   today = new Date();
+  unreferencedOrganizer: any = null;
 
   private apiUrl: string;
 
@@ -78,9 +79,14 @@ export class TrackdayComponent {
         this.organizers = organizers
           .filter(org => org.lastName !== "VAX CONSEILS")
           .sort((a, b) => {
-            if (a.lastName === "!organisateur non référencé") return -1;
-            if (b.lastName === "!organisateur non référencé") return 1;
-            
+            if (a.lastName === "!Organisateur non référencé") {
+              this.unreferencedOrganizer = a;
+              return -1;
+            }
+            if (b.lastName === "!Organisateur non référencé") {
+              this.unreferencedOrganizer = b;
+              return 1;
+            }
             return a.lastName.localeCompare(b.lastName);
           });
         
@@ -93,13 +99,28 @@ export class TrackdayComponent {
     );
   }
 
+  onUnreferencedOrganizerChange(isChecked: boolean) {
+    if (isChecked && this.unreferencedOrganizer) {
+      this.form.get('organizer')?.setValue(this.unreferencedOrganizer.id);
+    } else if (!isChecked && this.form.get('organizer')?.value === this.unreferencedOrganizer?.id) {
+      this.form.get('organizer')?.setValue(null);
+    }
+
+  }
+
   onOrganizerChange(event: any) {
     const selectedOrganizer = this.organizers.find(org => org.id === event.value);
     if (selectedOrganizer) {
       this.organizerNameChange.emit(selectedOrganizer.lastName);
+      
+      if (selectedOrganizer.id !== this.unreferencedOrganizer?.id) {
+        this.form.get('unreferencedOrganizer')?.setValue(false, { emitEvent: false });
+      }
+      if (selectedOrganizer.id === this.unreferencedOrganizer?.id) {
+        this.form.get('unreferencedOrganizer')?.setValue(true, { emitEvent: false });
+      }
     }
   }
-
   get isPilot() {
     return this.form.get('role')?.value === 'pilote';
   }

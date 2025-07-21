@@ -262,18 +262,6 @@ export class EventCoverageComponent {
       vehicleType: ['']
     });
 
-    this.trackdayForm.get('unreferencedOrganizer')?.valueChanges.subscribe((value) => {
-      if (value) {
-        this.trackdayForm.get('organizer')?.reset();
-      }
-    });
-
-    this.trackdayForm.get('organizer')?.valueChanges.subscribe((value) => {
-      if (value && this.trackdayForm.get('unreferencedOrganizer')?.value) {
-        this.trackdayForm.get('unreferencedOrganizer')?.setValue(false);
-      }
-    });
-
     this.coverageOptionsForm = this.fb.group({
       iai: [false],
       inscriptionDate: [''],
