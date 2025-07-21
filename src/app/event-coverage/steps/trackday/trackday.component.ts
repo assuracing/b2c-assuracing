@@ -75,7 +75,15 @@ export class TrackdayComponent {
   private loadOrganizers() {
     this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
-        this.organizers = organizers.filter(org => org.lastName !== "VAX CONSEILS");
+        this.organizers = organizers
+          .filter(org => org.lastName !== "VAX CONSEILS")
+          .sort((a, b) => {
+            if (a.lastName === "!organisateur non référencé") return -1;
+            if (b.lastName === "!organisateur non référencé") return 1;
+            
+            return a.lastName.localeCompare(b.lastName);
+          });
+        
         this.isLoadingOrganizers = false;
       },
       (error) => {
