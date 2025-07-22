@@ -193,7 +193,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       city: ['', Validators.required],
       birthdate: ['', Validators.required],
       nationality: '',
-      country: ''
+      country: 'France'
     });
 
     this.vehicleForm = this.fb.group({

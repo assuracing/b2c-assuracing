@@ -1,10 +1,63 @@
 .circuit-select-field, .organizer-select-field {
   width: 100%;
-  margin-bottom: 16px;
 }
 
 .organizer-field {
   margin-bottom: 20px;
+  
+  .organizer-container {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    padding: 16px;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #f5f5f5;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .mat-form-field {
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  .unreferenced-checkbox {
+    display: block;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.date-duration-container {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #fafafa;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .mat-form-field {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .duration-group {
+    margin-top: 16px;
+    
+    mat-label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(0, 0, 0, 0.87);
+      font-size: 14px;
+    }
+    
+  }
 }
 
 ::ng-deep .circuit-select-panel,
@@ -95,4 +148,25 @@
 .mat-checkbox {
   display: block;
   margin-top: 8px;
+}
+
+.circuit-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.country-flag {
+  width: 24px;
+  height: 16px;
+  margin-right: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.circuit-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -70,3 +70,9 @@ input:disabled, .form-control:disabled, input[disabled], .form-control[disabled]
 .w-100 {
     width: 100%;
 }
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

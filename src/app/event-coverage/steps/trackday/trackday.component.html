@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="login-form">
   <div class="form-group">
     <mat-form-field
-      appearance="outline">
+      appearance="outline" style="width: 100%;">
       <mat-label>Type d'événement</mat-label>
       <mat-select formControlName="eventType">
         <mat-option value="training">Roulage entrainement</mat-option>
@@ -19,53 +19,61 @@
           <input #searchInput class="search-input" placeholder="Rechercher un circuit..." (click)="$event.stopPropagation()" (input)="filterCircuits($event)">
         </div>
         <mat-option *ngFor="let circuit of filteredCircuits | async" [value]="circuit.nom">
-          {{circuit.nom}}
+          <span class="circuit-option">
+            <img [src]="countryFlagService.getCountryFlagUrl(circuit.pays)" 
+               [alt]="'Drapeau ' + circuit.pays"
+               class="country-flag">
+            <span class="circuit-name">{{ circuit.nom }}</span>
+          </span>
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <div class="organizer-field">
-      <mat-form-field appearance="outline" class="organizer-select-field">
-        <mat-label>Organisateur</mat-label>
-        <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
-          <div class="search-container">
-            <input #organizerSearchInput class="search-input" placeholder="Rechercher un organisateur..." (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
-          </div>
-          <mat-option *ngIf="isLoadingOrganizers" disabled>
-            <mat-spinner diameter="20" class="spinner"></mat-spinner>
-            <span>Chargement des organisateurs...</span>
-          </mat-option>
-          <mat-option *ngFor="let organizer of filteredOrganizers | async" [value]="organizer.id">
-            {{organizer.lastName}}
-          </mat-option>
-        </mat-select>
+      <div class="organizer-container">
+        <mat-form-field appearance="outline" class="organizer-select-field">
+          <mat-label>Organisateur</mat-label>
+          <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
+            <div class="search-container">
+              <input #organizerSearchInput class="search-input" placeholder="Rechercher un organisateur..." (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
+            </div>
+            <mat-option *ngIf="isLoadingOrganizers" disabled>
+              <mat-spinner diameter="20" class="spinner"></mat-spinner>
+              <span>Chargement des organisateurs...</span>
+            </mat-option>
+            <mat-option *ngFor="let organizer of filteredOrganizers | async" [value]="organizer.id">
+              {{organizer.lastName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox 
+          formControlName="unreferencedOrganizer" 
+          class="unreferenced-checkbox"
+          (change)="onUnreferencedOrganizerChange($event.checked)">
+          Organisateur non référencé
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div class="date-duration-container">
+      <mat-form-field style="width: 100%;" appearance="outline">
+        <mat-label>Date de l'événement</mat-label>
+        <input matInput [matDatepicker]="picker" [min]="today" formControlName="eventDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
-      <mat-checkbox 
-        formControlName="unreferencedOrganizer" 
-        (change)="onUnreferencedOrganizerChange($event.checked)">
-        Ou organisateur non référencé
-      </mat-checkbox>
-    </div>
 
-    <mat-form-field
-      appearance="outline">
-      <mat-label>Date de l'événement</mat-label>
-      <input matInput [matDatepicker]="picker" [min]="today" formControlName="eventDate">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
-    <div class="duration-group">
-      <mat-label>Durée événement ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
-      <mat-slider [min]="1" [max]="5" [step]="1" thumbLabel>
-        <input matSliderThumb formControlName="duration" />
-      </mat-slider>
+      <div class="duration-group">
+        <mat-label >Durée événement ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
+        <mat-slider style="width: 95%;" [min]="1" [max]="5" [step]="1" thumbLabel>
+          <input matSliderThumb formControlName="duration" />
+        </mat-slider>
+      </div>
     </div>
-    
 
     <div class="role-group">
       <mat-form-field 
-        appearance="outline">
+        appearance="outline" style="width: 100%;">
         <mat-label>Vous êtes</mat-label>
         <mat-select formControlName="role" (selectionChange)="onRoleChange($event)">
           <mat-option value="pilote">Pilote</mat-option>
@@ -77,7 +85,7 @@
 
       <div *ngIf="isPilot || isPassenger" class="vehicle-group">
         <mat-form-field 
-          appearance="outline">
+          appearance="outline" style="width: 100%;">
           <mat-label>Votre véhicule</mat-label>
           <mat-select formControlName="vehicleType">
             <mat-option value="moto">Moto</mat-option>

@@ -223,7 +223,9 @@ export class EventCoverageComponent {
   private loadCircuits() {
     this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
-        this.circuits = circuits.sort((a, b) => {
+        const filteredCircuits = circuits.filter(circuit => circuit.id !== 92);
+        
+        this.circuits = filteredCircuits.sort((a, b) => {
           const isAFrench = a.pays === 'FR' || a.pays === 'France';
           const isBFrench = b.pays === 'FR' || b.pays === 'France';
           
@@ -293,11 +295,11 @@ export class EventCoverageComponent {
       phone: '',
       address: [''],
       addressComplement: '',
-      postalCode: '',
+      postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{4,8}$')]],
       city: [''],
       birthdate: [''],
       nationality: '',
-      country: '',
+      country: 'France',
     });
 
     this.vehicleForm = this.fb.group({
