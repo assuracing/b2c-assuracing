@@ -19,7 +19,12 @@
           <input #searchInput class="search-input" placeholder="Rechercher un circuit..." (click)="$event.stopPropagation()" (input)="filterCircuits($event)">
         </div>
         <mat-option *ngFor="let circuit of filteredCircuits | async" [value]="circuit.nom">
-          {{circuit.nom}}
+          <span class="circuit-option">
+            <img [src]="countryFlagService.getCountryFlagUrl(circuit.pays)" 
+               [alt]="'Drapeau ' + circuit.pays"
+               class="country-flag">
+            <span class="circuit-name">{{ circuit.nom }}</span>
+          </span>
         </mat-option>
       </mat-select>
     </mat-form-field>

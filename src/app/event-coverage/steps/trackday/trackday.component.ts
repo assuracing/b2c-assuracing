@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { CountryFlagService } from '../../../services/country-flag.service';
 
 interface Circuit {
   id: number;
@@ -59,7 +60,7 @@ import fr from '@angular/common/locales/fr';
   styleUrls: ['./trackday.component.scss', '../../../app.component.scss'],
   providers: [{ provide: LOCALE_ID, useValue: 'fr' }]
 })
-export class TrackdayComponent {
+export class TrackdayComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() set circuits(value: Circuit[]) {
     this._allCircuits = [...value];
@@ -78,16 +79,16 @@ export class TrackdayComponent {
   isLoadingOrganizers = true;
   today = new Date();
   unreferencedOrganizer: any = null;
-  
   filteredCircuits: Observable<Circuit[]> = of([]);
   filteredOrganizers: Observable<Organizer[]> = of([]);
-
+  
   private apiUrl: string;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    public countryFlagService: CountryFlagService
   ) {
     this.apiUrl = this.envService.apiUrl;
     registerLocaleData(fr);
@@ -127,13 +128,10 @@ export class TrackdayComponent {
     );
   }
 
-
-
   private setupAutocomplete() {
     this._allCircuits = [...this.circuits];
     this._allOrganizers = [...this.organizers];
     this.filteredCircuits = of(this.circuits);
-    this.filteredOrganizers = of(this.organizers);
     this.filteredOrganizers = of(this.organizers);
   }
 
