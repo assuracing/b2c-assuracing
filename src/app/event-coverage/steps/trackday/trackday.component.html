@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="login-form">
   <div class="form-group">
     <mat-form-field
-      appearance="outline">
+      appearance="outline" style="width: 100%;">
       <mat-label>Type d'événement</mat-label>
       <mat-select formControlName="eventType">
         <mat-option value="training">Roulage entrainement</mat-option>
@@ -50,25 +50,25 @@
       </div>
     </div>
 
-    <mat-form-field
-      appearance="outline">
-      <mat-label>Date de l'événement</mat-label>
-      <input matInput [matDatepicker]="picker" [min]="today" formControlName="eventDate">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+    <div class="date-duration-container">
+      <mat-form-field style="width: 100%;" appearance="outline">
+        <mat-label>Date de l'événement</mat-label>
+        <input matInput [matDatepicker]="picker" [min]="today" formControlName="eventDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
 
-    <div class="duration-group">
-      <mat-label>Durée événement ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
-      <mat-slider [min]="1" [max]="5" [step]="1" thumbLabel>
-        <input matSliderThumb formControlName="duration" />
-      </mat-slider>
+      <div class="duration-group">
+        <mat-label >Durée événement ({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</mat-label>
+        <mat-slider style="width: 95%;" [min]="1" [max]="5" [step]="1" thumbLabel>
+          <input matSliderThumb formControlName="duration" />
+        </mat-slider>
+      </div>
     </div>
-    
 
     <div class="role-group">
       <mat-form-field 
-        appearance="outline">
+        appearance="outline" style="width: 100%;">
         <mat-label>Vous êtes</mat-label>
         <mat-select formControlName="role" (selectionChange)="onRoleChange($event)">
           <mat-option value="pilote">Pilote</mat-option>
@@ -80,7 +80,7 @@
 
       <div *ngIf="isPilot || isPassenger" class="vehicle-group">
         <mat-form-field 
-          appearance="outline">
+          appearance="outline" style="width: 100%;">
           <mat-label>Votre véhicule</mat-label>
           <mat-select formControlName="vehicleType">
             <mat-option value="moto">Moto</mat-option>
