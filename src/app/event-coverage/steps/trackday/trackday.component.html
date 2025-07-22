@@ -25,26 +25,29 @@
     </mat-form-field>
 
     <div class="organizer-field">
-      <mat-form-field appearance="outline" class="organizer-select-field">
-        <mat-label>Organisateur</mat-label>
-        <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
-          <div class="search-container">
-            <input #organizerSearchInput class="search-input" placeholder="Rechercher un organisateur..." (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
-          </div>
-          <mat-option *ngIf="isLoadingOrganizers" disabled>
-            <mat-spinner diameter="20" class="spinner"></mat-spinner>
-            <span>Chargement des organisateurs...</span>
-          </mat-option>
-          <mat-option *ngFor="let organizer of filteredOrganizers | async" [value]="organizer.id">
-            {{organizer.lastName}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-checkbox 
-        formControlName="unreferencedOrganizer" 
-        (change)="onUnreferencedOrganizerChange($event.checked)">
-        Ou organisateur non référencé
-      </mat-checkbox>
+      <div class="organizer-container">
+        <mat-form-field appearance="outline" class="organizer-select-field">
+          <mat-label>Organisateur</mat-label>
+          <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
+            <div class="search-container">
+              <input #organizerSearchInput class="search-input" placeholder="Rechercher un organisateur..." (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
+            </div>
+            <mat-option *ngIf="isLoadingOrganizers" disabled>
+              <mat-spinner diameter="20" class="spinner"></mat-spinner>
+              <span>Chargement des organisateurs...</span>
+            </mat-option>
+            <mat-option *ngFor="let organizer of filteredOrganizers | async" [value]="organizer.id">
+              {{organizer.lastName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox 
+          formControlName="unreferencedOrganizer" 
+          class="unreferenced-checkbox"
+          (change)="onUnreferencedOrganizerChange($event.checked)">
+          Organisateur non référencé
+        </mat-checkbox>
+      </div>
     </div>
 
     <mat-form-field

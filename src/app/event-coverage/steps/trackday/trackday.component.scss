@@ -1,10 +1,32 @@
 .circuit-select-field, .organizer-select-field {
   width: 100%;
-  margin-bottom: 16px;
 }
 
 .organizer-field {
   margin-bottom: 20px;
+  
+  .organizer-container {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    padding: 16px;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #f5f5f5;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .mat-form-field {
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  .unreferenced-checkbox {
+    display: block;
+    color: rgba(0, 0, 0, 0.87);
+  }
 }
 
 ::ng-deep .circuit-select-panel,
