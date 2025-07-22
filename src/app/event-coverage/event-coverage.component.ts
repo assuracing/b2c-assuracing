@@ -219,7 +219,7 @@ export class EventCoverageComponent {
   priceCalculationError: string | null = null;
   priceDetails: (PrixDTO & { totalTTC: number }) | null = null;
   totalTTC: number = 0;
-  
+
   private loadCircuits() {
     this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
@@ -299,7 +299,7 @@ export class EventCoverageComponent {
       city: [''],
       birthdate: [''],
       nationality: '',
-      country: '',
+      country: 'France',
     });
 
     this.vehicleForm = this.fb.group({
