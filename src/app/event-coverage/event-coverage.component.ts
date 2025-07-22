@@ -295,7 +295,7 @@ export class EventCoverageComponent {
       phone: '',
       address: [''],
       addressComplement: '',
-      postalCode: '',
+      postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{4,8}$')]],
       city: [''],
       birthdate: [''],
       nationality: '',

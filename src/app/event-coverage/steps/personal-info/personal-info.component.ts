@@ -14,12 +14,24 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatError } from '@angular/material/form-field';
+import { NumbersOnlyDirective } from '../../../directives/numbers-only.directive';
 
 @Component({
   standalone: true,
   selector: 'app-personal-info',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatDatepickerModule, MatNativeDateModule, MatIconModule],
+  imports: [
+    FormsModule, 
+    ReactiveFormsModule, 
+    CommonModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatSelectModule, 
+    MatOptionModule, 
+    MatDatepickerModule, 
+    MatNativeDateModule, 
+    MatIconModule,
+    NumbersOnlyDirective
+  ],
   templateUrl: './personal-info.component.html',
   styleUrls: ['./personal-info.component.scss', '../../../app.component.scss'],
 })
@@ -175,7 +187,7 @@ export class PersonalInfoComponent {
         return 'Le numéro de téléphone doit contenir 10 chiffres';
       }
       if (controlName === 'postalCode') {
-        return 'Le code postal doit contenir 5 chiffres';
+        return 'Le code postal doit contenir entre 4 et 8 chiffres';
       }
     }
     if (control?.hasError('minlength')) {

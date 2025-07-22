@@ -65,7 +65,7 @@
 
     <div class="form-group">
         <label for="postalCode">Code postal</label>
-        <input formControlName="postalCode" type="text" id="postalCode" class="form-control" required>
+        <input formControlName="postalCode" id="postalCode" class="form-control" required appNumbersOnly maxlength="8">
         <div *ngIf="isInvalid('postalCode')" class="error-message">
             {{ getErrorMessage('postalCode') }}
         </div>
