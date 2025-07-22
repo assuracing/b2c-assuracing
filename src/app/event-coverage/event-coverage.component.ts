@@ -219,11 +219,13 @@ export class EventCoverageComponent {
   priceCalculationError: string | null = null;
   priceDetails: (PrixDTO & { totalTTC: number }) | null = null;
   totalTTC: number = 0;
-
+  
   private loadCircuits() {
     this.http.get<Circuit[]>(`${this.apiUrl}/api/circuits`).subscribe(
       (circuits) => {
-        this.circuits = circuits.sort((a, b) => {
+        const filteredCircuits = circuits.filter(circuit => circuit.id !== 92);
+        
+        this.circuits = filteredCircuits.sort((a, b) => {
           const isAFrench = a.pays === 'FR' || a.pays === 'France';
           const isBFrench = b.pays === 'FR' || b.pays === 'France';
           
