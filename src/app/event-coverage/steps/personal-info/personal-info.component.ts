@@ -16,6 +16,25 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NumbersOnlyDirective } from '../../../directives/numbers-only.directive';
 import { PostalCodeService, PostalCodeInfo } from '../../../services/postal-code.service';
+import { LOCALE_ID } from '@angular/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateAdapter } from '@angular/material/core';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DatePipe } from '@angular/common';
+
+const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   standalone: true,
@@ -35,6 +54,14 @@ import { PostalCodeService, PostalCodeInfo } from '../../../services/postal-code
   ],
   templateUrl: './personal-info.component.html',
   styleUrls: ['./personal-info.component.scss', '../../../app.component.scss'],
+    providers: [
+      { provide: LOCALE_ID, useValue: 'fr-FR' },
+      { provide: MAT_DATE_LOCALE, useValue: 'fr' },
+      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+      { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+      { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: false } },
+      DatePipe
+    ]
 })
 export class PersonalInfoComponent implements OnInit, OnDestroy {
   @ViewChild('postalCodeInput') postalCodeInput!: ElementRef;

@@ -7,7 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE, MAT_DATE_FORMATS, DateAdapter } from '@angular/material/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +18,18 @@ import { EnvironmentService } from '../../../core/services/environment.service';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CountryFlagService } from '../../../services/country-flag.service';
+
+const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 interface Circuit {
   id: number;
@@ -35,8 +48,9 @@ interface Organizer {
 }
 
 import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import fr from '@angular/common/locales/fr';
+import 'moment/locale/fr';
 
 @Component({
   selector: 'app-trackday',
@@ -58,7 +72,14 @@ import fr from '@angular/common/locales/fr';
   ],
   templateUrl: './trackday.component.html',
   styleUrls: ['./trackday.component.scss', '../../../app.component.scss'],
-  providers: [{ provide: LOCALE_ID, useValue: 'fr' }]
+  providers: [
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
+    { provide: MAT_DATE_LOCALE, useValue: 'fr' },
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: false } },
+    DatePipe
+  ]
 })
 export class TrackdayComponent implements OnInit {
   @Input() form!: FormGroup;

@@ -62,6 +62,13 @@ export class EventCoverageOptionsComponent {
   @Output() reservationAmountChanged = new EventEmitter<void>();
 
   onReservationAmountChange() {
+    const amountControl = this.form.get('reservationAmount');
+    if (amountControl) {
+      const value = parseFloat(amountControl.value);
+      if (value > 1500) {
+        amountControl.setValue(1500, { emitEvent: false });
+      }
+    }
     this.reservationAmountChanged.emit();
   }
   

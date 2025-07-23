@@ -20,8 +20,8 @@
         </li>
     </ul>
 
-    <p><strong>Les garanties d'assurance sont acquises sur tout circuit Homologué en France, UE, UK, Suisse pour tout évènement
-    Hors compétition (sauf kartings et mini-motos)</strong><mat-icon class="info-icon" matTooltip="Les garanties RC et protection juridique sont acquises uniquement pour les licenciés de nationalité française.">info</mat-icon></p>
+    <p><strong>Les garanties d'assurance sont acquises sur tout circuit Homologué en France, GB, Suisse,
+    hors compétitions fédérales, endurances de plus de 6 heures et les spécialités relevant du Motocross</strong><mat-icon class="info-icon" matTooltip="Les garanties RC et protection juridique sont acquises uniquement pour les licenciés de nationalité française.">info</mat-icon></p>
 
     <p>Les + auprès des organisateurs et circuits partenaires :</p>
 
@@ -115,14 +115,16 @@
 
       <h3>Permis de conduire</h3>
       <div class="summary-section">
-        <ng-container *ngIf="vehicles && vehicles.length > 0; else noVehicle">
+        <!-- <ng-container *ngIf="vehicles && vehicles.length > 0; else noVehicle">
           <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicles[vehicles.length - 1]?.titreConduite) || '--'}}</p>
           <p><strong>Numéro de permis:</strong> {{vehicles[vehicles.length - 1]?.titreNumber || '--'}}</p>
         </ng-container>
         <ng-template #noVehicle>
           <p><strong>Titre de conduite:</strong> --</p>
           <p><strong>Numéro de permis:</strong> --</p>
-        </ng-template>
+        </ng-template> -->
+        <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
+        <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
       </div>
 
       <div class="summary-section">
