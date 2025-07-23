@@ -22,10 +22,10 @@ export class CoverageOptionsComponent {
   @Input() form!: FormGroup;
   PROTECTION_LEVELS: { [key: number]: { death: number; disability: number; price: number } } = {
     1: { death: 7600, disability: 18500, price: 0 },
-    2: { death: 15200, disability: 37000, price: 0 },
-    3: { death: 30400, disability: 74000, price: 0 },
-    4: { death: 45600, disability: 111000, price: 0 },
-    5: { death: 76000, disability: 185000, price: 0 }
+    2: { death: 25000, disability: 37500, price: 0 },
+    3: { death: 100000, disability: 150000, price: 0 },
+    4: { death: 150000, disability: 200000, price: 0 },
+    5: { death: 200000, disability: 300000, price: 0 }
   };
 
   constructor(
