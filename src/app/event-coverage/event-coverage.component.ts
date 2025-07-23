@@ -684,9 +684,7 @@ export class EventCoverageComponent {
 
     const eventDate = trackdayForm.get('eventDate')?.value;
     const duration = trackdayForm.get('duration')?.value;
-    const circuitId = trackdayForm.get('circuit')?.value;
-    const circuit = this.circuits.find(c => c.id === circuitId)?.nom || 'Circuit non spécifié';
-    
+    const circuit = this.trackdayForm.get('circuit')?.value || 'Circuit non spécifié';
     const totalPrime = this.eventCoverageOptions?.totalPrime || 0;
 
     const formattedDate = new Date(eventDate).toLocaleDateString('fr-FR', {
@@ -695,7 +693,7 @@ export class EventCoverageComponent {
       day: 'numeric'
     });
 
-    return `Vous avez sélectionné les garanties : ${selectedGuarantees.join(', et ')}
+    return `Vous avez sélectionné les garanties : <strong>${selectedGuarantees.join('</strong>, <strong>')}</strong>
     pour votre événement du ${formattedDate} de ${duration} jour(s) à : ${circuit}.
     La prime totale est de ${totalPrime} €`;
   }
