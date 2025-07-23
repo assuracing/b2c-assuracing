@@ -1,10 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { UserService } from '../../../services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
+import { Subscription, debounceTime, distinctUntilChanged, fromEvent } from 'rxjs';
 import { EmailExistsDialogComponent } from './email-exists-dialog.component';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NumbersOnlyDirective } from '../../../directives/numbers-only.directive';
+import { PostalCodeService, PostalCodeInfo } from '../../../services/postal-code.service';
 
 @Component({
   standalone: true,
@@ -35,7 +36,12 @@ import { NumbersOnlyDirective } from '../../../directives/numbers-only.directive
   templateUrl: './personal-info.component.html',
   styleUrls: ['./personal-info.component.scss', '../../../app.component.scss'],
 })
-export class PersonalInfoComponent {
+export class PersonalInfoComponent implements OnInit, OnDestroy {
+  @ViewChild('postalCodeInput') postalCodeInput!: ElementRef;
+  
+  postalCodeSuggestions: PostalCodeInfo[] = [];
+  showPostalCodeSuggestions = false;
+  private postalCodeSubs = new Subscription();
   @Input() form!: FormGroup;
   @Input() nationalities: string[] = [];
   
@@ -74,7 +80,8 @@ export class PersonalInfoComponent {
     private fb: FormBuilder, 
     private userService: UserService, 
     private dialog: MatDialog, 
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private postalCodeService: PostalCodeService
   ) {}
 
   ngOnInit() {
@@ -84,6 +91,76 @@ export class PersonalInfoComponent {
       this.updateLockFields(user);
     });
     window.addEventListener('storage', () => this.updateLockFields(this.userService.getUser()));
+
+    this.setupPostalCodeInput();
+
+    this.form.get('country')?.valueChanges.subscribe(country => {
+      this.form.get('postalCode')?.setValue('');
+      this.form.get('city')?.setValue('');
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.postalCodeInput) {
+      this.setupPostalCodeInput();
+    }
+  }
+
+  ngOnDestroy() {
+    this.postalCodeSubs.unsubscribe();
+  }
+
+  private setupPostalCodeInput() {
+    const postalCodeInput = this.postalCodeInput?.nativeElement;
+    if (!postalCodeInput) return;
+
+    this.postalCodeSubs.unsubscribe();
+    this.postalCodeSubs = new Subscription();
+
+    const input$ = fromEvent(postalCodeInput, 'input').pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    );
+
+    this.postalCodeSubs.add(
+      input$.subscribe(() => this.onPostalCodeInput())
+    );
+  }
+
+  onPostalCodeInput() {
+    const country = this.form.get('country')?.value;
+    if (country !== 'France') {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    const value = this.postalCodeInput?.nativeElement?.value || '';
+    if (!/^\d+$/.test(value)) {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    this.postalCodeService.searchPostalCodes(value).subscribe(suggestions => {
+      this.postalCodeSuggestions = suggestions;
+      this.showPostalCodeSuggestions = this.postalCodeSuggestions.length > 0;
+    });
+  }
+
+  onPostalCodeBlur() {
+    setTimeout(() => {
+      this.showPostalCodeSuggestions = false;
+    }, 200);
+  }
+
+  selectPostalCode(postalCodeInfo: PostalCodeInfo) {
+    this.form.get('postalCode')?.setValue(postalCodeInfo.code);
+    this.form.get('city')?.setValue(postalCodeInfo.city);
+    this.postalCodeSuggestions = [];
+    this.showPostalCodeSuggestions = false;
   }
 
   filterCountries(event: Event) {

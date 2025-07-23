@@ -26,8 +26,6 @@ export class CountryFlagService {
     
     const normalizedCode = this.countryToCode[countryCode.toUpperCase()];
     if (!normalizedCode) return 'flags/default.png';
-
-    console.log("COde normalisé : ", normalizedCode);
     
     return `flags/${normalizedCode}.png`;
   }
