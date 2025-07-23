@@ -6,6 +6,66 @@ input:disabled, .form-control:disabled, input[disabled], .form-control[disabled]
     opacity: 1;
 }
 
+.postal-code-suggestions {
+  position: absolute;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 2px;
+
+  .suggestion-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .postal-code {
+      font-weight: 600;
+      color: #1976d2;
+      background: #e3f2fd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .city-name {
+      flex: 1;
+      margin-left: 12px;
+      color: #333;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    &:hover, &:focus {
+      background-color: #f5f9ff;
+      
+      .postal-code {
+        background: #bbdefb;
+      }
+    }
+
+    &:active {
+      background-color: #e3f2fd;
+    }
+  }
+}
+
 .radio {
     display: flex;
     flex-direction: row;

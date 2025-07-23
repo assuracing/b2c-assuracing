@@ -63,11 +63,33 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="position: relative;">
         <label for="postalCode">Code postal</label>
-        <input formControlName="postalCode" id="postalCode" class="form-control" required appNumbersOnly maxlength="8">
-        <div *ngIf="isInvalid('postalCode')" class="error-message">
+        <input 
+            #postalCodeInput
+            formControlName="postalCode" 
+            id="postalCode" 
+            class="form-control" 
+            required 
+            appNumbersOnly 
+            [maxLength]="form.get('country')?.value === 'France' ? 5 : 8"
+            (focus)="onPostalCodeInput()"
+            (blur)="onPostalCodeBlur()">
+        <div *ngIf="isInvalid('postalCode') && form.get('country')?.value !== 'France'"  class="error-message">
             {{ getErrorMessage('postalCode') }}
+        </div>
+        
+        <div 
+            *ngIf="showPostalCodeSuggestions && postalCodeSuggestions.length > 0" 
+            class="postal-code-suggestions"
+            (mousedown)="$event.preventDefault()">
+            <div 
+                *ngFor="let item of postalCodeSuggestions" 
+                class="suggestion-item"
+                (mousedown)="selectPostalCode(item)">
+                <span class="postal-code">{{ item.code }}</span>
+                <span class="city-name">{{ item.city }}</span>
+            </div>
         </div>
     </div>
 
