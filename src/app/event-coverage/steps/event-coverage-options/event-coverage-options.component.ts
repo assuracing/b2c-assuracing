@@ -110,7 +110,7 @@ export class EventCoverageOptionsComponent {
 
   checkAnnulationAvailability(inscriptionDate: any) {
     if (!inscriptionDate) {
-      this.annulationDisabledByInscriptionDate = true;
+      this.annulationDisabledByInscriptionDate = false;
       this.updateFormControlsAvailability();
       return;
     }
