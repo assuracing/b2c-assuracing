@@ -391,6 +391,12 @@ export class EventCoverageComponent {
     this.sectionInProgress = isInProgress;
   }
 
+  onStepChange(event: any) {
+    if (event.selectedIndex === 2) {
+      this.step2Page = 1;
+    }
+  }
+
   goToNextStep(): void {
     if (this.isMinor()) {
       this.step2Page = 2;
