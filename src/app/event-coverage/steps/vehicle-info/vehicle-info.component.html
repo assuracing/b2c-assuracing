@@ -7,14 +7,20 @@
     <h3> Votre véhicule </h3>
     <div class="form-group">
         <label for="type"></label>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Type véhicule</mat-label>
-          <mat-select formControlName="type" required>
-            <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
-              {{type.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Type véhicule</mat-label>
+            <mat-select formControlName="type" [disabled]="showVehicleTypeTooltip" required>
+              <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
+                {{type.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-icon 
+            *ngIf="showVehicleTypeTooltip"
+            matTooltip="Pour changer le type de véhicule, remontez à l'étape 1"
+            class="info-icon">
+            info
+          </mat-icon>
     </div>
 
     <div class="form-group">

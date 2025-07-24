@@ -76,6 +76,7 @@
       <form [formGroup]="vehicleForm">
         <app-vehicle-info 
           [form]="vehicleForm" 
+          [vehicleType]="trackdayForm.get('vehicleType')?.value"
           (vehicleAdded)="handleVehicleAdded($event)">
         </app-vehicle-info>
         <div class="mt-4">
