@@ -60,6 +60,7 @@ export class EventCoverageOptionsComponent {
   @Input() duration!: number;
   @Output() defenseRecoursChange = new EventEmitter<{isChecked: boolean, garantieType: string}>();
   @Output() reservationAmountChanged = new EventEmitter<void>();
+  @Output() sectionInProgress = new EventEmitter<boolean>();
 
   onReservationAmountChange() {
     const amountControl = this.form.get('reservationAmount');
@@ -212,7 +213,8 @@ export class EventCoverageOptionsComponent {
   }
 
   formatPrice(price: number | undefined): string {
-    return price !== undefined ? price.toFixed(2) + '€' : '-- € ';
+    if (price === undefined) return '-- € ';
+    return price % 1 === 0 ? `${price}€` : price.toFixed(2).replace('.', ',') + '€';
   }
 
   PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
@@ -468,6 +470,7 @@ export class EventCoverageOptionsComponent {
         protectionPilote: section === 'protectionPilote' ? this.form.get('protectionPilote')?.value || 0 : this.form.get('protectionPilote')?.value,
         responsabiliteRecours: section === 'responsabiliteRecours'
       });
+      this.sectionInProgress.emit(true);
       this.updateFormControlsAvailability();
     } else {
       this.activeSection = null;
@@ -492,6 +495,8 @@ export class EventCoverageOptionsComponent {
 
   resetSection(section: 'iai' | 'protectionPilote' | 'responsabiliteRecours'): void {
     const patchValues: any = {};
+    this.validatedSections[section] = false;
+    this.sectionInProgress.emit(false);
     if (section === 'iai') {
       patchValues.iai = false;
       patchValues.intemperies = false;
@@ -500,9 +505,11 @@ export class EventCoverageOptionsComponent {
       patchValues.inscriptionDate = '';
       patchValues.reservationAmount = '';
       this.wasIAIValidated = false;
+      this.form.get('reservationAmount')?.setValue(0);
     } else if (section === 'protectionPilote') {
       patchValues.protectionPilote = 0;
       this.wasProtectionPiloteValidated = false;
+      this.form.get('protectionPilote')?.setValue(0);
     } else if (section === 'responsabiliteRecours') {
       patchValues.responsabiliteRecours = false;
       patchValues.defenseRecours = false;
@@ -542,6 +549,9 @@ export class EventCoverageOptionsComponent {
     }
 
     this.validatedSections[section] = true;
+    this.activeSection = null;
+    this.sectionInProgress.emit(false);
+    
     if (section === 'iai') this.wasIAIValidated = true;
     if (section === 'protectionPilote') this.wasProtectionPiloteValidated = true;
     if (section === 'responsabiliteRecours') this.wasResponsabiliteRecoursValidated = true;
@@ -551,11 +561,13 @@ export class EventCoverageOptionsComponent {
   onCartClick(section: 'iai' | 'protectionPilote' | 'responsabiliteRecours'): void {
     if (this.activeSection === section) {
       this.activeSection = null;
-      return;
+    } else {
+      this.activeSection = section;
     }
 
     this.activeSection = section;
     this.validatedSections[section] = false;
+    this.sectionInProgress.emit(true);
 
     if (section === 'iai') this.form.patchValue({ iai: true });
     if (section === 'responsabiliteRecours') this.form.patchValue({ responsabiliteRecours: true });

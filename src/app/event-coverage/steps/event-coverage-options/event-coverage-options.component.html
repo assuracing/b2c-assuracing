@@ -1,6 +1,6 @@
 <form [formGroup]="form" class="coverage-options-form">
   <div class="total-prime">
-    <h3>Total : {{ totalPrime | currency:'EUR' }}</h3>
+    <h3>Total : {{ formatPrice(totalPrime) }}</h3>
   </div>
 
   <div class="protection-pilote" *ngIf="allowedGaranties.includes('IAI') && (!activeSection || activeSection === 'iai' || validatedSections['iai'])">
@@ -17,7 +17,7 @@
           <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('iai')">
             Garantie I A I (Intempéries, Annulation & Interruption)
             <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getIAIAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getIAIAmount()) }}</span>
           </div>
         </div>
       </ng-container>
@@ -118,7 +118,7 @@
           <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('protectionPilote')">
             Protection Corporelle
             <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getProtectionPiloteAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getProtectionPiloteAmount()) }}</span>
           </div>
         </div>
       </ng-container>
@@ -147,7 +147,7 @@
                 <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
               </div>
             </div>
-            <div class="price">{{ PROTECTION_LEVELS[level].price }}€</div>
+            <div class="price">{{ formatPrice(PROTECTION_LEVELS[level].price) }}</div>
           </div>
         </div>
 
@@ -170,7 +170,7 @@
           <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('responsabiliteRecours')">
             Garantie Responsabilité / Recours
             <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ getResponsabiliteRecoursAmount() | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getResponsabiliteRecoursAmount()) }}</span>
           </div>
         </div>
       </ng-container>

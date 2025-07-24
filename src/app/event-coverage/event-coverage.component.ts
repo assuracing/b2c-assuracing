@@ -175,6 +175,7 @@ export class EventCoverageComponent {
   async onContinueGuaranteeStep(stepper: MatStepper) {
     const form = this.coverageOptionsForm;
     const hasGuarantee = form.get('intemperies')?.value || form.get('annulation')?.value || form.get('interruption')?.value || (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value;
+    
     if (!hasGuarantee) {
       const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
         width: '400px',
@@ -190,6 +191,7 @@ export class EventCoverageComponent {
   }
   @ViewChild(MatStepper) stepper!: MatStepper
   step2Page: number = 1
+  sectionInProgress: boolean = false;
   trackdayForm!: FormGroup
   personalForm!: FormGroup
   RepresentativeLegalForm!: FormGroup
@@ -383,6 +385,10 @@ export class EventCoverageComponent {
       });
       this.garantiePrices = { ...this.garantiePrices }; 
     }
+  }
+
+  onSectionInProgress(isInProgress: boolean): void {
+    this.sectionInProgress = isInProgress;
   }
 
   goToNextStep(): void {
