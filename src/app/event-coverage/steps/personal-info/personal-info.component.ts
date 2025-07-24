@@ -139,6 +139,14 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.postalCodeSubs.unsubscribe();
   }
 
+  getStartDate() {
+    const today = new Date();
+    const year = today.getFullYear() - 20;
+    const month = today.getMonth();
+    const day = today.getDate();
+    return new Date(year, month, day);
+  }
+
   private setupPostalCodeInput() {
     const postalCodeInput = this.postalCodeInput?.nativeElement;
     if (!postalCodeInput) return;
