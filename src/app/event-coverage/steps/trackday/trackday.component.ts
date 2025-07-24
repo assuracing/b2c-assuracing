@@ -120,6 +120,16 @@ export class TrackdayComponent implements OnInit {
     this.loadOrganizers();
   }
 
+
+  getScheduledEndDate() : Date {
+    const eventDate = this.form.get('eventDate')?.value;
+    const duration = this.form.get('duration')?.value;
+    if (!eventDate || !duration) return this.today;
+    const finalDate = new Date(eventDate);
+    finalDate.setDate(finalDate.getDate() + duration - 1);
+    return finalDate;
+  }
+
   private loadOrganizers() {
     this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
