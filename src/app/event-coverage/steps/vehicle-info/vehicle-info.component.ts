@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -29,8 +29,9 @@ interface Circuit {
   styleUrls: ['./vehicle-info.component.scss', '../../../app.component.scss', '../../../motors-league/motors-league.component.scss'],
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule]
 })
-export class VehicleInfoComponent implements OnInit, OnDestroy {
+export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form!: FormGroup;
+  @Input() vehicleType?: string;
   @Output() vehicleAdded = new EventEmitter<any>();
   @Output() vehicleRemoved = new EventEmitter<any>();
   vehicles: any[] = [];
@@ -108,20 +109,36 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
     private http: HttpClient
   ) {}
 
+  showVehicleTypeTooltip = false;
+
   ngOnInit() {
     this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
     });
+    this.updateVehicleType();
+  }
 
-    this.form.get('type')?.valueChanges.subscribe(() => {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['vehicleType'] && !changes['vehicleType'].firstChange) {
+      this.updateVehicleType();
+    }
+  }
+
+  private updateVehicleType() {
+
+    if (this.vehicleType) {
+      this.form.get('type')?.setValue(this.vehicleType);
+      this.showVehicleTypeTooltip = true;
+      this.updateFilteredBrands();
+    }
+
+    this.form.get('type')?.valueChanges.subscribe((value) => {
       this.form.get('brand')?.reset();
       this.form.get('titreConduite')?.reset();
       this.updateFilteredBrands();
     });
     this.updateFilteredBrands();
   }
-
-
 
   getFilteredBrands(): string[] {
     const type = this.form.get('type')?.value;
