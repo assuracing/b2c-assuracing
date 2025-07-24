@@ -32,11 +32,18 @@
           [role]="trackdayForm.get('role')?.value"
           [disableIntempAnnul]="isEventDateLessThan3Weeks"
           (reservationAmountChanged)="calculateIAIPrices()"
-          [defenseRecoursPrice]="defenseRecoursPrice">
+          [defenseRecoursPrice]="defenseRecoursPrice"
+          (sectionInProgress)="onSectionInProgress($event)">
         </app-event-coverage-options>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
-          <button mat-button [disabled]="!coverageOptionsForm.valid" (click)="onContinueGuaranteeStep(stepper)">Continuer</button>
+          <div style="display: inline-block; position: relative;">
+            <div [matTooltip]="sectionInProgress ? 'Vous devez valider ou supprimer la garantie en cours de saisie pour continuer' : ''" matTooltipPosition="above">
+              <button mat-button [disabled]="!coverageOptionsForm.valid || sectionInProgress" (click)="onContinueGuaranteeStep(stepper)">
+                {{ sectionInProgress ? 'Terminer la saisie pour continuer' : 'Continuer' }}
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </mat-step>
