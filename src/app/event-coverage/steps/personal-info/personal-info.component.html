@@ -139,7 +139,7 @@
           <mat-label>Date de naissance</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="birthdate" required>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker #picker [startAt]="form.get('birthdate')?.value ? form.get('birthdate')?.value : getStartDate()"></mat-datepicker>
           <mat-error *ngIf="isInvalid('birthdate')">
             {{ getErrorMessage('birthdate') }}
           </mat-error>
