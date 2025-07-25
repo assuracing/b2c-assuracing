@@ -45,7 +45,7 @@ interface ProtectionLevel {
     MatProgressSpinnerModule
   ],
   templateUrl: './event-coverage-options.component.html',
-  styleUrls: ['./event-coverage-options.component.scss']
+  styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss']
 })
 export class EventCoverageOptionsComponent {
   @Input() isCalculatingPrice: boolean = false;
