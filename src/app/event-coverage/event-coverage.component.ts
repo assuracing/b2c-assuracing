@@ -30,6 +30,7 @@ import { EventCoverageOptionsComponent } from "./steps/event-coverage-options/ev
 import { VehicleService } from '../services/vehicle.service';
 import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
+import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 
 interface Circuit {
   id: number;
@@ -398,9 +399,24 @@ export class EventCoverageComponent {
   }
 
   goToNextStep(): void {
-    if (this.isMinor()) {
-      this.step2Page = 2;
-    } else {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
+      const birthDate = this.personalForm?.get('birthdate')?.value;
+      const trackdayForm = this.trackdayForm;
+      
+      if (birthDate && trackdayForm) {
+        const age = this.calculateAge(new Date(birthDate));
+        const role = trackdayForm.get('role')?.value;
+        
+        if (age < 16 && role === 'pilote') {
+          this.dialog.open(AgeRestrictionDialogComponent, {
+            width: '450px',
+            disableClose: true
+          });
+          return;
+        }
+      }
+    }
+    if (this.stepper) {
       this.stepper.next();
     }
   }
