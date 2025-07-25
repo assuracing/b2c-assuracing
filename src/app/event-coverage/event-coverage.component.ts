@@ -407,10 +407,11 @@ export class EventCoverageComponent {
         const age = this.calculateAge(new Date(birthDate));
         const role = trackdayForm.get('role')?.value;
         
-        if (age < 16 && role === 'pilote') {
+        if (age < 16 && (role === 'pilote' || role === 'passager')) {
           this.dialog.open(AgeRestrictionDialogComponent, {
             width: '450px',
-            disableClose: true
+            disableClose: true,
+            data: { role: role }
           });
           return;
         }
