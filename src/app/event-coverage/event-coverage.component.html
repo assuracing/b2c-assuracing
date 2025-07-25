@@ -77,7 +77,8 @@
         <app-vehicle-info 
           [form]="vehicleForm" 
           [vehicleType]="trackdayForm.get('vehicleType')?.value"
-          (vehicleAdded)="handleVehicleAdded($event)">
+          (vehicleAdded)="handleVehicleAdded($event)"
+          [userAge]="calculateAge(personalForm.get('birthdate')?.value)">
         </app-vehicle-info>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>

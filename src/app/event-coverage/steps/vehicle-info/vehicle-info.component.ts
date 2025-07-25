@@ -32,6 +32,7 @@ interface Circuit {
 export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form!: FormGroup;
   @Input() vehicleType?: string;
+  @Input() userAge?: number;
   @Output() vehicleAdded = new EventEmitter<any>();
   @Output() vehicleRemoved = new EventEmitter<any>();
   vehicles: any[] = [];
@@ -110,34 +111,105 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   showVehicleTypeTooltip = false;
+  showDriveLicenseTooltip = false;
 
   ngOnInit() {
     this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
     });
     this.updateVehicleType();
+    setTimeout(() => this.updateDriveLicenseTooltip());
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['vehicleType'] && !changes['vehicleType'].firstChange) {
       this.updateVehicleType();
     }
+    if (changes['userAge'] && !changes['userAge'].firstChange) {
+      this.updateDriveLicenseTooltip();
+    }
   }
 
   private updateVehicleType() {
-
     if (this.vehicleType) {
       this.form.get('type')?.setValue(this.vehicleType);
       this.showVehicleTypeTooltip = true;
       this.updateFilteredBrands();
+      this.updateDriveLicenseTooltip();
     }
 
     this.form.get('type')?.valueChanges.subscribe((value) => {
       this.form.get('brand')?.reset();
       this.form.get('titreConduite')?.reset();
       this.updateFilteredBrands();
+      this.updateDriveLicenseTooltip();
     });
     this.updateFilteredBrands();
+  }
+
+  private updateDriveLicenseTooltip(): void {
+    if (!this.form) return;
+    
+    const driveLicenseControl = this.form.get('titreConduite');
+    if (!driveLicenseControl) return;
+    
+    const currentValue = driveLicenseControl.value;
+    
+    driveLicenseControl.clearValidators();
+    driveLicenseControl.setValue(null, { emitEvent: false });
+    
+    if (this.vehicleType === 'auto') {
+      if (this.userAge && this.userAge < 17) {
+        driveLicenseControl.disable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else if (this.userAge && this.userAge <= 19) {
+        driveLicenseControl.enable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else {
+        driveLicenseControl.enable({ emitEvent: false });
+        driveLicenseControl.setValidators(Validators.required);
+        this.showDriveLicenseTooltip = true;
+      }
+    } else if (this.vehicleType === 'moto') {
+      if (this.userAge && this.userAge < 16) {
+        driveLicenseControl.disable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else {
+        driveLicenseControl.enable({ emitEvent: false });
+        driveLicenseControl.setValidators(Validators.required);
+        this.showDriveLicenseTooltip = true;
+      }
+    } else {
+      driveLicenseControl.disable({ emitEvent: false });
+      this.showDriveLicenseTooltip = false;
+    }
+    
+    if (driveLicenseControl.enabled) {
+      driveLicenseControl.setValue(currentValue, { emitEvent: false });
+    }
+    
+    driveLicenseControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  getDriveLicenseTooltipMessage(): string {
+    if (!this.userAge || !this.vehicleType) return '';
+    
+    if (this.vehicleType === 'auto') {
+      if (this.userAge < 17) {
+        return 'Le permis B n\'est pas à renseigner pour les personnes de moins de 17 ans';
+      } else if (this.userAge <= 19) {
+        return 'Le permis B n\'est pas indispensable pour les personnes de 17 à 19 ans';
+      } else {
+        return 'Le permis B est obligatoire pour les personnes de plus de 19 ans';
+      }
+    } else if (this.vehicleType === 'moto') {
+      if (this.userAge < 16) {
+        return 'Le permis n\'est pas accessible aux personnes de moins de 16 ans';
+      } else {
+        return 'Le permis A ou le CASM est obligatoire pour les personnes de plus de 16 ans';
+      }
+    }
+    return '';
   }
 
   getFilteredBrands(): string[] {
