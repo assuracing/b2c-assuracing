@@ -139,6 +139,22 @@
     border-radius: 5px;
     padding: 16px;
     margin-bottom: 20px;
+    position: relative;
+    transition: opacity 0.3s ease;
+
+    &.disabled-section {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+      background: #f5f5f5;
+      
+      .mat-icon, span, .mat-slide-toggle-content {
+        opacity: 0.6 !important;
+      }
+
+      .validated-toggle {
+        pointer-events: auto;      }
+    }
 
     .risk-group {
       background: white;
@@ -245,6 +261,28 @@
 
   .mat-slide-toggle {
     margin-bottom: 15px;
+
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+
+    &[disabled] {
+      opacity: 0.6;
+      cursor: default !important;
+      pointer-events: none;
+      
+      .mat-slide-toggle-label {
+        cursor: default !important;
+      }
+      
+      .mat-slide-toggle-bar {
+        cursor: default !important;
+      }
+      
+      .mat-slide-toggle-thumb {
+        cursor: default !important;
+      }
+    }
   }
 
   .mat-form-field {
@@ -305,12 +343,49 @@
   }
 }
 
+.disabled-cart {
+  opacity: 0.9;
+  cursor: default !important;
+  pointer-events: none;
+  
+  .mat-icon {
+    color: #1565c0 !important;
+    filter: grayscale(30%);
+  }
+  
+  span {
+    color: #252525 !important;
+  }
+  
+  .price-amount {
+    color: #1565c0 !important;
+    font-weight: 500;
+  } 
+}
+
+.validated-toggle {
+  cursor: default;
+  
+  mat-icon[color="warn"] {
+    cursor: pointer;
+  }
+  
+  .disabled-cart {
+    cursor: default !important;
+  }
+}
+
 .info-icon {
   font-size: 14px;
   margin-left: 5px;
   cursor: help;
+
+  &:hover {
+    color: #2196f3;
+  }
+  cursor: help;
   color: #6c757d;
-  
+
   @media (max-width: 768px) {
     font-size: 12px;
     margin-left: 3px;

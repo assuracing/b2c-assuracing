@@ -3,21 +3,44 @@
     <h3>Total : {{ formatPrice(totalPrime) }}</h3>
   </div>
 
-  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IAI') && (!activeSection || activeSection === 'iai' || validatedSections['iai'])">
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IAI')" 
+       [class.disabled-section]="activeSection && activeSection !== 'iai'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['iai'] && !wasIAIValidated">
-        <mat-slide-toggle labelPosition="before" style="margin-bottom: 20px;" [checked]="activeSection === 'iai'" (change)="onToggleChange('iai', $event.checked)">
+        <mat-slide-toggle 
+          labelPosition="before" 
+          style="margin-bottom: 20px;" 
+          [checked]="activeSection === 'iai'" 
+          [disabled]="activeSection && activeSection !== 'iai'"
+          (change)="onToggleChange('iai', $event.checked)"
+          [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
+          matTooltipPosition="above">
           Garantie I A I (Intempéries, Annulation & Interruption)
         </mat-slide-toggle>
       </ng-container>
 
       <ng-container *ngIf="validatedSections['iai'] || wasIAIValidated">
-        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+        <div class="validated-toggle" 
+             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltipPosition]="'above'"
+             [matTooltipDisabled]="!activeSection || activeSection === 'iai'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('iai')">close</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('iai')">
-            Garantie I A I (Intempéries, Annulation & Interruption)
-            <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getIAIAmount()) }}</span>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+               [class.disabled-cart]="activeSection && activeSection !== 'iai'"
+               [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltipPosition]="'above'"
+               [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
+               >
+            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+                 (click)="activeSection === 'iai' || !activeSection ? onCartClick('iai') : null">
+              Garantie I A I (Intempéries, Annulation & Interruption)
+              <mat-icon [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#1976d2'}">
+                {{ formatPrice(getIAIAmount()) }}
+              </span>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -104,21 +127,43 @@
     </div>
   </div>
 
-  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IA') && (!activeSection || activeSection === 'protectionPilote' || validatedSections['protectionPilote'])">
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('IA')" 
+       [class.disabled-section]="activeSection && activeSection !== 'protectionPilote'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['protectionPilote'] && !wasProtectionPiloteValidated">
-        <mat-slide-toggle labelPosition="before" [checked]="activeSection === 'protectionPilote'" (change)="onToggleChange('protectionPilote', $event.checked)">
+        <mat-slide-toggle 
+          labelPosition="before" 
+          [checked]="activeSection === 'protectionPilote'" 
+          [disabled]="activeSection && activeSection !== 'protectionPilote'"
+          (change)="onToggleChange('protectionPilote', $event.checked)"
+          [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltipPosition]="'above'"
+          [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'"
+          >
           Protection Corporelle
         </mat-slide-toggle>
       </ng-container>
 
       <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
-        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+        <div class="validated-toggle" 
+             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltipPosition]="'above'"
+             [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('protectionPilote')">
-            Protection Corporelle
-            <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getProtectionPiloteAmount()) }}</span>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+               [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
+               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltipPosition]="'above'"
+               [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
+            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+                 (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
+              Protection Corporelle
+              <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#1976d2'}">
+                {{ formatPrice(getProtectionPiloteAmount()) }}
+              </span>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -156,21 +201,42 @@
     </div>
   </div>
 
-  <div class="protection-pilote" *ngIf="allowedGaranties.includes('PJ') && (!activeSection || activeSection === 'responsabiliteRecours' || validatedSections['responsabiliteRecours'])">
+  <div class="protection-pilote" *ngIf="allowedGaranties.includes('PJ')" 
+       [class.disabled-section]="activeSection && activeSection !== 'responsabiliteRecours'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['responsabiliteRecours'] && !wasResponsabiliteRecoursValidated">
-        <mat-slide-toggle labelPosition="before" [checked]="activeSection === 'responsabiliteRecours'" (change)="onToggleChange('responsabiliteRecours', $event.checked)">
+        <mat-slide-toggle 
+          labelPosition="before" 
+          [checked]="activeSection === 'responsabiliteRecours'" 
+          [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
+          (change)="onToggleChange('responsabiliteRecours', $event.checked)"
+          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'"
+          matTooltipPosition="above">
           Garantie Responsabilité / Recours
         </mat-slide-toggle>
       </ng-container>
 
-      <ng-container *ngIf="wasResponsabiliteRecoursValidated && !activeSection">
-        <div class="validated-toggle" style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;">
+      <ng-container *ngIf="(validatedSections['responsabiliteRecours'] || wasResponsabiliteRecoursValidated)">
+        <div class="validated-toggle" 
+             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltipPosition]="'above'"
+             [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" (click)="onCartClick('responsabiliteRecours')">
-            Garantie Responsabilité / Recours
-            <mat-icon color="primary">shopping_cart</mat-icon>
-            <span style="margin-left: 8px; font-weight: 600; color: #1976d2;">{{ formatPrice(getResponsabiliteRecoursAmount()) }}</span>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+               [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
+               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltipPosition]="'above'"
+               [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
+            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+                 (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
+              Garantie Responsabilité / Recours
+              <mat-icon [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#1976d2'}">
+                {{ formatPrice(getResponsabiliteRecoursAmount()) }}
+              </span>
+            </div>
           </div>
         </div>
       </ng-container>
