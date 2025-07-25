@@ -1,0 +1,56 @@
+
+.disabled-cart {
+    opacity: 0.9;
+    cursor: default !important;
+    pointer-events: none;
+    
+    .mat-icon {
+      color: #1565c0 !important;
+      filter: grayscale(30%);
+    }
+    
+    span {
+      color: #252525 !important;
+    }
+    
+    .price-amount {
+      color: #1565c0 !important;
+      font-weight: 500;
+    } 
+  }
+  
+  .validated-toggle {
+    cursor: default;
+    
+    mat-icon[color="warn"] {
+      cursor: pointer;
+    }
+    
+    .disabled-cart {
+      cursor: default !important;
+    }
+  }
+  
+  .info-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: help;
+  
+    &:hover {
+      color: #2196f3;
+    }
+    cursor: help;
+    color: #6c757d;
+  
+    @media (max-width: 768px) {
+      font-size: 12px;
+      margin-left: 3px;
+    }
+  }
+  
+  .toggle-unavailable {
+    color: #e53935;
+    font-size: 0.85em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
