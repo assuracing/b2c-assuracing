@@ -9,7 +9,7 @@
         <label for="type"></label>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Type véhicule</mat-label>
-            <mat-select formControlName="type" [disabled]="showVehicleTypeTooltip" required>
+            <mat-select formControlName="type" [disabled]="showVehicleTypeTooltip" >
               <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
                 {{type.label}}
               </mat-option>
@@ -27,7 +27,7 @@
         <label for="brand"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Marque</mat-label>
-          <mat-select formControlName="brand" required panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)">
+          <mat-select formControlName="brand"  panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)">
             <div class="search-container">
               <input #brandSearchInput class="search-input" placeholder="Rechercher..." (click)="$event.stopPropagation()" (input)="filterBrands($event)">
             </div>
@@ -41,7 +41,7 @@
     <div class="form-group">
         <label for="model">Modèle</label>
         
-        <input formControlName="model" type="text" id="model" class="form-control" required>
+        <input formControlName="model" type="text" id="model" class="form-control">
     </div>
 
     <div class="radio">
@@ -62,24 +62,24 @@
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'immat'">
         <label for="immatNumber">Immatriculation</label>
-        <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" required>
+        <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" >
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'chassis'">
         <label for="chassisNumber">Nº chassis</label>
-        <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" required>
+        <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" >
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'serie'">
         <label for="serieNumber">Nº série</label>
-        <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" required>
+        <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" >
     </div>
 
     <div class="form-group">
         <label for="titreConduite"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Titre de conduite</mat-label>
-          <mat-select formControlName="titreConduite" [disabled]="showDriveLicenseTooltip" required>
+          <mat-select formControlName="titreConduite" [disabled]="showDriveLicenseTooltip" >
             <mat-option *ngFor="let license of getFilteredLicenseTypes()" [value]="license.value">
               {{license.label}}
             </mat-option>
@@ -95,7 +95,7 @@
 
     <div class="form-group">
         <label for="titreNumber">Nº titre</label>
-        <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" required>
+        <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" >
     </div>
 
 </div>

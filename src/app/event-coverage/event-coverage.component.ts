@@ -589,7 +589,7 @@ export class EventCoverageComponent {
   onSubmit(): void {
     const forms = [this.personalForm, this.vehicleForm, this.eventCoverageForm];
     const allFormsValid = forms.every(form => form?.valid);
-  
+    
     if (!allFormsValid) {
       forms.forEach(form => form.markAllAsTouched());
       return;
@@ -634,12 +634,12 @@ export class EventCoverageComponent {
         numeroPermisB: vehicleData.numeroPermisB || '',
         ffsaPermisB: vehicleData.ffsaPermisB || '',
       },
-      marque: vehicleData.brand,
-      modele: vehicleData.model,
-      typevehicule: vehicleData.type,
-      immatriculation: vehicleData.immatNumber,
-      param_n_serie: vehicleData.serieNumber || '',
-      param_n_chassis: vehicleData.chassisNumber || '',
+      marque: vehicleData.brand || 'ND',
+      modele: vehicleData.model || 'ND',
+      typevehicule: this.trackdayForm.get('vehicleType')?.value || this.vehicleForm.get('type')?.value,
+      immatriculation: vehicleData.immatNumber || 'ND',
+      param_n_serie: vehicleData.serieNumber || 'ND',
+      param_n_chassis: vehicleData.chassisNumber || 'ND',
       montantganrantie: coverageData.reservationAmount || 0,
       apporteurId: trackdayData.organizer,
       annual: false,
