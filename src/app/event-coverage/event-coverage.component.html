@@ -71,7 +71,7 @@
       </div>
     </mat-step>
   
-    <mat-step *ngIf="trackdayForm.get('role')?.value !== 'passager'" [stepControl]="vehicleForm">
+    <mat-step *ngIf="trackdayForm.get('role')?.value == 'pilote'" [stepControl]="vehicleForm">
       <ng-template matStepLabel>Vos Risques</ng-template>
       <form [formGroup]="vehicleForm">
         <app-vehicle-info 
