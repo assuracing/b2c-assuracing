@@ -408,7 +408,6 @@ export class EventCoverageComponent {
         const age = this.calculateAge(new Date(birthDate));
         const role = trackdayForm.get('role')?.value;
         if(this.isMinor()) {
-          console.log(this.isMinor())
           this.step2Page = 2;
           return;
         }
