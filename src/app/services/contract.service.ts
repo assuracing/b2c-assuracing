@@ -24,11 +24,14 @@ export class ContractService {
     private envService: EnvironmentService
   ) {
     this.apiUrl = `${this.envService.apiUrl}/api`;
-    console.log(this.apiUrl);
   }
 
   createContratB2C(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/createContractB2C`, data);
+    return this.http.post(`${this.apiUrl}/createContractB2C`, data, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    });
   }
 
   calculatePrice(data: any): Observable<PrixDTO> {

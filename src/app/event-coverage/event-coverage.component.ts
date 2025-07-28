@@ -54,6 +54,7 @@ interface Contract {
     dateinscription : string;
     dateNaissance: string;
     email: string;
+    login: string;
     firstName: string;
     lastName: string;
     nom: string;
@@ -620,12 +621,13 @@ export class EventCoverageComponent {
         codepostal: personalData.postalCode,
         dateinscription: formatISODate(new Date().toISOString()),
         dateNaissance: formatISODate(personalData.birthdate),
-        email: personalData.email,
-        firstName: personalData.firstname,
-        lastName: personalData.lastname,
-        nom: personalData.lastname,
-        telPortable: personalData.phone,
-        ville: personalData.city,
+        email: this.personalForm.get('email')?.value,
+        login: this.personalForm.get('email')?.value,
+        firstName: this.personalForm.get('firstname')?.value,
+        lastName: this.personalForm.get('lastname')?.value,
+        nom: this.personalForm.get('lastname')?.value,
+        telPortable: this.personalForm.get('phone')?.value,
+        ville: this.personalForm.get('city')?.value,
         numeroPermisA: vehicleData.numeroPermisA || '',
         cacmPermisA: vehicleData.cacmPermisA || '',
         licencePermisA: vehicleData.licencePermisA || '',
@@ -647,11 +649,12 @@ export class EventCoverageComponent {
     };
 
     this.contractService.createContratB2C(contract).subscribe({
+
       next: (response) => {
         const orderId = response?.transactionUID;
         const email = this.personalForm.get('email')?.value;
         const paymentUrl = `${this.envService.appUrl}/payment-confirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
-  
+
         window.location.href = paymentUrl;
       },
       error: (err) => {
@@ -751,8 +754,6 @@ export class EventCoverageComponent {
       param_n_serie: "",
       typevehicule: this.trackdayForm.get('vehicleType')?.value || "moto"
     };
-
-    console.log(`Envoi de la requête pour la garantie ${codeProduit}...`, priceData);
     
     const garantieKey = Object.entries(this.GARANTIE_CODES).find(
       ([key, value]) => value === codeProduit
@@ -766,7 +767,6 @@ export class EventCoverageComponent {
 
     this.contractService.calculatePrice(priceData).subscribe({
       next: (response) => {
-        console.log('Réponse du serveur:', response);
         const prix = response.prixProduitCompagnieTTC + response.fraisDeCourtage;
         
         this.garantiePrices[garantieKey] = prix;
