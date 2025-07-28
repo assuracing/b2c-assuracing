@@ -382,6 +382,12 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  onStepChange(event: any) {
+    if (event.selectedIndex === 1) {
+      this.step2Page = 1;
+    }
+  }
   
   goToNextStep(): void {
     if (this.stepper && this.stepper.selectedIndex === 1) {
