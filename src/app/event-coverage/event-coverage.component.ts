@@ -400,12 +400,18 @@ export class EventCoverageComponent {
 
   goToNextStep(): void {
     if (this.stepper && this.stepper.selectedIndex === 2) {
+
       const birthDate = this.personalForm?.get('birthdate')?.value;
       const trackdayForm = this.trackdayForm;
       
       if (birthDate && trackdayForm) {
         const age = this.calculateAge(new Date(birthDate));
         const role = trackdayForm.get('role')?.value;
+        if(this.isMinor()) {
+          console.log(this.isMinor())
+          this.step2Page = 2;
+          return;
+        }
         
         if (age < 16 && (role === 'pilote' || role === 'passager')) {
           this.dialog.open(AgeRestrictionDialogComponent, {
