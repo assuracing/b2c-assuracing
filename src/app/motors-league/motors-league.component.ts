@@ -267,6 +267,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return age < 18;
   }
 
+  isBetween16And18(): boolean {
+    const birthDate = this.personalForm.get('birthdate')?.value;
+    if (!birthDate) return false;
+    const age = this.calculateAge(birthDate);
+    return age >= 16 && age < 18;
+  }
+
   getSummaryData(): any {
     return {
       personalInfo: {
@@ -396,11 +403,11 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       if (birthDate) {
         const age = this.calculateAge(new Date(birthDate));
 
-        if(this.isMinor()) {
+        if(this.isBetween16And18()) {
           this.step2Page = 2;
           return;
         }
-        
+
         if (age < 16) {
           this.dialog.open(AgeRestrictionDialogComponent, {
             width: '450px',
