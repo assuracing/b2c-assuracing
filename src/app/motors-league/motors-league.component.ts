@@ -24,13 +24,15 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { Router } from '@angular/router';
+import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface Contract {
   selectedCircuit: string;
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: string[];
-  c: {
+  c: {  
     adresse: string;
     complementadresse: string;
     civilite: string;
@@ -99,7 +101,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private matSnackBar: MatSnackBar,
     private envService: EnvironmentService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -182,17 +185,17 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       verificationCode: ['', Validators.required]
     });
     this.personalForm = this.fb.group({
-      civility: ['', Validators.required],
-      firstname: ['', [Validators.required, Validators.minLength(2)]],
-      lastname: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: '',
-      address: ['', Validators.required],
+      civility: ['' , Validators.required],
+      firstname: ['', [ Validators.required, Validators.minLength(2)]],
+      lastname: ['', [ Validators.required, Validators.minLength(2)]],
+      email: ['', [ Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      address: ['' , Validators.required],
       addressComplement: '',
-      postalCode: '',
+      postalCode: ['', Validators.required],
       city: ['', Validators.required],
-      birthdate: ['', Validators.required],
-      nationality: '',
+      birthdate: ['' , Validators.required],
+      nationality: ['' , Validators.required],
       country: 'France'
     });
 
@@ -262,6 +265,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     if (!birthDate) return false;
     const age = this.calculateAge(birthDate);
     return age < 18;
+  }
+
+  isBetween16And18(): boolean {
+    const birthDate = this.personalForm.get('birthdate')?.value;
+    if (!birthDate) return false;
+    const age = this.calculateAge(birthDate);
+    return age >= 16 && age < 18;
   }
 
   getSummaryData(): any {
@@ -379,11 +389,36 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  onStepChange(event: any) {
+    if (event.selectedIndex === 1) {
+      this.step2Page = 1;
+    }
+  }
   
   goToNextStep(): void {
-    if (this.isMinor()) {
-      this.step2Page = 2;
-    } else {
+    if (this.stepper && this.stepper.selectedIndex === 1) {
+      const birthDate = this.personalForm?.get('birthdate')?.value;
+      
+      if (birthDate) {
+        const age = this.calculateAge(new Date(birthDate));
+
+        if(this.isBetween16And18()) {
+          this.step2Page = 2;
+          return;
+        }
+
+        if (age < 16) {
+          this.dialog.open(AgeRestrictionDialogComponent, {
+            width: '450px',
+            disableClose: true,
+            data: { role: '' }
+          });
+          return;
+        }
+      }
+    }
+    if (this.stepper) {
       this.stepper.next();
     }
   }
