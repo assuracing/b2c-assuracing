@@ -2,19 +2,21 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
 
 export interface AgeRestrictionDialogData {
-  role: 'pilote' | 'passager';
+  role: 'pilote' | 'passager' | '';
 }
 
 @Component({
   selector: 'app-age-restriction-dialog',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, CommonModule],
   template: `
     <h2 mat-dialog-title>Âge minimum requis</h2>
     <mat-dialog-content>
-      <p>Vous devez avoir au moins 16 ans pour souscrire en tant que {{ data.role }}.</p>
+      <p *ngIf="data.role !== ''">Vous devez avoir au moins 16 ans pour souscrire en tant que {{ data.role }}.</p>
+      <p *ngIf="data.role === ''">Vous devez avoir au moins 16 ans pour souscrire à la Motors League.</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Compris</button>
