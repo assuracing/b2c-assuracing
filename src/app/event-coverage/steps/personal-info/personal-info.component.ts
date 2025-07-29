@@ -1,10 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { switchMap } from 'rxjs/operators';
+import { of, Subscription, debounceTime, distinctUntilChanged, fromEvent } from 'rxjs';
 import { UserService } from '../../../services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, debounceTime, distinctUntilChanged, fromEvent } from 'rxjs';
 import { EmailExistsDialogComponent } from './email-exists-dialog.component';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -102,6 +103,8 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   filteredCountries: string[] = [];
   private _allCountries: string[] = [];
   private checkEmailSub?: Subscription;
+  private subscription = new Subscription();
+
 
   constructor(
     private fb: FormBuilder, 
@@ -114,11 +117,45 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._allCountries = [...this.countries];
     this.filteredCountries = [...this.countries];
-    this.userService.user$.subscribe(user => {
-      this.updateLockFields(user);
-    });
-    window.addEventListener('storage', () => this.updateLockFields(this.userService.getUser()));
+    
+      
+    if (this.userService.isLoggedIn()) {
 
+      this.form.get('email')?.disable();
+      this.form.get('firstname')?.disable();
+      this.form.get('lastname')?.disable();
+
+        this.subscription.add(
+          this.userService.getAccount().pipe(
+            switchMap((account: any) => account?.id 
+              ? this.userService.getAdherentId().pipe(
+                  switchMap(() => this.userService.getAdherentInfo())
+                )
+              : of(null)
+            )
+          ).subscribe((adherent: any) => {
+            if (adherent) {
+              if(adherent.user['login']) this.form.get('email')?.setValue(adherent.user['login']);
+              if(adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
+              if(adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
+              if(adherent.dateNaissance) this.form.get('birthdate')?.setValue(adherent.dateNaissance);
+              if(adherent.telPortable) this.form.get('phone')?.setValue(adherent.telPortable);
+              if(adherent.adresse) this.form.get('address')?.setValue(adherent.adresse);
+              if(adherent.codepostal) this.form.get('postalCode')?.setValue(adherent.codepostal);
+              if(adherent.ville) this.form.get('city')?.setValue(adherent.ville);
+              if(adherent.pays) this.form.get('country')?.setValue(adherent.pays);
+              if(adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
+              if(adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
+            }
+          })
+        );
+      }
+      else {
+        this.form.get('email')?.enable();
+        this.form.get('firstname')?.enable();
+        this.form.get('lastname')?.enable();
+      }
+    
     this.setupPostalCodeInput();
 
     this.form.get('country')?.valueChanges.subscribe(country => {
@@ -136,6 +173,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.subscription.unsubscribe();
     this.postalCodeSubs.unsubscribe();
   }
 
@@ -215,23 +253,6 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
           searchInput.focus();
         }
       });
-    }
-  }
-
-  updateLockFields(userParam?: any) {
-    const isLogged = this.userService.isLoggedIn();
-    const user = userParam || this.userService.getUser();
-    if (isLogged && user) {
-      if (this.form.get('email')?.value !== user.email) this.form.get('email')?.setValue(user.email);
-      if (this.form.get('firstname')?.value !== user.firstName) this.form.get('firstname')?.setValue(user.firstName);
-      if (this.form.get('lastname')?.value !== user.lastName) this.form.get('lastname')?.setValue(user.lastName);
-      this.form.get('email')?.disable({ emitEvent: false });
-      this.form.get('firstname')?.disable({ emitEvent: false });
-      this.form.get('lastname')?.disable({ emitEvent: false });
-    } else {
-      this.form.get('email')?.enable({ emitEvent: false });
-      this.form.get('firstname')?.enable({ emitEvent: false });
-      this.form.get('lastname')?.enable({ emitEvent: false });
     }
   }
 
