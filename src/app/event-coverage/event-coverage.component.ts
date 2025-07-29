@@ -313,23 +313,33 @@ export class EventCoverageComponent {
       identificationNumber: [''],
       immatNumber: [''],
       hasCasm: [''],
+      hasPermisB: [''],
       chassisNumber: [''],
       serieNumber: [''],
-      titreConduite: [''],
+      titreConduite: ['', Validators.required],
       titreNumber: ['']
     });
 
     this.vehicleForm.get('hasCasm')?.valueChanges.subscribe(value => {
       if(value === 'Oui') {
-        console.log("Oui");
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
         this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
         this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       } else {
-        console.log("Non");
-        this.vehicleForm.get('titreConduite')?.setValidators([Validators.required]);
+        this.vehicleForm.get('titreNumber')?.clearValidators();
+        this.vehicleForm.get('titreNumber')?.setValue('');
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
+      }
+    });
+
+    this.vehicleForm.get('hasPermisB')?.valueChanges.subscribe(value => {
+      if(value === 'Oui') {
+        this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
+        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
+      } else {
         this.vehicleForm.get('titreNumber')?.clearValidators();
         this.vehicleForm.get('titreNumber')?.setValue('');
         this.vehicleForm.get('titreNumber')?.updateValueAndValidity();

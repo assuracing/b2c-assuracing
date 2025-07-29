@@ -75,7 +75,7 @@
         <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" >
     </div>
 
-    <div class="form-group" *ngIf="this.userAge && this.userAge >= 18 && this.vehicleType === 'moto' || this.vehicleType === 'auto'">
+    <div class="form-group" *ngIf="this.userAge && this.userAge >= 18 && this.vehicleType === 'moto'">
         <label for="titreConduite"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Titre de conduite</mat-label>
@@ -105,7 +105,20 @@
       </div>
     </div>
 
-    <div class="form-group" *ngIf="form.get('hasCasm')?.value === 'Oui' && this.vehicleType === 'moto' && this.userAge && this.userAge < 18 || this.vehicleType === 'auto'">
+    
+    <div class="radio" *ngIf="this.vehicleType === 'auto'">
+      <label> <strong>Possédez-vous le permis B ?</strong></label>
+      <div class="radio-group">
+          <label for="hasPermisB">Oui</label>
+          <input type="radio" id="hasPermisB" formControlName="hasPermisB" value="Oui">
+      </div>
+      <div class="radio-group">
+          <label for="hasntPermisB">Non</label>
+          <input type="radio" id="hasntPermisB" formControlName="hasPermisB" value="Non">
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="form.get('hasCasm')?.value === 'Oui' && this.vehicleType === 'moto' && this.userAge && this.userAge < 18 || form.get('hasPermisB')?.value === 'Oui' && this.vehicleType === 'auto'">
         <label for="titreNumber">Nº titre</label>
         <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" >
     </div>
