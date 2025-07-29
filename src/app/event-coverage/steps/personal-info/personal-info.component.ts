@@ -121,9 +121,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       
     if (this.userService.isLoggedIn()) {
 
-      this.form.get('email')?.disable();
-      this.form.get('firstname')?.disable();
-      this.form.get('lastname')?.disable();
+      // this.form.get('email')?.disable();
+      // this.form.get('firstname')?.disable();
+      // this.form.get('lastname')?.disable();
 
         this.subscription.add(
           this.userService.getAccount().pipe(
