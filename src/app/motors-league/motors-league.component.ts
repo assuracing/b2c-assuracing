@@ -416,10 +416,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
           });
           return;
         }
+        else if(age >= 16 && age < 18){
+          this.step2Page = 2;
+          return;
+        }
+        else {
+          this.stepper.next();
+        }
       }
-    }
-    if (this.stepper) {
-      this.stepper.next();
     }
   }
 

@@ -436,12 +436,8 @@ export class EventCoverageComponent {
       if (birthDate && trackdayForm) {
         const age = this.calculateAge(new Date(birthDate));
         const role = trackdayForm.get('role')?.value;
-        if(this.isMinor()) {
-          this.step2Page = 2;
-          return;
-        }
-        
-        if (age < 16 && (role === 'pilote' || role === 'passager')) {
+
+        if (age < 16 && role) {
           this.dialog.open(AgeRestrictionDialogComponent, {
             width: '450px',
             disableClose: true,
@@ -449,10 +445,14 @@ export class EventCoverageComponent {
           });
           return;
         }
+        else if(age >= 16 && age < 18){
+          this.step2Page = 2;
+          return;
+        }
+        else {
+          this.stepper.next();
+        }
       }
-    }
-    if (this.stepper) {
-      this.stepper.next();
     }
   }
 
