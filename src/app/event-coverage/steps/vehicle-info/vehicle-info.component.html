@@ -75,7 +75,7 @@
         <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" >
     </div>
 
-    <div class="form-group">
+    <div class="form-group" *ngIf="this.userAge && this.userAge >= 18 && this.vehicleType === 'moto' || this.vehicleType === 'auto'">
         <label for="titreConduite"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Titre de conduite</mat-label>
@@ -93,7 +93,19 @@
         </mat-icon>
     </div>
 
-    <div class="form-group">
+    <div class="radio" *ngIf="this.userAge && this.userAge < 18 && this.vehicleType === 'moto'">
+      <label> <strong>Possédez-vous le CASM ?</strong></label>
+      <div class="radio-group">
+          <label for="hasCasm">Oui</label>
+          <input type="radio" id="hasCasm" formControlName="hasCasm" value="Oui">
+      </div>
+      <div class="radio-group">
+          <label for="hasntCasm">Non</label>
+          <input type="radio" id="hasntCasm" formControlName="hasCasm" value="Non">
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="form.get('hasCasm')?.value === 'Oui'">
         <label for="titreNumber">Nº titre</label>
         <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" >
     </div>
