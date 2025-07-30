@@ -31,6 +31,7 @@ import { VehicleService } from '../services/vehicle.service';
 import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
+import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
 
 interface Circuit {
   id: number;
@@ -453,6 +454,37 @@ export class EventCoverageComponent {
           this.stepper.next();
         }
       }
+    }
+  }
+
+  goToSummaryFromVehicle(): void {
+    const birthDate = this.personalForm?.get('birthdate')?.value;
+    if(!birthDate) return;
+    const age = this.calculateAge(new Date(birthDate));
+    const driveLicenseType = this.vehicleForm.get('hasPermisB')?.value ? 'Permis B' : 'CASM';
+    console.log("DriveLicenseType"  , driveLicenseType);
+    console.log("Age", age);
+    console.log("HasPermisB", this.vehicleForm.get('hasPermisB')?.value);
+    console.log("HasCasm", this.vehicleForm.get('hasCasm')?.value);
+    console.log("VehicleType", this.vehicleForm.get('type')?.value);
+    if(age > 16 && age < 18 && driveLicenseType === 'CASM' && this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('hasCasm')?.value === 'Non'){
+      this.dialog.open(DriveLicenseAgeRestrictionDialogComponent, {
+        width: '450px',
+        disableClose: true,
+        data: { driveLicenseType: driveLicenseType, ages: [16, 18] }
+      });
+      return;
+    }
+    else if(age > 19 && driveLicenseType === 'Permis B' && this.vehicleForm.get('type')?.value === 'auto' && this.vehicleForm.get('hasPermisB')?.value === 'Non'){
+      this.dialog.open(DriveLicenseAgeRestrictionDialogComponent, {
+        width: '450px',
+        disableClose: true,
+        data: { driveLicenseType: driveLicenseType, ages: [19] }
+      });
+      return;
+    }
+    else {
+      this.stepper.next();
     }
   }
 

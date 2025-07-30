@@ -203,10 +203,11 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
         return 'Le permis B est obligatoire pour les personnes de plus de 19 ans';
       }
     } else if (this.vehicleType === 'moto') {
-      if (this.userAge < 16) {
-        return 'Le permis n\'est pas accessible aux personnes de moins de 16 ans';
-      } else {
-        return 'Le permis A ou le CASM est obligatoire pour les personnes de plus de 16 ans';
+      if(this.userAge >= 16 && this.userAge < 18){
+        return 'Le CASM est obligatoire pour les personnes de 16 à 18 ans';
+      }
+      else if(this.userAge >= 18){
+        return 'Le permis A ou le CASM est obligatoire pour les personnes de plus de 18 ans';
       }
     }
     return '';
