@@ -94,7 +94,14 @@
     </div>
 
     <div class="radio" *ngIf="this.userAge && this.userAge < 18 && this.vehicleType === 'moto'">
-      <label> <strong>Possédez-vous le CASM ?</strong></label>
+      <label> <strong>Possédez-vous le CASM ?</strong>
+        <mat-icon 
+        *ngIf="showDriveLicenseTooltip"
+        [matTooltip]="getDriveLicenseTooltipMessage()"
+        class="info-icon">
+        info
+      </mat-icon>
+      </label>
       <div class="radio-group">
           <label for="hasCasm">Oui</label>
           <input type="radio" id="hasCasm" formControlName="hasCasm" value="Oui">
@@ -107,7 +114,14 @@
 
     
     <div class="radio" *ngIf="this.vehicleType === 'auto'">
-      <label> <strong>Possédez-vous le permis B ?</strong></label>
+      <label> <strong>Possédez-vous le permis B ?</strong>
+      <mat-icon 
+      *ngIf="showDriveLicenseTooltip"
+      [matTooltip]="getDriveLicenseTooltipMessage()"
+      class="info-icon">
+      info
+    </mat-icon>
+      </label>
       <div class="radio-group">
           <label for="hasPermisB">Oui</label>
           <input type="radio" id="hasPermisB" formControlName="hasPermisB" value="Oui">
