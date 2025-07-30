@@ -83,7 +83,7 @@
         </app-vehicle-info>
         <div class="mt-4">
           <button mat-button matStepperPrevious>Retour</button>
-          <button mat-button matStepperNext [disabled]="!vehicleForm.valid">Continuer</button>
+          <button mat-button (click)="goToSummaryFromVehicle()" [disabled]="!vehicleForm.valid">Continuer</button>
         </div>
       </form>
     </mat-step>
