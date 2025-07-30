@@ -45,7 +45,7 @@ interface ProtectionLevel {
     MatProgressSpinnerModule
   ],
   templateUrl: './event-coverage-options.component.html',
-  styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss']
+  styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss',  '../../../app.component.scss']
 })
 export class EventCoverageOptionsComponent {
   @Input() isCalculatingPrice: boolean = false;
@@ -277,6 +277,7 @@ export class EventCoverageOptionsComponent {
 
   @Input() trackdayForm!: FormGroup;
   @Input() organizerId: string | null = null;
+  @Input() vehicleType?: string;
   
   public initializeProtectionPrices(): void {
     if (!this.trackdayForm) {

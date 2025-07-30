@@ -33,6 +33,7 @@
           [disableIntempAnnul]="isEventDateLessThan3Weeks"
           (reservationAmountChanged)="calculateIAIPrices()"
           [defenseRecoursPrice]="defenseRecoursPrice"
+          [vehicleType]="trackdayForm.get('vehicleType')?.value"
           (sectionInProgress)="onSectionInProgress($event)">
         </app-event-coverage-options>
         <div class="mt-4">
