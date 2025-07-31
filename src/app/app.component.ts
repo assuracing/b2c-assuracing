@@ -4,10 +4,11 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { ToastComponent } from './toast';
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, FormsModule, HttpClientModule],
+  imports: [RouterOutlet, NavbarComponent, FormsModule, HttpClientModule, ToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

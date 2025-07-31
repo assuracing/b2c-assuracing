@@ -3,8 +3,8 @@ import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -18,7 +18,7 @@ export class ResetPasswordComponent {
   email: string = '';
   resetKey: string | null = null;
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private matSnackBar: MatSnackBar, private router: Router) {}
+  constructor(private userService: UserService, private route: ActivatedRoute, private toastService: ToastService, private router: Router) {}
 
   ngOnInit(): void {
     this.resetKey = this.route.snapshot.queryParamMap.get('key');
@@ -26,19 +26,11 @@ export class ResetPasswordComponent {
 
   onSubmit() {
     if (this.password !== this.confirmPassword) {
-      this.matSnackBar.open('Les mots de passe ne correspondent pas', 'Fermer', {
-        duration: 5000,
-        verticalPosition: 'top',
-        horizontalPosition: 'center'
-      });
+      this.toastService.error('Les mots de passe ne correspondent pas');  
       return;
     }
     this.userService.resetPassword(this.resetKey!, this.password).subscribe(() => {
-      this.matSnackBar.open('Mot de passe réinitialisé avec succès', 'Fermer', {
-        duration: 5000,
-        verticalPosition: 'top',
-        horizontalPosition: 'center'
-      });
+      this.toastService.success('Mot de passe réinitialisé avec succès');
       this.router.navigate(['/login']);
     });
   }

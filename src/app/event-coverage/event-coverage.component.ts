@@ -19,7 +19,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ToastService } from '../services/toast.service';
 import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
 import { VehicleInfoComponent } from './steps/vehicle-info/vehicle-info.component';
 import { PersonalInfoComponent } from './steps/personal-info/personal-info.component';
@@ -165,7 +166,7 @@ export class EventCoverageComponent {
     private contractService: ContractService,
     private http: HttpClient,
     private userService: UserService,
-    private matSnackBar: MatSnackBar,
+    private toastService: ToastService,
     private dialog: MatDialog,
     private router: Router,
     private envService: EnvironmentService
@@ -615,10 +616,6 @@ export class EventCoverageComponent {
         
         this.isCalculatingPrice = false;
         
-        this.matSnackBar.open(`Prix calculé avec succès : ${totalTTC.toFixed(2)} €`, 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
       },
     });
   }
@@ -846,10 +843,7 @@ export class EventCoverageComponent {
     this.userService.sendVerificationEmail(email).subscribe({
       next: () => {
         this.stepper.next();
-        this.matSnackBar.open('Code de verification envoyé, ce code devra etre renseigné à la dernière étape', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.info('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
       },
       error: (err) => {
         console.error('Erreur lors de l envoi du code de verification', err);
@@ -862,17 +856,11 @@ export class EventCoverageComponent {
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.matSnackBar.open('Code de verification validé', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.success('Code de verification validé');
         this.onSubmit();
       },
       error: (err) => {
-        this.matSnackBar.open('Code de verification invalide', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.error('Code de verification invalide');
         console.error('Erreur lors de la validation du code de verification', err);
       }
     });
