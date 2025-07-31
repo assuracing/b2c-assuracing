@@ -647,7 +647,12 @@ export class EventCoverageComponent {
   }
 
   onSubmit(): void {
-    const forms = [this.personalForm, this.vehicleForm, this.eventCoverageForm];
+    const forms = [this.personalForm, this.eventCoverageForm];
+    
+    if (this.trackdayForm.get('role')?.value === 'pilote') {
+      forms.push(this.vehicleForm);
+    }
+    
     const allFormsValid = forms.every(form => form?.valid);
     
     if (!allFormsValid) {
