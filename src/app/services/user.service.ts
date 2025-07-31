@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { EnvironmentService } from '../core/services/environment.service';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 export interface User {
   authorities: any;
@@ -47,17 +49,51 @@ export class UserService {
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<number>(`${this.apiUrl}/api/adherents/by-user/` + this.userSubject.value?.id, { headers }).pipe(
-      tap(adherentId => this.adherentIdSubject.next(adherentId))
+    return this.http.get<any>(`${this.apiUrl}/api/adherents/by-user/` + this.userSubject.value?.id, { headers }).pipe(
+      tap(adherent => this.adherentIdSubject.next(adherent.id)),
+      map((adherent: any) => adherent.id)
     );
   }
 
-  getAdherentInfo() : Observable<User> {
+  getAdherentInfo(): Observable<any> {
     const token = localStorage.getItem('auth_token');
     const headers = {
       'Authorization': `Bearer ${token}`
     };
-    return this.http.get<User>(`${this.apiUrl}/api/adherents/` + this.adherentIdSubject.value, { headers });
+    const adherentId = this.adherentIdSubject.value;
+    
+    const getUserInfo = () => this.getAccount().pipe(
+      map(user => ({
+        id: user.id,
+        nom: user.lastName || '',
+        prenom: user.firstName || '',
+        email: user.email || '',
+        isBasicInfo: true
+      }))
+    );
+
+    const getAdherentInfo = (id: number) => this.http.get<any>(`${this.apiUrl}/api/adherents/${id}`, { headers }).pipe(
+      catchError(error => {
+        if (error.status === 404) {
+          return getUserInfo();
+        }
+        return throwError(error);
+      })
+    );
+
+    if (adherentId) {
+      return getAdherentInfo(adherentId);
+    }
+
+    return this.getAdherentId().pipe(
+      switchMap(id => getAdherentInfo(id)),
+      catchError(error => {
+        if (error.status === 404) {
+          return getUserInfo();
+        }
+        return throwError(error);
+      })
+    );
   }
 
   checkEmail(email: string, login: string): Observable<boolean> {
