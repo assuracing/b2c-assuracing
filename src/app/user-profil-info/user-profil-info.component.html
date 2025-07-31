@@ -1,13 +1,26 @@
-<div *ngIf="adherentInfo; else loading">
+<div *ngIf="!isLoading; else loading">
   <h2>Mon profil</h2>
-  <ul class="user-info-list">
-    <li><strong>Nom :</strong> {{ adherentInfo.nom }}</li>
-    <li><strong>Prénom :</strong> {{ adherentInfo.prenom }}</li>
-    <li><strong>Adresse :</strong> {{ adherentInfo.adresse }}</li>
-    <li><strong>Email :</strong> {{ adherentInfo.user?.login }}</li>
-    <li><strong>Numéro de téléphone :</strong> {{ adherentInfo.telPortable }}</li>
-  </ul>
+  <div *ngIf="userInfo">
+    <ul class="user-info-list">
+      <li><strong>Nom :</strong> {{ userInfo.nom }}</li>
+      <li><strong>Prénom :</strong> {{ userInfo.prenom }}</li>
+      <li><strong>Email :</strong> {{ hasAdherentInfo ? userInfo.user.login : (userInfo.email || 'Non renseigné') }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Numéro de téléphone :</strong> {{ userInfo.telPortable || 'Non renseigné' }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Date de naissance :</strong> {{ (userInfo.dateNaissance | date: 'dd MMMM yyyy') || 'Non renseignée' }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Date d'inscription :</strong> {{ (userInfo.dateinscription | date: 'dd MMMM yyyy') || 'Non renseignée' }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Adresse :</strong> {{ userInfo.adresse || 'Non renseignée' }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Ville :</strong> {{ userInfo.ville || 'Non renseignée' }}</li>
+      <li *ngIf="hasAdherentInfo"><strong>Code postal :</strong> {{ userInfo.codepostal || 'Non renseigné' }}</li>
+    </ul>
+  </div>
+  
+  <div *ngIf="!userInfo" class="alert alert-warning">
+    Impossible de charger les informations du profil.
+  </div>
 </div>
+
 <ng-template #loading>
-  <p>Chargement des informations...</p>
+  <div class="loading-container">
+    <p>Chargement des informations en cours...</p>
+  </div>
 </ng-template>
