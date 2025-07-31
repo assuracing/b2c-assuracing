@@ -26,6 +26,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from '../services/toast.service';
 
 interface Contract {
   selectedCircuit: string;
@@ -103,6 +104,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private envService: EnvironmentService,
     private router: Router,
     private dialog: MatDialog,
+    private toastService: ToastService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -432,10 +434,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.userService.sendVerificationEmail(email).subscribe({
       next: () => {
         this.stepper.next();
-        this.matSnackBar.open('Code de verification envoyé, ce code devra etre renseigné à la dernière étape', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
       },
       error: (err) => {
         console.error('Erreur lors de l envoi du code de verification', err);
@@ -448,19 +447,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.matSnackBar.open('Code de verification validé', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.success('Code de verification validé');
         this.onSubmit();
       },
       error: (err) => {
-        this.matSnackBar.open('Code de verification invalide', 'Fermer', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+        this.toastService.error('Code de verification invalide');
         console.error('Erreur lors de la validation du code de verification', err);
       }
     });
   }
-} 
+}
