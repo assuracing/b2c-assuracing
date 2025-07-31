@@ -101,23 +101,29 @@
           <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
         </div>
 
-        <div class="summary-section">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
             <div class="vehicle-info">
               <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
             </div>
         </div>
 
-        <div class="summary-section">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
           <div class="vehicle-info">
             <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
           </div>
       </div>
         
-        <div class="summary-section">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
             <div class="vehicle-info">
               <p><strong>Véhicule:</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
             </div>
           </div>
+
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'passager'" class="summary-section">
+          <div class="vehicle-info">
+            <p><strong>Véhicule:</strong> {{formatVehicleType(trackdayForm.get('vehicleType')?.value)}}</p>
+          </div>
+        </div>
 
         </div>
       <div class="coverage-summary">
