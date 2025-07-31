@@ -513,8 +513,8 @@ export class EventCoverageComponent {
 
   formatVehicleType(type: string): string {
     const types: { [key: string]: string } = {
-      'moto': 'MOTO',
-      'auto': 'AUTO'
+      'moto': 'Moto',
+      'auto': 'Auto'
     };
     return types[type] || type;
   }
