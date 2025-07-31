@@ -862,11 +862,11 @@ export class EventCoverageComponent {
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.stepper.next();
         this.matSnackBar.open('Code de verification validé', 'Fermer', {
           duration: 5000,
           verticalPosition: 'top'
         });
+        this.onSubmit();
       },
       error: (err) => {
         this.matSnackBar.open('Code de verification invalide', 'Fermer', {
