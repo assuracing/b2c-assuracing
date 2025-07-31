@@ -526,8 +526,11 @@ export class EventCoverageOptionsComponent {
   }
 
   validateSection(section: 'iai' | 'protectionPilote' | 'responsabiliteRecours'): void {
+    this.sectionInProgress.emit(false);
+    this.activeSection = null;
+    
     let shouldValidate = true;
-
+    
     if (section === 'iai') {
       shouldValidate = !!(
         this.form.get('intemperies')?.value ||
@@ -545,18 +548,14 @@ export class EventCoverageOptionsComponent {
       if (section === 'iai') this.wasIAIValidated = false;
       if (section === 'protectionPilote') this.wasProtectionPiloteValidated = false;
       if (section === 'responsabiliteRecours') this.wasResponsabiliteRecoursValidated = false;
-      this.activeSection = null;
       return;
     }
 
     this.validatedSections[section] = true;
-    this.activeSection = null;
-    this.sectionInProgress.emit(false);
     
     if (section === 'iai') this.wasIAIValidated = true;
     if (section === 'protectionPilote') this.wasProtectionPiloteValidated = true;
     if (section === 'responsabiliteRecours') this.wasResponsabiliteRecoursValidated = true;
-    this.activeSection = null;
   }
 
   onCartClick(section: 'iai' | 'protectionPilote' | 'responsabiliteRecours'): void {
