@@ -1,22 +1,36 @@
-<table>
-    <thead>
-        <tr>
-            <th>Date de roulage</th>
-            <th>Date d'effet du contrat</th>
-            <th>Entreprise</th>
-            <th>Contrat</th>
-            <th>Circuit</th>
-            <th>Validé</th>
+<mat-form-field>
+    <mat-label>Filtres</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher..." #input>
+</mat-form-field>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="dateAdhesion">
+            <th mat-header-cell *matHeaderCellDef>Date de roulage</th>
+            <td mat-cell *matCellDef="let element">{{element.dateAdhesion}}</td>
+        </ng-container>
+        <ng-container matColumnDef="dateSaisie">
+            <th mat-header-cell *matHeaderCellDef>Date d'effet du contrat</th>
+            <td mat-cell *matCellDef="let element">{{element.dateSaisie}}</td>
+        </ng-container>
+        <ng-container matColumnDef="adherentnomCliententreprise">
+            <th mat-header-cell *matHeaderCellDef>Entreprise</th>
+            <td mat-cell *matCellDef="let element">{{element.adherentnomCliententreprise}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nomcontrat">
+            <th mat-header-cell *matHeaderCellDef>Contrat</th>
+            <td mat-cell *matCellDef="let element">{{element.nomcontrat}}</td>
+        </ng-container>
+        <ng-container matColumnDef="circuit">
+            <th mat-header-cell *matHeaderCellDef>Circuit</th>
+            <td mat-cell *matCellDef="let element">{{element.circuit}}</td>
+        </ng-container>
+        <ng-container matColumnDef="valide">
+            <th mat-header-cell *matHeaderCellDef>Validé</th>
+            <td mat-cell *matCellDef="let element"> <ng-container *ngIf="element.valide">Oui</ng-container><ng-container *ngIf="!element.valide">Non</ng-container></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['dateAdhesion', 'dateSaisie', 'adherentnomCliententreprise', 'nomcontrat', 'circuit', 'valide']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['dateAdhesion', 'dateSaisie', 'adherentnomCliententreprise', 'nomcontrat', 'circuit', 'valide'];"></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="6">Aucun contrat trouvé pour "{{input.value}}"</td>
         </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let contract of contracts">
-            <td>{{ contract.dateAdhesion }}</td>
-            <td>{{ contract.dateSaisie }}</td>
-            <td>{{ contract.adherentnomCliententreprise }}</td>
-            <td>{{ contract.nomcontrat }}</td>
-            <td>{{ contract.circuit }}</td>
-            <td>{{ contract.valide}}</td>
-        </tr>
-    </tbody>
 </table>
+<mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5"  [length]="contracts.length" aria-label="Selectionner une page"></mat-paginator>
