@@ -4,18 +4,15 @@
        class="coverage-option"
        [class.selected]="form.get('coverageLevel')?.value === level"
        (click)="onProtectionLevelChange(level)">
-    <div class="level">Niveau {{ level }}</div>
+    <div class="level">Niveau {{ level }} <br> <span style="color: #2196f3">{{ PROTECTION_LEVELS[level].price }}€</span></div>
     <div class="coverage-details">
       <div class="coverage-item">
-        <span class="label">Décès :</span>
-        <span class="amount">{{ PROTECTION_LEVELS[level].death | number }} €</span>
+        <span class="label">Décès : {{ PROTECTION_LEVELS[level].death | number }} €</span>
       </div>
       <div class="coverage-item">
-        <span class="label">Invalidité :</span>
-        <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
+        <span class="label">Invalidité : {{ PROTECTION_LEVELS[level].disability | number }} €</span>
       </div>
     </div>
-    <div class="price">{{ PROTECTION_LEVELS[level].price }}€</div>
   </div>
 </div>
 

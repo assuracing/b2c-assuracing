@@ -37,6 +37,8 @@
     color: #333;
     margin-bottom: 10px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
   }
 
   .coverage-details {
@@ -44,7 +46,7 @@
 
     .coverage-item {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       margin-bottom: 5px;
 
       .label {

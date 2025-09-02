@@ -1,0 +1,99 @@
+.profile-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.profile-card {
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+mat-card-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  mat-card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  button {
+    margin-left: auto;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 200px;
+
+  &.full-width {
+    flex: 1 1 100%;
+  }
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+
+  button {
+    min-width: 200px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #666;
+}
+
+input[readonly] {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+mat-error {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+mat-datepicker-toggle {
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-field {
+    width: 100%;
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}

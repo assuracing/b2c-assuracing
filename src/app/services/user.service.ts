@@ -143,4 +143,12 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/api/getAllContrats`, { headers });
   }
 
+  updateUserProfile(profileData: any): Observable<any> {
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.put(`${this.apiUrl}/api/adherents`, profileData, { headers });
+  }
 }

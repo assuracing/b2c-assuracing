@@ -333,11 +333,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formatISODate = (date: string): string => {
+    const formatISODate = (date: string | Date): string => {
       if (!date) return '';
-      const d = new Date(date);
+      const d = date instanceof Date ? date : new Date(date);
       if (isNaN(d.getTime())) return '';
-      return d.toISOString().split('T')[0];
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     };
 
     const contract: Contract = {
