@@ -18,7 +18,7 @@
           <mat-icon 
             *ngIf="showVehicleTypeTooltip"
             matTooltip="Pour changer le type de véhicule, remontez à l'étape 1"
-            class="info-icon">
+            class="info-bulle">
             info
           </mat-icon>
     </div>
@@ -45,7 +45,7 @@
     </div>
 
     <div class="radio">
-        <label> <strong>Numéro d'identification</strong> <mat-icon class="info-icon" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
+        <label> <strong>Numéro d'identification</strong> <mat-icon class="info-bulle" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
         <div class="radio-group">
             <label for="immat">Immatriculation</label>
             <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
@@ -88,7 +88,7 @@
         <mat-icon 
           *ngIf="showDriveLicenseTooltip"
           [matTooltip]="getDriveLicenseTooltipMessage()"
-          class="info-icon">
+          class="info-bulle">
           info
         </mat-icon>
     </div>
@@ -98,7 +98,7 @@
         <mat-icon 
         *ngIf="showDriveLicenseTooltip"
         [matTooltip]="getDriveLicenseTooltipMessage()"
-        class="info-icon">
+        class="info-bulle">
         info
       </mat-icon>
       </label>
@@ -118,7 +118,7 @@
       <mat-icon 
       *ngIf="showDriveLicenseTooltip"
       [matTooltip]="getDriveLicenseTooltipMessage()"
-      class="info-icon">
+      class="info-bulle">
       info
     </mat-icon>
       </label>

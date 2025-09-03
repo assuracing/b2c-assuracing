@@ -171,7 +171,7 @@
       <div class="risk-details" *ngIf="activeSection === 'protectionPilote'">
         <p class="description">
           La garantie corporelle la plus complète du marché
-          <mat-icon class="info-icon" matTooltip="Notre Protection corporelle pilote comprend les garanties suivantes :&#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+          <mat-icon class="info-bulle" matTooltip="Notre Protection corporelle pilote comprend les garanties suivantes :&#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
             info
           </mat-icon>
         </p>
@@ -246,7 +246,7 @@
           <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true">Responsabilité Civile participants</mat-slide-toggle>
           <mat-icon 
           [matTooltip]="vehicleType === 'auto' ? 'Il est possible d\'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans' : 'Il est possible d\'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans'"
-          class="info-bulle">
+          class="info-bulle-blink">
           info
          </mat-icon>
           <p class="inclus" style="font-weight: normal; font-size: 12px; color: #1976d2; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
