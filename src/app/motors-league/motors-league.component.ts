@@ -71,7 +71,7 @@ interface Contract {
   selector: 'app-motors-league',
   imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
   templateUrl: './motors-league.component.html',
-  styleUrls: ['./motors-league.component.scss']
+  styleUrls: ['./motors-league.component.scss', '../app.component.scss']
 })
 export class MotorsLeagueComponent implements OnInit, OnDestroy {
   public nationalities: string[] = [
