@@ -1,38 +1,32 @@
-<!DOCTYPE html>
-<div class="accueil-container">
-
-  <div *ngIf="!userService.isLoggedIn()" class="options">
-
+<div *ngIf="!userService.isLoggedIn()" class="accueil-container">
+  <div class="options">
       <h2>Bienvenue sur notre plateforme</h2>
       <div class="carte" (click)="goToLogin()">
-        <h3>Déjà client ?</h3>
-        <p>Connectez-vous</p>
+          <h3>Déjà client ?</h3>
+          <p>Connectez-vous</p>
       </div>
-
       <div class="carte" (click)="goToGuaranteeChoice()">
-        <h3>Nouveau client ?</h3>
-        <p>Démarrez ici</p>
+          <h3>Nouveau client ?</h3>
+          <p>Démarrez ici</p>
       </div>
   </div>
+</div>
 
-  <div
-    *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER') && !userService.hasRole('ROLE_ADMIN')"
-    class="user-actions">
-    <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
-    <div class="actions-column">
-      <button (click)="goToUserContracts()" class="btn btn-test">
-        Mes contrats
-      </button>
-      <button (click)="goToGuaranteeChoice()" class="btn btn-test">
-        Souscrire un nouveau contrat
-      </button>
-      <button (click)="goToUserProfilInfo()" class="btn btn-test profile-btn">
-        <mat-icon style="vertical-align: middle; margin-right: 4px;">settings</mat-icon>
-        Mes informations personnelles
-      </button>
-    </div>
-  </div>
+<div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER') && !userService.hasRole('ROLE_ADMIN')"
+  class="container-app">
+  <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
+  <button (click)="goToUserContracts()" class="btn btn-test">
+      Mes contrats
+  </button>
+  <button (click)="goToGuaranteeChoice()" class="btn btn-test">
+      Souscrire un nouveau contrat
+  </button>
+  <button (click)="goToUserProfilInfo()" class="btn btn-test">
+      <mat-icon style="vertical-align: middle; margin-right: 4px;">settings</mat-icon>
+      Mes informations personnelles
+  </button>
+</div>
 
-  <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_ADMIN')">
-    <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
-  </div>
+<div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_ADMIN')">
+  <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
+</div>

@@ -15,7 +15,7 @@ body::after {
     background-position: center;
     background-size: 100% 100%;
     background-attachment: fixed;
-    opacity: 0.5;
+    opacity: 0.4;
   }
   
 .login-form {
@@ -106,18 +106,19 @@ body::after {
 
 .container-app {
     max-width: 30%;
-    height: 60%;
-    margin: 50px auto;
-    padding: 30px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-height: 60%;
+    margin: 5% auto;
+    padding: 2.5%;
     background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: center;  
-}
+}  
 
 @media (max-width: 1200px) {
     .container-app {
@@ -160,7 +161,7 @@ body::after {
 
 main {
     padding-top: 60px;
-  }
+}
   
 .info-bulle {
     font-size: 22px;
