@@ -7,7 +7,7 @@
 
 .accueil-container h2 {
     font-size: 2.5rem;
-    color: #333;
+    color: #fff;
     margin-bottom: 40px;
     font-weight: 300;
 }
@@ -45,26 +45,4 @@
     color: #7f8c8d;
     font-size: 1rem;
     margin: 0;
-}
-
-.body {
-    background-color: blue;
-}
-
-
-.user-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.actions-column {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-    margin-top: 16px;
-}
-.profile-btn mat-icon {
-    vertical-align: middle;
-    margin-right: 4px;
 }

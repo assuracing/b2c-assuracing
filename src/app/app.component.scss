@@ -1,3 +1,7 @@
+body {
+    font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
 body::after {
     content: "";
     position: fixed;
@@ -15,8 +19,8 @@ body::after {
     background-position: center;
     background-size: 100% 100%;
     background-attachment: fixed;
-    opacity: 0.5;
-  }
+    opacity: 0.4;
+}
   
 .login-form {
     max-width: 400px;
@@ -85,8 +89,38 @@ body::after {
 }
 
 .btn-test {
-    background-color: #02556e;
-    color: white;
+    align-items: center;
+    background-color: #ffffff;
+    border: 0;
+    border-radius: 100px;
+    box-sizing: border-box;
+    color: #02556e;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 20px;
+    max-width: 480px;
+    min-height: 40px;
+    min-width: 0px;
+    overflow: hidden;
+    padding: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+    touch-action: manipulation;
+    transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+
+    &:hover,
+    &:focus { 
+      background-color: darken(#02556e, 10%);
+      color: #ffffff;
+    }
 }
 
 .forgot-password {
@@ -106,17 +140,26 @@ body::after {
 
 .container-app {
     max-width: 30%;
-    height: 60%;
-    margin: 50px auto;
-    padding: 30px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    min-height: 60%;
+    margin: 5% auto;
+    padding: 2.5%;
+    background-color: #02556e;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 208, 208, 0.1);
+    text-align: center;
+    position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: center;  
+}
+
+.text-light {
+    color: #FFFFFF; 
+}
+  
+.text-dark {
+    color: #262626;
 }
 
 @media (max-width: 1200px) {
@@ -138,6 +181,10 @@ body::after {
         margin: 30px auto;
         padding: 20px;
     }
+    .btn-test {
+        min-width: 120px;
+        padding: 0 25px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -150,9 +197,10 @@ body::after {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 480px){
     .container-app {
-        max-width: 95%;
+        max-width: 90%;
+        height: 88%;
         margin: 10px auto;
         padding: 10px;
     }
@@ -160,7 +208,7 @@ body::after {
 
 main {
     padding-top: 60px;
-  }
+}
   
 .info-bulle {
     font-size: 22px;

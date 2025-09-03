@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-home',
   imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss', '../app.component.scss']
+  styleUrls: ['./home.component.scss', '../app.component.scss', '../guarantee-choice/guarantee-choice.component.scss']
 })
 export class HomeComponent {
 
@@ -28,7 +28,7 @@ constructor(public userService: UserService, private router: Router) {}
     }
   }
 
-    goToLogin() {
+  goToLogin() {
     this.router.navigate(['/login']);
   }
 
