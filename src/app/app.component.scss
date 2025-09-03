@@ -115,25 +115,14 @@ body::after {
     user-select: none;
     -webkit-user-select: none;
     vertical-align: middle;
+
+    &:hover,
+    &:focus { 
+      background-color: darken(#02556e, 10%);
+      color: #ffffff;
+    }
 }
 
-.btn-test:hover,
-.btn-test:focus { 
-  background-color: #16437E;
-  color: #ffffff;
-}
-
-.button-18:active {
-  background: #09223b;
-  color: rgb(255, 255, 255, .7);
-}
-
-.button-18:disabled { 
-  cursor: not-allowed;
-  background: rgba(0, 0, 0, .08);
-  color: rgba(0, 0, 0, .3);
-}
-  
 .forgot-password {
     text-align: center;
     margin-top: 15px;
