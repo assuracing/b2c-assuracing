@@ -16,9 +16,11 @@
   class="container-app">
   <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
   <button (click)="goToUserContracts()" class="btn btn-test">
+    <mat-icon style="vertical-align: middle; margin-right: 4px;">list_alt</mat-icon>
       Mes contrats
   </button>
   <button (click)="goToGuaranteeChoice()" class="btn btn-test">
+    <mat-icon style="vertical-align: middle; margin-right: 4px;">assignment</mat-icon>
       Souscrire un nouveau contrat
   </button>
   <button (click)="goToUserProfilInfo()" class="btn btn-test">
