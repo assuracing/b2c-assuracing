@@ -154,9 +154,13 @@ body::after {
     align-items: center;
 }
 
-.container-app h2, .container-app h3 {
-    color: #ffffff;
-}  
+.text-light {
+    color: #FFFFFF; 
+}
+  
+.text-dark {
+    color: #262626;
+}
 
 @media (max-width: 1200px) {
     .container-app {

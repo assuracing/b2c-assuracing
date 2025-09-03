@@ -1,6 +1,7 @@
-<div *ngIf="!userService.isLoggedIn()" class="accueil-container">
+<div *ngIf="!userService.isLoggedIn()" class="container-app">
+<div class="accueil-container">
   <div class="options">
-      <h2>Bienvenue sur notre plateforme</h2>
+      <h2 class="text-light">Bienvenue sur notre plateforme</h2>
       <div class="carte" (click)="goToLogin()">
           <h3>Déjà client ?</h3>
           <p>Connectez-vous</p>
@@ -11,10 +12,11 @@
       </div>
   </div>
 </div>
+</div>
 
 <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER') && !userService.hasRole('ROLE_ADMIN')"
   class="container-app">
-  <h2>Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
+  <h2 class="text-light">Bienvenue, {{ userService.getUser()?.firstName }} !</h2>
   <button (click)="goToUserContracts()" class="btn btn-test">
     <mat-icon style="vertical-align: middle; margin-right: 4px;">list_alt</mat-icon>
       Mes contrats
