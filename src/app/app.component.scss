@@ -197,9 +197,10 @@ body::after {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 480px){
     .container-app {
-        max-width: 95%;
+        max-width: 90%;
+        height: 88%;
         margin: 10px auto;
         padding: 10px;
     }
