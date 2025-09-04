@@ -1,5 +1,5 @@
 
-<mat-horizontal-stepper linear #stepper (selectionChange)="onStepChange($event)">
+<mat-horizontal-stepper linear [labelPosition]="labelPosition" #stepper (selectionChange)="onStepChange($event)">
   <mat-step [stepControl]="coverageForm">
     <ng-template matStepLabel>Vos garanties</ng-template>
     <div *ngIf="step1Page === 1">
