@@ -1,5 +1,5 @@
 
-<mat-horizontal-stepper linear #stepper (selectionChange)="onStepChange($event)">
+<mat-horizontal-stepper [labelPosition]="labelPosition" linear #stepper (selectionChange)="onStepChange($event)">
     <mat-step [stepControl]="trackdayForm">
       <ng-template matStepLabel>Votre événement</ng-template>
         <form [formGroup]="trackdayForm">

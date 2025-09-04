@@ -27,6 +27,7 @@ import { Router } from '@angular/router';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 interface Contract {
   selectedCircuit: string;
@@ -71,7 +72,7 @@ interface Contract {
   selector: 'app-motors-league',
   imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
   templateUrl: './motors-league.component.html',
-  styleUrls: ['./motors-league.component.scss', '../app.component.scss']
+  styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
 export class MotorsLeagueComponent implements OnInit, OnDestroy {
   public nationalities: string[] = [
@@ -94,6 +95,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   acceptTerms: boolean = false;
   private subscription?: Subscription;
   private apiUrl: string;
+  labelPosition: 'end' | 'bottom' = 'end';
 
   constructor(
     private fb: FormBuilder,
@@ -104,10 +106,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private envService: EnvironmentService,
     private router: Router,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breakpointObserver: BreakpointObserver
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
+    this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
+      this.labelPosition = result.matches ? 'bottom' : 'end';
+    });
   }
 
   ngOnInit() {

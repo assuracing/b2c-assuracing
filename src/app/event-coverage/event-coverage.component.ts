@@ -33,6 +33,7 @@ import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 interface Circuit {
   id: number;
@@ -124,9 +125,10 @@ interface ContractResponse {
     MatTooltipModule,
   ],
   templateUrl: './event-coverage.component.html',
-  styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss']
+  styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss']
 })
 export class EventCoverageComponent {
+  labelPosition: 'end' | 'bottom' = 'end';
   public nationalities: string[] = [
   'Française',
   'Allemande',
@@ -160,7 +162,7 @@ export class EventCoverageComponent {
 ];
   private apiUrl: string;
 
-  constructor(
+  constructor( 
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private contractService: ContractService,
@@ -169,11 +171,15 @@ export class EventCoverageComponent {
     private toastService: ToastService,
     private dialog: MatDialog,
     private router: Router,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    private breakpointObserver: BreakpointObserver
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
     this.loadCircuits();
+    this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
+      this.labelPosition = result.matches ? 'bottom' : 'end';
+    });
   }
 
   async onContinueGuaranteeStep(stepper: MatStepper) {
