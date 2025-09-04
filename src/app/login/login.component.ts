@@ -11,7 +11,7 @@ import { ToastService } from '../services/toast.service';
   selector: 'app-login',
   imports: [FormsModule, MatIconModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss', '../app.component.scss']
 })
 export class LoginComponent {
   username = '';

@@ -103,7 +103,7 @@
     </div>
 
     <div class="form-group">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-106">
             <mat-label>Pays de résidence</mat-label>
             <mat-select formControlName="country" id="country" required
                       panelClass="country-select-panel"
@@ -124,7 +124,7 @@
     </div>
     
     <div class="form-group">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-106">
   <mat-label>Nationalité</mat-label>
   <mat-select formControlName="nationality" id="nationality" required>
     <mat-option *ngFor="let nat of nationalities" [value]="nat">{{ nat }}</mat-option>
@@ -136,7 +136,7 @@
     </div>
 
     <div class="form-group">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-106">
           <mat-label>Date de naissance</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="birthdate" required>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
