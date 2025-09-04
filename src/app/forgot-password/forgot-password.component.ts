@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-forgot-password',
   imports: [FormsModule, CommonModule],
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+  styleUrls: ['./forgot-password.component.scss', '../app.component.scss']
 })
 export class ForgotPasswordComponent {
   email: string = '';
