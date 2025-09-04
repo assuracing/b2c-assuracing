@@ -134,7 +134,7 @@ export class TrackdayComponent implements OnInit {
     this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
         const filteredOrganizers = organizers
-          .filter(org => org.lastName !== "VAX CONSEILS")
+          .filter(org => org.lastName !== "VAX CONSEILS" && org.lastName !== "GP Explorer")
           .sort((a, b) => {
             if (a.lastName === "!Organisateur non référencé") {
               this.unreferencedOrganizer = a;
