@@ -102,6 +102,7 @@ export class TrackdayComponent implements OnInit {
   unreferencedOrganizer: any = null;
   filteredCircuits: Observable<Circuit[]> = of([]);
   filteredOrganizers: Observable<Organizer[]> = of([]);
+  selectedCircuit: Circuit | null = null;
   
   private apiUrl: string;
 
@@ -175,6 +176,10 @@ export class TrackdayComponent implements OnInit {
         }
       });
     }
+  }
+
+  onCircuitSelect(circuitName: string): void {
+    this.selectedCircuit = this._allCircuits.find(circuit => circuit.nom === circuitName) || null;
   }
 
   onOrganizerPanelOpened(isOpen: boolean): void {
