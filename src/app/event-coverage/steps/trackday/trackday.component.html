@@ -14,15 +14,23 @@
 
     <mat-form-field appearance="outline" class="circuit-select-field">
       <mat-label>Circuit</mat-label>
-      <mat-select [formControl]="getFormControl('circuit')" #singleSelect panelClass="circuit-select-panel" (openedChange)="onPanelOpened($event)">
+      <mat-select [formControl]="getFormControl('circuit')" #singleSelect panelClass="circuit-select-panel" (openedChange)="onPanelOpened($event)" (selectionChange)="onCircuitSelect($event.value)">
+        <mat-select-trigger>
+          <span style="display: flex; align-items: center;" *ngIf="selectedCircuit" class="selected-circuit"> 
+            <img [src]="countryFlagService.getCountryFlagUrl(selectedCircuit.pays)" 
+                 [alt]="'Drapeau ' + selectedCircuit.pays"
+                 class="country-flag">
+            <span class="circuit-name">{{ selectedCircuit.nom }}</span>
+          </span>
+        </mat-select-trigger>
         <div class="search-container">
           <input #searchInput class="search-input" placeholder="Rechercher un circuit..." (click)="$event.stopPropagation()" (input)="filterCircuits($event)">
         </div>
         <mat-option *ngFor="let circuit of filteredCircuits | async" [value]="circuit.nom">
           <span class="circuit-option">
             <img [src]="countryFlagService.getCountryFlagUrl(circuit.pays)" 
-               [alt]="'Drapeau ' + circuit.pays"
-               class="country-flag">
+                 [alt]="'Drapeau ' + circuit.pays"
+                 class="country-flag">
             <span class="circuit-name">{{ circuit.nom }}</span>
           </span>
         </mat-option>
