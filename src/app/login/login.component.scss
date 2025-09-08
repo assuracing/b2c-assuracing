@@ -1,5 +1,5 @@
 .login-form {
-    max-width: 400px;
+    width: 80%;
     margin: 50px auto;
     padding: 30px;
     border: 1px solid #ddd;
@@ -55,13 +55,13 @@
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #02556e;
     color: white;
     width: 100%;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #02556e;
 }
 
 .forgot-password {
@@ -70,7 +70,7 @@
 }
 
 .forgot-password a {
-    color: #007bff;
+    color: #02556e;
     text-decoration: none;
     font-size: 14px;
 }
