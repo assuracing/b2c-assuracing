@@ -11,13 +11,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { VehicleService } from '../../services/vehicle.service';
 import { Subscription } from 'rxjs';
+import { AdaptiveTooltipComponent } from "../../adaptive-tooltip/adaptive-tooltip.component";
 
 @Component({
   selector: 'app-vehicle-info',
   templateUrl: './vehicle-info.component.html',
   styleUrls: ['./vehicle-info.component.scss', '../../app.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatOptionModule]
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatOptionModule, AdaptiveTooltipComponent]
 })
 export class VehicleInfoComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;

@@ -148,7 +148,11 @@
     </div>
 
     <div class="radio">
-        <label> <strong>Numéro d'identification</strong> <mat-icon class="info-bulle" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
+        <label> <strong>Numéro d'identification</strong>
+          <app-adaptive-tooltip
+           text="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">
+          </app-adaptive-tooltip>
+        </label>
         <div class="radio-group">
             <label for="immat">Immatriculation</label>
             <input type="radio" id="immat" formControlName="identificationNumber" value="immat">

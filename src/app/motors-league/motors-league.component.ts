@@ -28,6 +28,7 @@ import { AgeRestrictionDialogComponent } from '../shared/components/age-restrict
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
 
 interface Contract {
   selectedCircuit: string;
@@ -70,7 +71,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, AdaptiveTooltipComponent],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })

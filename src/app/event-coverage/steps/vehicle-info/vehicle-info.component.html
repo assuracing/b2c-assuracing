@@ -15,12 +15,10 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-icon 
+          <app-adaptive-tooltip
             *ngIf="showVehicleTypeTooltip"
-            matTooltip="Pour changer le type de véhicule, remontez à l'étape 1"
-            class="info-bulle">
-            info
-          </mat-icon>
+            text="Pour changer le type de véhicule, remontez à l'étape 1">
+          </app-adaptive-tooltip>
     </div>
 
     <div class="form-group">
@@ -45,7 +43,11 @@
     </div>
 
     <div class="radio">
-        <label> <strong>Numéro d'identification</strong> <mat-icon class="info-bulle" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
+        <label> <strong>Numéro d'identification</strong>
+          <app-adaptive-tooltip
+          text="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">
+        </app-adaptive-tooltip>
+        </label>
         <div class="radio-group">
             <label for="immat">Immatriculation</label>
             <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
@@ -85,22 +87,18 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-icon 
+        <app-adaptive-tooltip
           *ngIf="showDriveLicenseTooltip"
-          [matTooltip]="getDriveLicenseTooltipMessage()"
-          class="info-bulle">
-          info
-        </mat-icon>
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
     </div>
 
     <div class="radio" *ngIf="this.userAge && this.userAge < 18 && this.vehicleType === 'moto'">
       <label> <strong>Possédez-vous le CASM ?</strong>
-        <mat-icon 
-        *ngIf="showDriveLicenseTooltip"
-        [matTooltip]="getDriveLicenseTooltipMessage()"
-        class="info-bulle">
-        info
-      </mat-icon>
+        <app-adaptive-tooltip
+          *ngIf="showDriveLicenseTooltip"
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
       </label>
       <div class="radio-group">
           <label for="hasCasm">Oui</label>
@@ -115,12 +113,10 @@
     
     <div class="radio" *ngIf="this.vehicleType === 'auto'">
       <label> <strong>Possédez-vous le permis B ?</strong>
-      <mat-icon 
-      *ngIf="showDriveLicenseTooltip"
-      [matTooltip]="getDriveLicenseTooltipMessage()"
-      class="info-bulle">
-      info
-    </mat-icon>
+        <app-adaptive-tooltip
+          *ngIf="showDriveLicenseTooltip"
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
       </label>
       <div class="radio-group">
           <label for="hasPermisB">Oui</label>

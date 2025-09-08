@@ -1,0 +1,20 @@
+<button *ngIf="!isMobile()"
+        mat-icon-button
+        [matTooltip]="text"
+        matTooltipShowDelay="200"
+        [ngClass]="{'blink-tooltip': blink}">
+  <mat-icon color="primary">info</mat-icon>
+</button>
+
+<button *ngIf="isMobile()"
+        mat-icon-button
+        [matMenuTriggerFor]="infoMenu"
+        [ngClass]="{'blink-tooltip': blink}">
+  <mat-icon color="primary">info</mat-icon>
+</button>
+
+<mat-menu #infoMenu="matMenu">
+  <div style="padding: 8px; max-width: 220px; white-space: normal;">
+    {{ text }}
+  </div>
+</mat-menu>
