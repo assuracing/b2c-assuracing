@@ -1,2 +1,11 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-step-icon {
+    background-color: #02556e !important;
+    color: #ffffff !important;
+}
+
+.mat-mdc-slider .mdc-slider__track--inactive {
+    background-color: #0ba2cf !important;
+}

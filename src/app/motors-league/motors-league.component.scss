@@ -136,13 +136,11 @@ button:first-child:not(.mat-calendar-button):not(.coverage-option) {
 
 .mat-stepper-button-next,
 button:last-child:not(.mat-calendar-button):not(.coverage-option) {
-  background-color: #007bff !important;
+  background-color: #047da1 !important;
   color: white !important;
-  border: 1px solid #007bff !important;
   
   &:hover:not(:disabled) {
-    background-color: #0056b3 !important;
-    border-color: #0056b3 !important;
+    background-color: #0ba2cf !important;
   }
   
   &:disabled {
