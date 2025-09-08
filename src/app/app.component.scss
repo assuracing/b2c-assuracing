@@ -211,36 +211,3 @@ main {
     padding-top: 60px;
 }
   
-.info-bulle-blink {
-    font-size: 22px;
-    margin-left: 5px;
-    cursor: help;
-    animation: blink 0.5s infinite alternate;
-  
-    @keyframes blink {
-      from {
-        color: #6c757d;
-      }
-      to {
-        color: #2196f3;
-      }
-    }
-  
-    @media (max-width: 768px) {
-      font-size: 18px;
-      margin-left: 3px;
-    }
-  }
-
-.info-bulle {
-    font-size: 22px;
-    margin-left: 5px;
-    cursor: help;
-    color: #2196f3;
-
-    @media (max-width: 768px) {
-      font-size: 18px;
-      margin-left: 3px;
-    }
-}
-  

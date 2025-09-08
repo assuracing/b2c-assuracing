@@ -13,6 +13,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { VehicleService } from '../../../services/vehicle.service';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { AdaptiveTooltipComponent } from "../../../adaptive-tooltip/adaptive-tooltip.component";
 
 interface Circuit {
   id: number;
@@ -27,7 +28,7 @@ interface Circuit {
   selector: 'app-vehicle-info',
   templateUrl: './vehicle-info.component.html',
   styleUrls: ['./vehicle-info.component.scss', '../../../app.component.scss', '../../../motors-league/motors-league.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule]
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule, AdaptiveTooltipComponent]
 })
 export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form!: FormGroup;

@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContractService } from '../../../services/contract.service';
 import { OrganizerService } from '../../../services/organizer.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
+import { AdaptiveTooltipComponent } from '../../../adaptive-tooltip/adaptive-tooltip.component';
 
 interface ProtectionLevel {
   death: number;
@@ -42,7 +43,8 @@ interface ProtectionLevel {
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    AdaptiveTooltipComponent
   ],
   templateUrl: './event-coverage-options.component.html',
   styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss',  '../../../app.component.scss']
@@ -246,7 +248,7 @@ export class EventCoverageOptionsComponent {
     private dialog: MatDialog, 
     private contractService: ContractService,
     private organizerService: OrganizerService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     this.initializeForms();
   }
