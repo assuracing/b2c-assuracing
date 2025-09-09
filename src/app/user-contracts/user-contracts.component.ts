@@ -1,25 +1,44 @@
 import { Component, ViewChild } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { CommonModule } from '@angular/common';
-import {MatTableModule} from '@angular/material/table';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { CommonModule, DatePipe } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {MatPaginatorIntl} from '@angular/material/paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 
 @Component({
   selector: 'app-user-contracts',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule],  
+  standalone: true,
+  imports: [
+    CommonModule, 
+    MatTableModule, 
+    MatPaginatorModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatIconModule,
+    CustomDatePipe
+  ],  
   templateUrl: './user-contracts.component.html',
-  styleUrl: './user-contracts.component.scss'
+  styleUrls: ['./user-contracts.component.scss']
 })
 export class UserContractsComponent {
   @ViewChild('paginator') paginator!: MatPaginator;
 
   contracts: any[] = [];
   dataSource = new MatTableDataSource(this.contracts);
+  displayedColumns: string[] = [
+    'dateAdhesion', 
+    'dateSaisie', 
+    'adherentnomCliententreprise', 
+    'nomcontrat', 
+    'circuit', 
+    'valide'
+  ];
 
   constructor(private userService: UserService, private paginatorIntl: MatPaginatorIntl) { }
 
