@@ -13,13 +13,10 @@
     <div class="form-group">
         <label>Genre</label>
         <div class="radio">
-            <input type="radio" id="male" formControlName="civility" value="M">
+            <input type="radio" id="male" formControlName="civility" value="M" required>
             <label for="male">Homme</label>
-            <input type="radio" id="female" formControlName="civility" value="Mme">
+            <input type="radio" id="female" formControlName="civility" value="Mme" required>
             <label for="female">Femme</label>
-        </div>
-        <div *ngIf="isInvalid('civility')" class="error-message">
-            {{ getErrorMessage('civility') }}
         </div>
     </div>
 
@@ -71,12 +68,12 @@
             formControlName="postalCode" 
             id="postalCode" 
             class="form-control" 
-            required 
+            required
             appNumbersOnly 
             [maxLength]="form.get('country')?.value === 'France' ? 5 : 8"
             (focus)="onPostalCodeInput()"
             (blur)="onPostalCodeBlur()">
-        <div *ngIf="isInvalid('postalCode') && form.get('country')?.value !== 'France'"  class="error-message">
+        <div *ngIf="isInvalid('postalCode')" class="error-message">
             {{ getErrorMessage('postalCode') }}
         </div>
         

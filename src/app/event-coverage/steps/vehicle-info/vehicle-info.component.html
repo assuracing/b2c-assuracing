@@ -25,7 +25,7 @@
         <label for="brand"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Marque</mat-label>
-          <mat-select formControlName="brand"  panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)">
+          <mat-select formControlName="brand"  panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)" required>
             <div class="search-container">
               <input #brandSearchInput class="search-input" placeholder="Rechercher..." (click)="$event.stopPropagation()" (input)="filterBrands($event)">
             </div>
@@ -39,7 +39,7 @@
     <div class="form-group">
         <label for="model">Modèle</label>
         
-        <input formControlName="model" type="text" id="model" class="form-control">
+        <input formControlName="model" type="text" id="model" class="form-control" required>
     </div>
 
     <div class="radio">
@@ -50,26 +50,26 @@
         </label>
         <div class="radio-group">
             <label for="immat">Immatriculation</label>
-            <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
+            <input type="radio" id="immat" formControlName="identificationNumber" value="immat" required>
         </div>
         <div class="radio-group">
             <label for="chassis">Nº chassis</label>
-            <input type="radio" id="chassis" formControlName="identificationNumber" value="chassis">
+            <input type="radio" id="chassis" formControlName="identificationNumber" value="chassis" required>
         </div>
         <div class="radio-group">
             <label for="serie">Nº série</label>
-            <input type="radio" id="serie" formControlName="identificationNumber" value="serie">
+            <input type="radio" id="serie" formControlName="identificationNumber" value="serie" required>
         </div>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'immat'">
         <label for="immatNumber">Immatriculation</label>
-        <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" >
+        <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" required>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'chassis'">
         <label for="chassisNumber">Nº chassis</label>
-        <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" >
+        <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" required>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'serie'">
@@ -130,7 +130,7 @@
 
     <div class="form-group" *ngIf="(form.get('hasCasm')?.value === 'Oui' && this.vehicleType === 'moto') || (form.get('hasPermisB')?.value === 'Oui' && this.vehicleType === 'auto') || (this.userAge && this.userAge >= 18 && this.vehicleType === 'moto')">
         <label for="titreNumber">Nº titre</label>
-        <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" >
+        <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" required>
     </div>
 
 </div>
