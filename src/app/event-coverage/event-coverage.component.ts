@@ -266,13 +266,13 @@ export class EventCoverageComponent {
     });
 
     this.trackdayForm = this.fb.group({
-      eventType: [''],
-      circuit: [''],
-      organizer: [''],
+      eventType: ['', Validators.required],
+      circuit: ['', Validators.required],
+      organizer: ['', Validators.required],
       unreferencedOrganizer: [false],
-      eventDate: [''],
+      eventDate: ['', Validators.required],
       duration: [1, [Validators.min(1), Validators.max(5)]],
-      role: [''],
+      role: ['', Validators.required],
       vehicleType: ['']
     });
 
@@ -307,7 +307,7 @@ export class EventCoverageComponent {
       phone: '',
       address: [''],
       addressComplement: '',
-      postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{4,8}$')]],
+      postalCode: ['', [Validators.pattern('^[0-9]{4,8}$')]],
       city: [''],
       birthdate: [''],
       nationality: '',
@@ -379,9 +379,9 @@ export class EventCoverageComponent {
     });
 
     this.RepresentativeLegalForm = this.fb.group({
-      representativeLastname: [''],
-      representativeFirstname: [''],
-      representativeEmail: ['']
+      representativeLastname: ['', Validators.required],
+      representativeFirstname: ['', Validators.required],
+      representativeEmail: ['', [Validators.required, Validators.email]],
     });
 
     this.paymentForm = this.fb.group({
@@ -852,9 +852,10 @@ export class EventCoverageComponent {
     this.userService.sendVerificationEmail(email).subscribe({
       next: () => {
         this.stepper.next();
-        this.toastService.info('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
+        this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
       },
       error: (err) => {
+        this.toastService.error('Erreur lors de l envoi du code de verification');
         console.error('Erreur lors de l envoi du code de verification', err);
       }
     });

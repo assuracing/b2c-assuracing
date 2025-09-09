@@ -447,6 +447,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
       },
       error: (err) => {
+        this.toastService.error('Erreur lors de l envoi du code de verification');
         console.error('Erreur lors de l envoi du code de verification', err);
       }
     });

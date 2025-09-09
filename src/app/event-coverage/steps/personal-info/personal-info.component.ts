@@ -319,7 +319,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       if (controlName === 'phone') {
         return 'Le numéro de téléphone doit contenir 10 chiffres';
       }
-      if (controlName === 'postalCode') {
+      if (controlName === 'postalCode' && this.form.get('country')?.value != 'France') {
         return 'Le code postal doit contenir entre 4 et 8 chiffres';
       }
     }
