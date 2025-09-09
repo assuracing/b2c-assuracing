@@ -1,36 +1,102 @@
-<mat-form-field>
-    <mat-label>Filtres</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher..." #input>
-</mat-form-field>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <ng-container matColumnDef="dateAdhesion">
-            <th mat-header-cell *matHeaderCellDef>Date de roulage</th>
-            <td mat-cell *matCellDef="let element">{{element.dateAdhesion}}</td>
-        </ng-container>
-        <ng-container matColumnDef="dateSaisie">
-            <th mat-header-cell *matHeaderCellDef>Date d'effet du contrat</th>
-            <td mat-cell *matCellDef="let element">{{element.dateSaisie}}</td>
-        </ng-container>
-        <ng-container matColumnDef="adherentnomCliententreprise">
-            <th mat-header-cell *matHeaderCellDef>Entreprise</th>
-            <td mat-cell *matCellDef="let element">{{element.adherentnomCliententreprise}}</td>
-        </ng-container>
-        <ng-container matColumnDef="nomcontrat">
-            <th mat-header-cell *matHeaderCellDef>Contrat</th>
-            <td mat-cell *matCellDef="let element">{{element.nomcontrat}}</td>
-        </ng-container>
-        <ng-container matColumnDef="circuit">
-            <th mat-header-cell *matHeaderCellDef>Circuit</th>
-            <td mat-cell *matCellDef="let element">{{element.circuit}}</td>
-        </ng-container>
-        <ng-container matColumnDef="valide">
-            <th mat-header-cell *matHeaderCellDef>Validé</th>
-            <td mat-cell *matCellDef="let element"> <ng-container *ngIf="element.valide">Oui</ng-container><ng-container *ngIf="!element.valide">Non</ng-container></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['dateAdhesion', 'dateSaisie', 'adherentnomCliententreprise', 'nomcontrat', 'circuit', 'valide']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['dateAdhesion', 'dateSaisie', 'adherentnomCliententreprise', 'nomcontrat', 'circuit', 'valide'];"></tr>
-        <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" colspan="6">Aucun contrat trouvé</td>
-        </tr>
-</table>
-<mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5"  [length]="contracts.length" aria-label="Selectionner une page"></mat-paginator>
+<div class="container">
+    <div class="filter-container">
+        <div class="filters-row">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Rechercher un contrat</mat-label>
+                <input matInput [formControl]="searchFilter" placeholder="Rechercher par entreprise, contrat..." #input>
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="year-filter">
+                <mat-label>Année</mat-label>
+                <mat-select [formControl]="yearFilter">
+                    <mat-option [value]="null">Toutes les années</mat-option>
+                    <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+                </mat-select>
+                <button mat-icon-button matSuffix (click)="clearYearFilter()" *ngIf="yearFilter.value">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z1 mobile-table">
+            <ng-container matColumnDef="dateAdhesion">
+                <th mat-header-cell *matHeaderCellDef>Date de roulage</th>
+                <td mat-cell *matCellDef="let element" data-label="Date de roulage">
+                    <div class="mat-cell-content">
+                        {{element.dateAdhesion | customDate}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateSaisie">
+                <th mat-header-cell *matHeaderCellDef>Date d'effet du contrat</th>
+                <td mat-cell *matCellDef="let element" data-label="Date d'effet">
+                    <div class="mat-cell-content">  
+                        {{element.dateSaisie | customDate}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="adherentnomCliententreprise">
+                <th mat-header-cell *matHeaderCellDef>Entreprise</th>
+                <td mat-cell *matCellDef="let element" data-label="Entreprise" class="truncate">
+                    <div class="mat-cell-content">
+                        {{element.adherentnomCliententreprise}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nomcontrat">
+                <th mat-header-cell *matHeaderCellDef>Contrat</th>
+                <td mat-cell *matCellDef="let element" data-label="Contrat" class="truncate">
+                    <div class="mat-cell-content">
+                        {{element.nomcontrat}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="circuit">
+                <th mat-header-cell *matHeaderCellDef>Circuit</th>
+                <td mat-cell *matCellDef="let element" data-label="Circuit">
+                    <div class="mat-cell-content">
+                        {{element.circuit}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="valide">
+                <th mat-header-cell *matHeaderCellDef>Validé</th>
+                <td mat-cell *matCellDef="let element" data-label="Validé">
+                    <div class="mat-cell-content">
+                        <span class="status-badge" [class.valid]="element.valide" [class.invalid]="!element.valide">
+                            {{element.valide ? 'Oui' : 'Non'}}
+                        </span>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [class.row-valid]="row.valide"
+                [class.row-invalid]="!row.valide"></tr>
+                
+            <tr class="no-data" *matNoDataRow>
+                <td colspan="6">
+                    <mat-icon>search_off</mat-icon>
+                    <span>Aucun contrat ne correspond à votre recherche</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <mat-paginator #paginator
+                  [pageSizeOptions]="[5, 10, 25, 100]" 
+                  [pageSize]="10"
+                  [length]="contracts.length"
+                  showFirstLastButtons
+                  aria-label="Sélectionner une page">
+    </mat-paginator>
+</div>
