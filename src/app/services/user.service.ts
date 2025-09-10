@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { EnvironmentService } from '../core/services/environment.service';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { tap, switchMap, map, catchError } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
+import { EnvironmentService } from '../core/services/environment.service';
+import { getAuthHeaders, setAuthToken, getAuthToken } from '../core/utils/http-utils';
 
 export interface User {
   authorities: any;
@@ -31,12 +31,9 @@ export class UserService {
     this.apiUrl = this.envService.apiUrl;
   }
 
+
   getAccount(): Observable<User> {
-    const token = localStorage.getItem('auth_token');
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
-    return this.http.get<User>(`${this.apiUrl}/api/account`, { headers }).pipe(
+    return this.http.get<User>(`${this.apiUrl}/api/account`, getAuthHeaders()).pipe(
       tap(user => this.userSubject.next(user))
     );
   }
@@ -44,22 +41,17 @@ export class UserService {
   private adherentIdSubject = new BehaviorSubject<number | null>(null);
   adherentId$ = this.adherentIdSubject.asObservable();
 
-  getAdherentId() : Observable<number> {
-    const token = localStorage.getItem('auth_token');
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
-    return this.http.get<any>(`${this.apiUrl}/api/adherents/by-user/` + this.userSubject.value?.id, { headers }).pipe(
+  getAdherentId(): Observable<number> {
+    return this.http.get<any>(
+      `${this.apiUrl}/api/adherents/by-user/${this.userSubject.value?.id}`, 
+      getAuthHeaders()
+    ).pipe(
       tap(adherent => this.adherentIdSubject.next(adherent.id)),
       map((adherent: any) => adherent.id)
     );
   }
 
   getAdherentInfo(): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
     const adherentId = this.adherentIdSubject.value;
     
     const getUserInfo = () => this.getAccount().pipe(
@@ -72,7 +64,10 @@ export class UserService {
       }))
     );
 
-    const getAdherentInfo = (id: number) => this.http.get<any>(`${this.apiUrl}/api/adherents/${id}`, { headers }).pipe(
+    const getAdherentInfo = (id: number) => this.http.get<any>(
+      `${this.apiUrl}/api/adherents/${id}`, 
+      getAuthHeaders()
+    ).pipe(
       catchError(error => {
         if (error.status === 404) {
           return getUserInfo();
@@ -97,7 +92,11 @@ export class UserService {
   }
 
   checkEmail(email: string, login: string): Observable<boolean> {
-    return this.http.post<boolean>(`${this.apiUrl}/api/checkemail`, { email, login });
+    return this.http.post<boolean>(
+      `${this.apiUrl}/api/checkemail`, 
+      { email, login },
+      getAuthHeaders()
+    );
   }
 
   hasRole(role: string): boolean {
@@ -120,35 +119,49 @@ export class UserService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return getAuthToken();
+  }
+
+  setToken(token: string): void {
+    setAuthToken(token);
   }
 
   sendVerificationEmail(email: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/sendVerificationCode`, { email });
+    return this.http.post<void>(
+      `${this.apiUrl}/api/sendVerificationCode`, 
+      { email },
+      getAuthHeaders()
+    );
   }
 
   verifyCode(email: string, code: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/verifyCode`, { email, code });
+    return this.http.post<void>(
+      `${this.apiUrl}/api/verifyCode`, 
+      { email, code },
+      getAuthHeaders()
+    );
   }
 
   resetPassword(key: string, newPassword: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/account/reset-password/finish`, { key, newPassword });
+    return this.http.post<void>(
+      `${this.apiUrl}/api/account/reset-password/finish`, 
+      { key, newPassword },
+      getAuthHeaders()
+    );
   }
 
   getAllContracts(): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
-    return this.http.get<any>(`${this.apiUrl}/api/getAllContrats`, { headers });
+    return this.http.get<any>(
+      `${this.apiUrl}/api/getAllContrats`,
+      getAuthHeaders()
+    );
   }
 
   updateUserProfile(profileData: any): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.put(`${this.apiUrl}/api/adherents`, profileData, { headers });
+    return this.http.put(
+      `${this.apiUrl}/api/account`, 
+      profileData, 
+      getAuthHeaders()
+    );
   }
 }

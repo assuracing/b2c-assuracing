@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EnvironmentService } from '../core/services/environment.service';
+import { getAuthHeaders } from '../core/utils/http-utils';
 
 export interface PrixDTO {
   prixProduitCompagnieTTC: number;
@@ -27,14 +28,18 @@ export class ContractService {
   }
 
   createContratB2C(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/createContractB2C`, data, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-      },
-    });
+    return this.http.post(
+      `${this.apiUrl}/createContractB2C`, 
+      data, 
+      getAuthHeaders()
+    );
   }
 
   calculatePrice(data: any): Observable<PrixDTO> {
-    return this.http.post<PrixDTO>(`${this.apiUrl}/getPrix`, data);
+    return this.http.post<PrixDTO>(
+      `${this.apiUrl}/getPrix`, 
+      data, 
+      getAuthHeaders()
+    );
   }
 }
