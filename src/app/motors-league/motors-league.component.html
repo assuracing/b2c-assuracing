@@ -1,5 +1,5 @@
 
-<mat-horizontal-stepper linear [labelPosition]="labelPosition" #stepper (selectionChange)="onStepChange($event)">
+<mat-horizontal-stepper linear [labelPosition]="labelPosition" #stepper (selectionChange)="onStepChange($event)" style="background-color: #02556e;">
   <mat-step [stepControl]="coverageForm">
     <ng-template matStepLabel>Vos garanties</ng-template>
     <div *ngIf="step1Page === 1">
@@ -96,33 +96,33 @@
 
   <mat-step [stepControl]="summaryForm">
     <ng-template matStepLabel>Resumé</ng-template>
-    <div class="summary-container">
-      <h3>Informations personnelles</h3>
-      <div class="summary-section">
-        <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
-        <p><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
-        <p><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
-        <p><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
-        <p><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
-        <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
+    <div class="login-form">
+      <div class="summary-container">
+        <h3>Informations personnelles</h3>
+          <p class="text-dark"><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
+          <p class="text-dark"><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p class="text-dark"><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
+          <p class="text-dark"><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p class="text-dark"><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
+          <p class="text-dark"><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
       </div>
 
+      <div class="summary-container">
       <h3>Véhicules</h3>
-      <div class="summary-section">
-        <div *ngFor="let vehicle of vehicles; let i = index" class="vehicle-summary">
-          <div class="vehicle-info">
+        <!-- <div *ngFor="let vehicle of vehicles; let i = index" class="vehicle-summary">
+          <div class="vehicle-info"> -->
             <p>
-              <strong>Véhicule {{i + 1}}</strong> : {{vehicle.type}} - {{vehicle.brand}} - {{vehicle.model}} - 
-              <span *ngIf="vehicle.identificationNumber === 'immat'">{{vehicle.immatNumber}}</span>
-              <span *ngIf="vehicle.identificationNumber === 'chassis'">{{vehicle.chassisNumber}}</span>
-              <span *ngIf="vehicle.identificationNumber === 'serie'">{{vehicle.serieNumber}}</span>
+              <strong>Véhicule</strong> : {{vehicleForm.get('type')?.value}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - 
+              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'immat'">{{vehicleForm.get('immatNumber')?.value}}</span>
+              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'chassis'">{{vehicleForm.get('chassisNumber')?.value}}</span>
+              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'serie'">{{vehicleForm.get('serieNumber')?.value}}</span>
             </p>
           </div>
-        </div>
-      </div>
+        <!-- </div>
+      </div> -->
 
+      <div class="summary-container">
       <h3>Permis de conduire</h3>
-      <div class="summary-section">
         <!-- <ng-container *ngIf="vehicles && vehicles.length > 0; else noVehicle">
           <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicles[vehicles.length - 1]?.titreConduite) || '--'}}</p>
           <p><strong>Numéro de permis:</strong> {{vehicles[vehicles.length - 1]?.titreNumber || '--'}}</p>
@@ -135,18 +135,16 @@
         <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
       </div>
 
-      <div class="summary-section">
-        <p>Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
-        <p>(décès {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death) : '--'}} €,
-          invalidité {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability) : '--'}} €)</p>
-        <p>La prime annuelle est de {{getLevelPrice(coverageForm.get('coverageLevel')?.value) ? formatNumber(getLevelPrice(coverageForm.get('coverageLevel')?.value)) : '--'}} €</p>
-      </div>
-      
+      <p class="text-dark">Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
+      <p class="text-dark">(décès {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death) : '--'}} €,
+        invalidité {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability) : '--'}} €)</p>
+      <p class="text-dark">La prime annuelle est de {{getLevelPrice(coverageForm.get('coverageLevel')?.value) ? formatNumber(getLevelPrice(coverageForm.get('coverageLevel')?.value)) : '--'}} €</p>
+    
       <div class="signature-section">
-        <p>Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
-          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
-          <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
-        </p>
+          <p class="text-dark">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+            {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
+            <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
+          </p>
         
         <p style="color: red;" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
@@ -155,14 +153,13 @@
             <mat-label>Code de vérification</mat-label>
             <input matInput type="text" formControlName="verificationCode">
           </mat-form-field>
-
-          <div class="mt-4">
-            <button mat-button matStepperPrevious>Retour</button>
-            <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
-            <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
-          </div>
         </form>
       </div>
+    </div>
+    <div class="mt-4">
+      <button mat-button matStepperPrevious>Retour</button>
+      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
     </div>
   </mat-step>
 

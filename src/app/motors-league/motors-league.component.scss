@@ -5,80 +5,11 @@
 .info-text {
   font-size: 14px;
   margin-left: 5px;
-  color: #6c757d;
+  color: #dadcdd;
   
   @media (max-width: 768px) {
     font-size: 12px;
     margin-left: 3px;
-  }
-}
-
-.summary-container {
-  padding: 1rem;
-  
-  h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    color: #333;
-  }
-  
-  .summary-section {
-    margin-bottom: 0.2rem;
-    
-    .vehicle-summary {
-      margin: 3px 0;
-      padding: 3px;
-      background-color: #f8f9fa;
-      border-radius: 4px;
-      
-      .vehicle-info {
-        margin-bottom: 2px;
-        
-        p {
-          margin: 2px 0;
-          color: #333;
-          font-size: 1.1em;
-          
-          span {
-            color: #000;
-          }
-        }
-      }
-      
-      .identification-info {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid #e9ecef;
-        
-        p {
-          margin: 5px 0;
-          color: #333;
-          
-          strong {
-            color: #000;
-          }
-        }
-      }
-    }
-    
-    p {
-      margin-bottom: 0.5rem;
-      
-      strong {
-        color: #666;
-      }
-    }
-  }
-  
-  .signature-section {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-    
-    p {
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
   }
 }
 
@@ -148,4 +79,30 @@ button:last-child:not(.mat-calendar-button):not(.coverage-option) {
     color: #adb5bd !important;
     border-color: #adb5bd !important;
   }
+}
+
+h2 {
+    color: #ffffff !important;
+}
+
+p {
+    color: #ffffff !important;
+}
+
+li {
+    color: #ffffff !important;
+}
+
+.text-dark {
+    color: #000000 !important;
+}
+
+
+.summary-container {
+  border: 1px solid #ddd !important;
+  padding: 1rem !important;
+  p {
+    color: #000000 !important;
+  }
+  margin-bottom: 1rem !important;
 }

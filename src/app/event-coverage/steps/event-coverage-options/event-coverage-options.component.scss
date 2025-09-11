@@ -3,12 +3,12 @@
     margin-bottom: 20px;
     h3 {
       font-size: 1.5rem;
-      color: #333;
+      color: #dadcdd;
     }
   }
 
   .iai-options {
-    background: #f9f9f9;
+    background: #f1f1f1;
     border: 1px solid #eee;
     border-radius: 5px;
     padding: 16px;
@@ -93,7 +93,7 @@
 
             &.selected {
               background: #e3f2fd;
-              border-color: #2196f3;
+              border-color: #0ba2cf;
             }
 
             .level-number {
@@ -125,7 +125,7 @@
             .price {
               text-align: right;
               font-weight: bold;
-              color: #2196f3;
+              color: #0ba2cf;
             }
           }
         }
@@ -134,8 +134,8 @@
   }
 
   .protection-pilote {
-    background: #f9f9f9;
-    border: 1px solid #eee;
+    background: #f1f1f1e1;
+    border: 1px solid #ddd;
     border-radius: 5px;
     padding: 16px;
     margin-bottom: 20px;
@@ -157,8 +157,8 @@
     }
 
     .risk-group {
-      background: white;
-      border: 1px solid #eee;
+      background: #f1f1f1;
+      border: 1px solid #ddd;
       border-radius: 4px;
       padding: 12px;
       margin-bottom: 15px;
@@ -214,17 +214,17 @@
             transition: all 0.3s ease;
 
             &:hover {
-              background: #f0f0f0;
+              background: #cecbcb65;
             }
 
             &.selected {
               background: #e3f2fd;
-              border-color: #2196f3;
+              border-color: #0ba2cf;
             }
 
             .level-number {
               font-weight: bold;
-              color: #333;
+              color: #0ba2cf;
               margin-bottom: 10px;
               text-align: center;
             }
@@ -251,7 +251,7 @@
             .price {
               text-align: right;
               font-weight: bold;
-              color: #2196f3;
+              color: #0ba2cf;
             }
           }
         }
