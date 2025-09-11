@@ -29,7 +29,7 @@
 
   &.selected {
     background: #e3f2fd;
-    border-color: #2196f3;
+    border-color: #0ba2cf;
   }
 
   .level {
@@ -63,7 +63,7 @@
   .price {
     text-align: right;
     font-weight: bold;
-    color: #2196f3;
+    color: #0ba2cf;
   }
 }
 
@@ -109,4 +109,8 @@
     flex-direction: column;
     gap: 15px;
 }
+}
+
+p {
+    color: #dadcdd;
 }

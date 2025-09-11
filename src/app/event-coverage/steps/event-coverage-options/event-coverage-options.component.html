@@ -7,10 +7,9 @@
        [class.disabled-section]="activeSection && activeSection !== 'iai'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['iai'] && !wasIAIValidated">
-        <mat-slide-toggle 
+        <mat-slide-toggle
           labelPosition="before" 
-          style="margin-bottom: 20px;" 
-          [checked]="activeSection === 'iai'" 
+          [checked]="activeSection === 'iai'"
           [disabled]="activeSection && activeSection !== 'iai'"
           (change)="onToggleChange('iai', $event.checked)"
           [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
@@ -22,7 +21,7 @@
 
       <ng-container *ngIf="validatedSections['iai'] || wasIAIValidated">
         <div class="validated-toggle" 
-             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
              [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'iai'">
@@ -37,95 +36,91 @@
                  (click)="activeSection === 'iai' || !activeSection ? onCartClick('iai') : null">
               Garantie I A I (Intempéries, Annulation & Interruption)
               <mat-icon [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#1976d2'}">
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getIAIAmount()) }}
               </span>
             </div>
           </div>
         </div>
       </ng-container>
-    </div>
-
-    <div *ngIf="activeSection === 'iai'" class="iai-options">
-      <div class="date-group">
-        <mat-form-field appearance="outline">
-          <mat-label>Date d'inscription à l'événement</mat-label>
-          <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate" [max]="today">
-          <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
-          <mat-datepicker #inscriptionDate></mat-datepicker>
-        </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Montant de la réservation (€)</mat-label>
-        <input 
-          matInput 
-          type="number" 
-          formControlName="reservationAmount"
-          (input)="onReservationAmountChange()"
-          min="0"
-          max="1500"
-          step="0.01"
-          placeholder="Montant max. 1500 €">
-        <mat-hint align="end">Montant max. 1500 €</mat-hint>
-      </mat-form-field>
-
-      <div class="risques">
-        <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
-          <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-            Non disponible pour cet organisateur
-          </small>
-          <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-            Non disponible pour les dates de roulage à moins de 3 semaines de l'événement
-          </small>
-          <div class="risk-details">
-            <ul>
-              <li>100% en cas d'annulation</li>
-              <li>70% en cas de roulage sous la pluie</li>
-            </ul>
-            <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
-          </div>
+      <div *ngIf="activeSection === 'iai'" style="margin-top: 40px;">
+        <div class="date-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Date d'inscription à l'événement</mat-label>
+            <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate" [max]="today">
+            <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
+            <mat-datepicker #inscriptionDate></mat-datepicker>
+          </mat-form-field>
         </div>
-
-        <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
-            <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+  
+        <mat-form-field appearance="outline" style="margin-bottom: 15px;">
+          <mat-label>Montant de la réservation (€)</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            formControlName="reservationAmount"
+            (input)="onReservationAmountChange()"
+            min="0"
+            max="1500"
+            step="0.01"
+            placeholder="Montant max. 1500 €">
+          <mat-hint align="end">Montant max. 1500 €</mat-hint>
+        </mat-form-field>
+  
+          <div class="risk-group">
+            <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
+            <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
               Non disponible pour cet organisateur
             </small>
-            <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
+            <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
               Non disponible pour les dates de roulage à moins de 3 semaines de l'événement
             </small>
-            <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
-              Non disponible pour les inscriptions aux évènements de plus de 15 jours.
+            <div class="risk-details">
+              <ul>
+                <li>100% en cas d'annulation</li>
+                <li>70% en cas de roulage sous la pluie</li>
+              </ul>
+              <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
+            </div>
+          </div>
+  
+          <div class="risk-group">
+            <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
+              <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
+                Non disponible pour cet organisateur
+              </small>
+              <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
+                Non disponible pour les dates de roulage à moins de 3 semaines de l'événement
+              </small>
+              <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
+                Non disponible pour les inscriptions aux évènements de plus de 15 jours.
+              </small>
+            <div class="risk-details">
+              <ul>
+                <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
+                <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
+                <li>80% autres motifs de santé</li>
+              </ul>
+              <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
+            </div>
+          </div>
+  
+          <div class="risk-group">
+            <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isProductUnavailable('INTERRUPTION')">Risques Interruption</mat-slide-toggle>
+            <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
+              Non disponible pour cet organisateur
             </small>
-          <div class="risk-details">
-            <ul>
-              <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
-              <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
-              <li>80% autres motifs de santé</li>
-            </ul>
-            <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
+            <div class="risk-details">
+              <ul>
+                <li>50 % en cas d'accident survenant lors de l'événement ne permettant pas de reprendre l'activité</li>
+              </ul>
+              <p>Prime : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
+            </div>
           </div>
-        </div>
-
-        <div class="risk-group">
-          <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isProductUnavailable('INTERRUPTION')">Risques Interruption</mat-slide-toggle>
-          <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
-            Non disponible pour cet organisateur
-          </small>
-          <div class="risk-details">
-            <ul>
-              <li>50 % en cas d'accident survenant lors de l'événement ne permettant pas de reprendre l'activité</li>
-            </ul>
-            <p>Prime : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
-          </div>
-        </div>
+        <button mat-button class="mat-button" (click)="validateSection('iai')">Valider</button>
       </div>
-
-      <button mat-flat-button color="primary" (click)="validateSection('iai')">Valider</button>
     </div>
-  </div>
+    </div>
 
   <div class="protection-pilote" *ngIf="allowedGaranties.includes('IA')" 
        [class.disabled-section]="activeSection && activeSection !== 'protectionPilote'">
@@ -138,15 +133,14 @@
           (change)="onToggleChange('protectionPilote', $event.checked)"
           [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
           [matTooltipPosition]="'above'"
-          [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'"
-          >
+          [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
           Protection Corporelle
         </mat-slide-toggle>
       </ng-container>
 
       <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
         <div class="validated-toggle" 
-             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
              [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
@@ -160,7 +154,7 @@
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
               Protection Corporelle
               <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#1976d2'}">
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getProtectionPiloteAmount()) }}
               </span>
             </div>
@@ -196,7 +190,7 @@
           </div>
         </div>
 
-        <button mat-flat-button color="primary" (click)="validateSection('protectionPilote')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">Valider</button>
       </div>
     </div>
   </div>
@@ -205,8 +199,8 @@
        [class.disabled-section]="activeSection && activeSection !== 'responsabiliteRecours'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['responsabiliteRecours'] && !wasResponsabiliteRecoursValidated">
-        <mat-slide-toggle 
-          labelPosition="before" 
+        <mat-slide-toggle
+          labelPosition="before"
           [checked]="activeSection === 'responsabiliteRecours'" 
           [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
           (change)="onToggleChange('responsabiliteRecours', $event.checked)"
@@ -219,7 +213,7 @@
 
       <ng-container *ngIf="(validatedSections['responsabiliteRecours'] || wasResponsabiliteRecoursValidated)">
         <div class="validated-toggle" 
-             style="display: flex; align-items: center; gap: 8px; color: #1976d2; font-weight: 500;"
+             style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
              [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
@@ -233,7 +227,7 @@
                  (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
               Garantie Responsabilité / Recours
               <mat-icon [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#1976d2'}">
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getResponsabiliteRecoursAmount()) }}
               </span>
             </div>
@@ -254,7 +248,7 @@
             *ngIf="vehicleType === 'moto'"
             text="Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans">
           </app-adaptive-tooltip>
-          <p class="inclus" style="font-weight: normal; font-size: 12px; color: #1976d2; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
+          <p class="inclus" style="font-weight: normal; font-size: 12px; color: #0ba2cf; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
         </div>
         <div class="defense-recours">
           <mat-slide-toggle 
@@ -272,7 +266,7 @@
             <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
           </div>
         </div>
-        <button mat-flat-button color="primary" (click)="validateSection('responsabiliteRecours')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">Valider</button>
       </div>
     </div>
   </div>

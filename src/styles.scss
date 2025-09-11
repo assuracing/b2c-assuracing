@@ -1,11 +1,52 @@
+@use '@angular/material' as mat;
+
+:root {
+  @include mat.slide-toggle-overrides((
+    selected-track-color: #0ba2cf,           
+    selected-focus-track-color: #0ba2cf,     
+    selected-hover-track-color: #0ba2cf,     
+    selected-pressed-track-color: #0ba2cf,   
+    selected-handle-color: white,            
+    selected-hover-handle-color: white,      
+    selected-pressed-handle-color: white,    
+    selected-focus-handle-color: white       
+  ));
+  @include mat.slider-overrides((
+    handle-color: #0ba2cf,
+    hover-handle-color: #0ba2cf,
+    focus-handle-color: #0ba2cf,
+    disabled-handle-color: gray,
+    ripple-color: #0ba2cf,
+    active-track-color: #0ba2cf
+  ));
+  @include mat.checkbox-overrides((
+    selected-icon-color: #0ba2cf,
+    selected-hover-icon-color: #0ba2cf,
+    selected-focus-icon-color: #0ba2cf,
+    selected-pressed-icon-color: #0ba2cf,
+  ));
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-step-icon {
-    background-color: #02556e !important;
-    color: #ffffff !important;
+    background-color: #f1f1f1 !important;
+    color: #0ba2cf !important;
 }
 
 .mat-mdc-slider .mdc-slider__track--inactive {
     background-color: #0ba2cf !important;
+}
+
+.mat-step-label {
+    color: #f1f1f1 !important;
+}
+
+
+.mat-button {
+    background-color: #0ba2cf !important;
+    color: white !important;
+    margin-top: 10px !important;
+    min-width: 120px !important;
 }
