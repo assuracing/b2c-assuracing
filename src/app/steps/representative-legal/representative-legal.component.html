@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<h2 style="display: flex; justify-content: center;">Informations du représentant légal</h2>
+<h2 class="text-grey" style="display: flex; justify-content: center;">Informations du représentant légal</h2>
 <form class="login-form">
-
     <h3>Le représentant légal (Assuré mineur)</h3>
     <div class="form-group">
         <label for="password">Nom</label>
@@ -16,10 +15,9 @@
     <div class="form-group">
         <label for="email">Email</label>
         <input [(ngModel)]="representativeEmail" type="email" id="representativeEmail" name="representativeEmail" class="form-control" required>
-    </div>   
+    </div>
+
+    <p class="info" style="display: flex; justify-content: center;"> Le plafond de la garantie Décès est limité à XXXX € pour les assurés de moins de 18 ans</p>
+    <p class="code"> <strong>Un code va vous être envoyé par mail</strong></p>
 
 </form>
-
-<p class="info"> Le  plafond de la garantie Décès est limité à XXXX € pour les assurés de moins de 18 ans</p>
-
-<p class="code"> <strong>Un code va vous être envoyé par mail</strong></p>

@@ -81,11 +81,11 @@ button:last-child:not(.mat-calendar-button):not(.coverage-option) {
   }
 }
 
-h2 {
-    color: #ffffff !important;
+.text-red {
+  color: rgb(240, 70, 70);
 }
 
-p {
+h2 {
     color: #ffffff !important;
 }
 
@@ -96,7 +96,6 @@ li {
 .text-dark {
     color: #000000 !important;
 }
-
 
 .summary-container {
   border: 1px solid #ddd !important;
