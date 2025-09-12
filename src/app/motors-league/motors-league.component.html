@@ -135,18 +135,18 @@
         <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
       </div>
 
-      <p class="text-dark">Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
-      <p class="text-dark">(décès {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death) : '--'}} €,
+      <p class="text-dark-center">Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
+      <p class="text-dark-center">(décès {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.death) : '--'}} €,
         invalidité {{getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability ? formatNumber(getCoverageAmounts(coverageForm.get('coverageLevel')?.value)?.disability) : '--'}} €)</p>
-      <p class="text-dark">La prime annuelle est de {{getLevelPrice(coverageForm.get('coverageLevel')?.value) ? formatNumber(getLevelPrice(coverageForm.get('coverageLevel')?.value)) : '--'}} €</p>
+      <p class="text-dark-center">La prime annuelle est de {{getLevelPrice(coverageForm.get('coverageLevel')?.value) ? formatNumber(getLevelPrice(coverageForm.get('coverageLevel')?.value)) : '--'}} €</p>
     
       <div class="signature-section">
-          <p class="text-dark">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+          <p class="text-dark-center">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
             {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance des éléments contractuels du produit "Licence MotorsLeague" et confirme valider ma demande de licence
             <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
           </p>
         
-        <p style="color: red;" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+        <p class="text-red" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
         <form [formGroup]="summaryForm">
           <mat-form-field *ngIf="isMinor()">

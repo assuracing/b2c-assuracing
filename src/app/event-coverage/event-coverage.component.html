@@ -121,7 +121,7 @@
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
 
-        <p class="text-red" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+        <p class="text-dark" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
         <form [formGroup]="summaryForm">
           <mat-form-field *ngIf="isMinor()">
