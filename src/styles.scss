@@ -25,6 +25,9 @@
     selected-focus-icon-color: #0ba2cf,
     selected-pressed-icon-color: #0ba2cf,
   ));
+  @include mat.select-overrides((
+    panel-background-color: #ffffff,
+  ));
 }
 
 html, body { height: 100%; }
@@ -53,4 +56,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-mdc-checkbox .mdc-checkbox__background {
   background-color: #ffffff;
+}
+
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: #ffffff;
+  border-radius: 8px;
 }

@@ -125,7 +125,7 @@ interface ContractResponse {
     MatTooltipModule,
   ],
   templateUrl: './event-coverage.component.html',
-  styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss']
+  styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss', '../app.component.scss']
 })
 export class EventCoverageComponent {
   labelPosition: 'end' | 'bottom' = 'end';
