@@ -89,9 +89,9 @@
   
     <mat-step [stepControl]="summaryForm">
       <ng-template matStepLabel>Resumé</ng-template>
-      <div class="summary-container">
-        <h2>Résumé</h2>
-        <div class="summary-section">
+      <div class="login-form">
+        <h2 class="text-dark">Résumé de la commande</h2>
+        <div class="summary-container">
           <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
           <p><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
           <p><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
@@ -100,23 +100,13 @@
           <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
         </div>
 
-        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-container">
             <div class="vehicle-info">
               <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
+              <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+              <p *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" ><strong>Véhicule:</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
             </div>
         </div>
-
-        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
-          <div class="vehicle-info">
-            <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
-          </div>
-      </div>
-        
-        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-section">
-            <div class="vehicle-info">
-              <p><strong>Véhicule:</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
-            </div>
-          </div>
 
         <div *ngIf="this.trackdayForm.get('role')?.value == 'passager'" class="summary-section">
           <div class="vehicle-info">
@@ -124,33 +114,28 @@
           </div>
         </div>
 
-        </div>
-      <div class="coverage-summary">
-        <p [innerHTML]="formatCoverageSummary()"></p>
-      </div>
+        <p class="text-dark" [innerHTML]="formatCoverageSummary()"></p>
 
-      <div class="signature-section">
-        <p>Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+        <p class="text-dark">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
           {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance <a href="https://www.assuracing.com/documents" target="_blank">des éléments contractuels</a> du/des produit(s) indiqué ci-dessus et confirme valider ma souscription aux garanties listées :
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
-      </div>
 
-      <p style="color: red;" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+        <p class="text-red" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
-      <form [formGroup]="summaryForm">
-        <mat-form-field *ngIf="isMinor()">
-          <mat-label>Code de vérification</mat-label>
-          <input matInput type="text" formControlName="verificationCode">
-        </mat-form-field>
+        <form [formGroup]="summaryForm">
+          <mat-form-field *ngIf="isMinor()">
+            <mat-label>Code de vérification</mat-label>
+            <input matInput type="text" formControlName="verificationCode">
+          </mat-form-field>
+        </form>
+    </div>
 
-        <div class="mt-4">
-          <button mat-button matStepperPrevious>Retour</button>
-          <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
-          <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
-        </div>
-      </form>
-
+    <div class="mt-4">
+      <button mat-button matStepperPrevious>Retour</button>
+      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
+      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
+    </div>
     </mat-step>
   
     <mat-step [stepControl]="paymentForm">
