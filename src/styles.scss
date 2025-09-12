@@ -54,6 +54,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     min-width: 120px !important;
 }
 
+.mat-mdc-checkbox .mdc-checkbox__background {
+  background-color: #ffffff;
+}
+
 .mat-mdc-form-field .mat-mdc-text-field-wrapper {
   background-color: #ffffff;
   border-radius: 8px;
