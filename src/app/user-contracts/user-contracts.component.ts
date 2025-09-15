@@ -68,11 +68,15 @@ export class UserContractsComponent implements AfterViewInit {
 
   ngOnInit(): void {
     this.userService.getAllContracts().subscribe((contracts) => {
-      this.contracts = contracts;
+      this.contracts = contracts.sort((a: any, b: any) => {
+        const dateA = new Date(a.dateSaisie).getTime();
+        const dateB = new Date(b.dateSaisie).getTime();
+        return dateB - dateA;
+      });
+      
       this.filteredContracts = [...this.contracts];
       this.initializeDataSource();
       this.initializeYearFilter();
-      
       this.applyFilters();
     });
     
