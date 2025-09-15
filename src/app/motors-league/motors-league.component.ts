@@ -97,6 +97,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
   private apiUrl: string;
   labelPosition: 'end' | 'bottom' = 'end';
+  vehicleType: 'auto' | 'moto' = 'auto';
+  userAge: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -121,6 +123,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
       this.updateSummary();
+    });
+
+    this.initializeBirthdateSubscription();
+    
+    this.vehicleForm.get('type')?.valueChanges.subscribe(type => {
+      if (type) {
+        this.vehicleType = type;
+      }
     });
   }
 
@@ -189,6 +199,19 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
   }
 
+  private initializeBirthdateSubscription() {
+    if (this.personalForm) {
+      const birthdateControl = this.personalForm.get('birthdate');
+      if (birthdateControl) {
+        birthdateControl.valueChanges.subscribe(birthDate => {
+          if (birthDate) {
+            this.userAge = this.calculateAge(new Date(birthDate));
+          }
+        });
+      }
+    }
+  }
+
   private initializeForms() {
     this.summaryForm = this.fb.group({
       verificationCode: ['', Validators.required]
@@ -216,28 +239,56 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       immatNumber: ['', Validators.required],
       chassisNumber: ['', Validators.required],
       serieNumber: ['', Validators.required],
-      titreConduite: ['', Validators.required],
-      titreNumber: ['', Validators.required]
+      titreConduite: [''],
+      titreNumber: [''],
+      hasCasm: [''],
+      hasPermisB: ['']
     });
 
     this.vehicleForm.get('immatNumber')?.disable();
     this.vehicleForm.get('chassisNumber')?.disable();
     this.vehicleForm.get('serieNumber')?.disable();
     this.vehicleForm.get('identificationNumber')?.valueChanges.subscribe(value => {
-    this.vehicleForm.get('immatNumber')?.disable();
-    this.vehicleForm.get('chassisNumber')?.disable();
-    this.vehicleForm.get('serieNumber')?.disable();
+      this.vehicleForm.get('immatNumber')?.disable();
+      this.vehicleForm.get('chassisNumber')?.disable();
+      this.vehicleForm.get('serieNumber')?.disable();
 
-    switch(value) {
-      case 'immat':
-        this.vehicleForm.get('immatNumber')?.enable();
-        break;
-      case 'chassis':
-        this.vehicleForm.get('chassisNumber')?.enable();
-        break;
-      case 'serie':
-        this.vehicleForm.get('serieNumber')?.enable();
-        break;
+      switch(value) {
+        case 'immat':
+          this.vehicleForm.get('immatNumber')?.enable();
+          break;
+        case 'chassis':
+          this.vehicleForm.get('chassisNumber')?.enable();
+          break;
+        case 'serie':
+          this.vehicleForm.get('serieNumber')?.enable();
+          break;
+      }
+    });
+
+    this.vehicleForm.get('hasCasm')?.valueChanges.subscribe(value => {
+      if (value === 'Oui') {
+        this.vehicleForm.get('titreConduite')?.clearValidators();
+        this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
+        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
+      } else {
+        this.vehicleForm.get('titreNumber')?.clearValidators();
+        this.vehicleForm.get('titreNumber')?.setValue('');
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
+      }
+    });
+
+    this.vehicleForm.get('hasPermisB')?.valueChanges.subscribe(value => {
+      if (value === 'Oui') {
+        this.vehicleForm.get('titreConduite')?.clearValidators();
+        this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
+        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
+      } else {
+        this.vehicleForm.get('titreNumber')?.clearValidators();
+        this.vehicleForm.get('titreNumber')?.setValue('');
+        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       }
     });
 

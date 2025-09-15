@@ -56,15 +56,15 @@
       <label> <strong>Numéro d'identification</strong> <mat-icon class="info-icon" matTooltip="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">info</mat-icon></label>
       <div class="radio-group">
             <label for="immat">Immatriculation</label>
-            <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
+            <input type="radio" id="immat" formControlName="identificationNumber" name="identificationType" value="immat">
         </div>
         <div class="radio-group">
             <label for="chassis">Nº chassis</label>
-            <input type="radio" id="chassis" formControlName="identificationNumber" value="chassis">
+            <input type="radio" id="chassis" formControlName="identificationNumber" name="identificationType" value="chassis">
         </div>
         <div class="radio-group">
             <label for="serie">Nº série</label>
-            <input type="radio" id="serie" formControlName="identificationNumber" value="serie">
+            <input type="radio" id="serie" formControlName="identificationNumber" name="identificationType" value="serie">
         </div>
     </div>
 
@@ -182,19 +182,58 @@
         <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" required>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" *ngIf="userAge && userAge >= 18 && form.get('type')?.value === 'moto'">
         <label for="titreConduite"></label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Titre de conduite</mat-label>
-          <mat-select formControlName="titreConduite" required>
+          <mat-select formControlName="titreConduite" [disabled]="showDriveLicenseTooltip">
             <mat-option *ngFor="let license of getFilteredLicenseTypes()" [value]="license.value">
               {{license.label}}
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <app-adaptive-tooltip
+          *ngIf="showDriveLicenseTooltip"
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
     </div>
 
-    <div class="form-group">
+    <div class="radio" *ngIf="userAge && userAge < 18 && form.get('type')?.value === 'moto'">
+      <label> <strong>Possédez-vous le CASM ?</strong>
+        <app-adaptive-tooltip
+          *ngIf="showDriveLicenseTooltip"
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
+      </label>
+      <div class="radio-group">
+          <label for="hasCasm">Oui</label>
+          <input type="radio" id="hasCasm" formControlName="hasCasm" name="casmGroup" value="Oui">
+      </div>
+      <div class="radio-group">
+          <label for="hasntCasm">Non</label>
+          <input type="radio" id="hasntCasm" formControlName="hasCasm" name="casmGroup" value="Non">
+      </div>
+    </div>
+
+    <div class="radio" *ngIf="form.get('type')?.value === 'auto'">
+      <label> <strong>Possédez-vous le permis B ?</strong>
+        <app-adaptive-tooltip
+          *ngIf="showDriveLicenseTooltip"
+          text="{{getDriveLicenseTooltipMessage()}}">
+        </app-adaptive-tooltip>
+      </label>
+      <div class="radio-group">
+          <label for="hasPermisB">Oui</label>
+          <input type="radio" id="hasPermisB" formControlName="hasPermisB" name="permisBGroup" value="Oui">
+      </div>
+      <div class="radio-group">
+          <label for="hasntPermisB">Non</label>
+          <input type="radio" id="hasntPermisB" formControlName="hasPermisB" name="permisBGroup" value="Non">
+      </div>
+    </div>
+
+    <!-- Debug: hasCasm={{form.get('hasCasm')?.value}}, hasPermisB={{form.get('hasPermisB')?.value}}, type={{form.get('type')?.value}}, userAge={{userAge}} -->
+    <div class="form-group" *ngIf="shouldShowTitreNumber()">
         <label for="titreNumber">Nº titre</label>
         <input formControlName="titreNumber" type="text" id="titreNumber" class="form-control" required>
     </div>

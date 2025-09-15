@@ -83,6 +83,8 @@
     <form [formGroup]="vehicleForm">
       <app-vehicle-info 
         [form]="vehicleForm" 
+        [vehicleType]="vehicleType"
+        [userAge]="userAge"
         (vehicleAdded)="handleVehicleAdded($event)"
         (vehicleRemoved)="onVehicleRemoved($event)">
       </app-vehicle-info>
