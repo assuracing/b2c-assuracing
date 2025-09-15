@@ -162,29 +162,29 @@ export class EventCoverageOptionsComponent {
 
 
   GARANTIES_MAP: any = {
-    training: {
-      pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['IA', 'PJ'],
-      mecanicien: ['IA', 'PJ'],
-      photographe: ['IA', 'PJ'] 
+    ROULAGE_ENTRAINEMENT: {
+      PILOTE: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
+      PASSAGER: ['IA', 'PJ'],
+      MECANICIEN: ['IA', 'PJ'],
+      PHOTOGRAPHE_VIDEASTE: ['IA', 'PJ'] 
     },
-    coaching: {
-      pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['IA', 'PJ'],
-      mecanicien: ['IA', 'PJ'],
-      photographe: ['IA', 'PJ']
+    COACHING: {
+      PILOTE: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
+      PASSAGER: ['IA', 'PJ'],
+      MECANICIEN: ['IA', 'PJ'],
+      PHOTOGRAPHE_VIDEASTE: ['IA', 'PJ']
     },
-    stage: {
-      pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['IA', 'PJ'],
-      mecanicien: ['IA', 'PJ'],
-      photographe: ['IA', 'PJ']
+    STAGE_PILOTAGE: {
+      PILOTE: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
+      PASSAGER: ['IA', 'PJ'],
+      MECANICIEN: ['IA', 'PJ'],
+      PHOTOGRAPHE_VIDEASTE: ['IA', 'PJ']
     },
-    competition: {
-      pilote: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
-      passager: ['IA', 'PJ'],
-      mecanicien: ['IA', 'PJ'],
-      photographe: ['IA', 'PJ']
+    COMPETITION: {
+      PILOTE: ['IAI', 'IA', 'RC', 'PJ', 'Dommages'],
+      PASSAGER: ['IA', 'PJ'],
+      MECANICIEN: ['IA', 'PJ'],
+      PHOTOGRAPHE_VIDEASTE: ['IA', 'PJ']
     }
   };
 
@@ -194,7 +194,7 @@ export class EventCoverageOptionsComponent {
       return;
     }
 
-    const mappedRole = this._role === 'photographe' ? 'photographe' : this._role;
+    const mappedRole = this._role === 'PHOTOGRAPHE_VIDEASTE' ? 'PHOTOGRAPHE_VIDEASTE' : this._role;
     this.allowedGaranties = this.GARANTIES_MAP[this._eventType]?.[mappedRole] || [];
 
     if (this.allowedGaranties.includes('Annulation')) {
