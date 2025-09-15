@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { VehicleService } from '../../services/vehicle.service';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { AdaptiveTooltipComponent } from "../../adaptive-tooltip/adaptive-tooltip.component";
 
@@ -20,8 +21,10 @@ import { AdaptiveTooltipComponent } from "../../adaptive-tooltip/adaptive-toolti
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatOptionModule, AdaptiveTooltipComponent]
 })
-export class VehicleInfoComponent implements OnInit, OnDestroy {
+export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form!: FormGroup;
+  @Input() vehicleType?: string;
+  @Input() userAge?: number;
   @Output() vehicleAdded = new EventEmitter<any>();
   @Output() vehicleRemoved = new EventEmitter<any>();
   vehicles: any[] = [];
@@ -30,6 +33,9 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
   filteredBrands: string[] = [];
   private allBrands: string[] = [];
+  
+  showVehicleTypeTooltip = false;
+  showDriveLicenseTooltip = false;
 
   vehicleTypes = [
     { value: 'auto', label: 'Auto' },
@@ -110,20 +116,110 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
     });
+    this.updateVehicleType();
+    setTimeout(() => this.updateDriveLicenseTooltip());
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['vehicleType'] && !changes['vehicleType'].firstChange) {
+      this.updateVehicleType();
+    }
+    if (changes['userAge'] && !changes['userAge'].firstChange) {
+      this.updateDriveLicenseTooltip();
+    }
+  }
+
+  private updateVehicleType() {
+    if (this.vehicleType) {
+      this.form.get('type')?.setValue(this.vehicleType);
+      this.showVehicleTypeTooltip = true;
+      this.updateFilteredBrands();
+      this.updateDriveLicenseTooltip();
+    }
 
     this.form.get('type')?.valueChanges.subscribe(() => {
       this.form.get('brand')?.reset();
       this.form.get('titreConduite')?.reset();
       this.updateFilteredBrands();
+      this.updateDriveLicenseTooltip();
     });
     this.updateFilteredBrands();
+  }
+
+  private updateDriveLicenseTooltip(): void {
+    if (!this.form) return;
+    
+    const driveLicenseControl = this.form.get('titreConduite');
+    const vehicleType = this.form.get('type')?.value;
+    
+    if (!driveLicenseControl || !vehicleType) return;
+    
+    const currentValue = driveLicenseControl.value;
+    
+    driveLicenseControl.clearValidators();
+    driveLicenseControl.setValue(null, { emitEvent: false });
+    
+    if (vehicleType === 'auto') {
+      if (this.userAge && this.userAge < 17) {
+        driveLicenseControl.disable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else if (this.userAge && this.userAge <= 19) {
+        driveLicenseControl.enable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else {
+        driveLicenseControl.enable({ emitEvent: false });
+        driveLicenseControl.setValidators(Validators.required);
+        this.showDriveLicenseTooltip = true;
+      }
+    } else if (vehicleType === 'moto') {
+      if (this.userAge && this.userAge < 16) {
+        driveLicenseControl.disable({ emitEvent: false });
+        this.showDriveLicenseTooltip = true;
+      } else {
+        driveLicenseControl.enable({ emitEvent: false });
+        driveLicenseControl.setValidators(Validators.required);
+        this.showDriveLicenseTooltip = true;
+      }
+    } else {
+      driveLicenseControl.disable({ emitEvent: false });
+      this.showDriveLicenseTooltip = false;
+    }
+    
+    if (driveLicenseControl.enabled) {
+      driveLicenseControl.setValue(currentValue, { emitEvent: false });
+    }
+    
+    driveLicenseControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  getDriveLicenseTooltipMessage(): string {
+    if (!this.userAge || !this.vehicleType) return '';
+    
+    if (this.vehicleType === 'auto') {
+      if (this.userAge < 17) {
+        return 'Le permis B n\'est pas à renseigner pour les personnes de moins de 17 ans';
+      } else if (this.userAge <= 19) {
+        return 'Le permis B n\'est pas indispensable pour les personnes de 17 à 19 ans';
+      } else {
+        return 'Le permis B est obligatoire pour les personnes de plus de 19 ans';
+      }
+    } else if (this.vehicleType === 'moto') {
+      if(this.userAge >= 16 && this.userAge < 18){
+        return 'Le CASM est obligatoire pour les personnes de 16 à 18 ans';
+      }
+      else if(this.userAge >= 18){
+        return 'Le permis A ou le CASM est obligatoire pour les personnes de plus de 18 ans';
+      }
+    }
+    return '';
   }
 
   updateFilteredBrands() {
@@ -214,5 +310,26 @@ export class VehicleInfoComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  shouldShowTitreNumber(): boolean {
+    if (!this.form) return false;
+    
+    const type = this.form.get('type')?.value;
+    if (!type) return false;
+    
+    const hasCasm = this.form.get('hasCasm')?.value === 'Oui';
+    const hasPermisB = this.form.get('hasPermisB')?.value === 'Oui';
+    const isMoto = type === 'moto';
+    const isAuto = type === 'auto';
+    const isAdult = this.userAge !== undefined && this.userAge >= 18;
+
+    if (isMoto) {
+      return hasCasm || isAdult;
+    } else if (isAuto) {
+      return hasPermisB;
+    }
+    
+    return false;
   }
 }
