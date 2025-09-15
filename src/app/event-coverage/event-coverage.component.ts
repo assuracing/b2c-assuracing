@@ -49,6 +49,8 @@ interface Contract {
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: number[];
+  typeEvenement: string;
+  typeAssure: string;
   c: {
     adresse: string;
     complementadresse: string;
@@ -685,6 +687,8 @@ export class EventCoverageComponent {
       nbrjour: trackdayData.duration,
       datedebutroulage: formatISODate(trackdayData.eventDate),
       codeProduit: this.getSelectedProducts(coverageData),
+      typeEvenement: trackdayData.eventType,
+      typeAssure: trackdayData.role,
       c: {
         adresse: personalData.address,
         complementadresse: personalData.addressComplement,
