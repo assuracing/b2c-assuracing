@@ -1,5 +1,27 @@
-h2, h3 {
-  color: #333;
-  font-weight: bold;
+.btn-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 480px;
+  margin: 16px 0;
 }
 
+.badge {
+  position: absolute;
+  right: 10%;
+  transform: translateY(-50%);
+  background: #0ba2cf;
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+
+.btn-test mat-icon {
+  margin-right: 8px;
+  }
