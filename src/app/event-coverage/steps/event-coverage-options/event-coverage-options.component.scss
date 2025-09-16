@@ -7,19 +7,12 @@
     }
   }
 
-  .iai-options {
-    background: #f1f1f1;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    padding: 16px;
-    margin-bottom: 20px;
-
-    .date-group {
-      margin-bottom: 15px;
-    }
-
-    .reservation-amount {
-      margin-bottom: 15px;
+  .date-group, .amount-group {
+    margin-top: 20px;
+    
+    mat-form-field {
+      width: 100%;
+      max-width: 300px; 
     }
   }
 
@@ -336,7 +329,7 @@
   font-weight: 600;
   font-size: 16px;
   color: #02556e;
-}
+} 
 
 .toggle-label-medium {  
   font-weight: 500;

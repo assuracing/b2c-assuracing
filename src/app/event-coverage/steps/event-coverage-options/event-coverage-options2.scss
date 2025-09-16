@@ -39,3 +39,21 @@
   }
 
   
+  .date-amount-group {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    
+    mat-form-field {
+      width: 100%;
+      max-width: 300px; 
+    }
+  }
+
+  @media (max-width: 400px) {
+    .date-amount-group {
+      mat-label {
+        font-size: 14px;
+      }
+    }
+  }

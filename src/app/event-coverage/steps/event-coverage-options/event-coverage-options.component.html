@@ -44,28 +44,27 @@
         </div>
       </ng-container>
       <div *ngIf="activeSection === 'iai'" style="margin-top: 40px;">
-        <div class="date-group">
+        <div class="date-amount-group">
           <mat-form-field appearance="outline">
             <mat-label>Date d'inscription à l'événement</mat-label>
             <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate" [max]="today">
             <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
             <mat-datepicker #inscriptionDate></mat-datepicker>
           </mat-form-field>
+          <mat-form-field appearance="outline" style="margin-bottom: 15px;">
+            <mat-label>Montant de la réservation (€)</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              formControlName="reservationAmount"
+              (input)="onReservationAmountChange()"
+              min="0"
+              max="1500"
+              step="1"
+              placeholder="Montant max. 1500 €">
+            <mat-hint align="end">Montant max. 1500 €</mat-hint>
+          </mat-form-field>
         </div>
-  
-        <mat-form-field appearance="outline" style="margin-bottom: 15px;">
-          <mat-label>Montant de la réservation (€)</mat-label>
-          <input 
-            matInput 
-            type="number" 
-            formControlName="reservationAmount"
-            (input)="onReservationAmountChange()"
-            min="0"
-            max="1500"
-            step="1"
-            placeholder="Montant max. 1500 €">
-          <mat-hint align="end">Montant max. 1500 €</mat-hint>
-        </mat-form-field>
   
           <div class="risk-group">
             <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul"><strong class="toggle-label-medium">Risques Intempéries</strong></mat-slide-toggle>
