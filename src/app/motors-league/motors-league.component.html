@@ -35,7 +35,7 @@
 
     <ul>
         <li> <strong>1 Reconditionnement d'Airbag par an</strong> (150 €)</li>
-        <li> <strong>1 Garantie « Satombalo »</strong> d'une valeur de 150 € (en cas de journée pluvieuse : 100% remboursés en cas d'annulation de participation 70% remboursés en cas de roulage)</li>
+        <li> <strong>1 Garantie « Satombalo »</strong> d'une valeur de 150 € (en cas de journée pluvieuse : 100 % remboursés en cas d'annulation de participation 70 % remboursés en cas de roulage)</li>
         <li> <strong>Abonnement QuickRacing Premium</strong></li>
     </ul>
 
@@ -101,12 +101,12 @@
     <div class="login-form">
       <div class="summary-container">
         <h3>Informations personnelles</h3>
-          <p class="text-dark"><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
-          <p class="text-dark"><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
-          <p class="text-dark"><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
-          <p class="text-dark"><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
-          <p class="text-dark"><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
-          <p class="text-dark"><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
+          <p class="text-dark"><strong>Nom :</strong> {{personalForm.get('lastname')?.value}}</p>
+          <p class="text-dark"><strong>Prénom :</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p class="text-dark"><strong>Adresse :</strong> {{personalForm.get('address')?.value}}</p>
+          <p class="text-dark"><strong>Nationalité :</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p class="text-dark"><strong>Email :</strong> {{personalForm.get('email')?.value}}</p>
+          <p class="text-dark"><strong>Téléphone :</strong> {{personalForm.get('phone')?.value}}</p>
       </div>
 
       <div class="summary-container">
@@ -126,15 +126,15 @@
       <div class="summary-container">
       <h3>Permis de conduire</h3>
         <!-- <ng-container *ngIf="vehicles && vehicles.length > 0; else noVehicle">
-          <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicles[vehicles.length - 1]?.titreConduite) || '--'}}</p>
-          <p><strong>Numéro de permis:</strong> {{vehicles[vehicles.length - 1]?.titreNumber || '--'}}</p>
+          <p><strong>Titre de conduite :</strong> {{formatPermisType(vehicles[vehicles.length - 1]?.titreConduite) || '--'}}</p>
+          <p><strong>Numéro de permis :</strong> {{vehicles[vehicles.length - 1]?.titreNumber || '--'}}</p>
         </ng-container>
         <ng-template #noVehicle>
-          <p><strong>Titre de conduite:</strong> --</p>
-          <p><strong>Numéro de permis:</strong> --</p>
+          <p><strong>Titre de conduite :</strong> --</p>
+          <p><strong>Numéro de permis :</strong> --</p>
         </ng-template> -->
-        <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
-        <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+        <p><strong>Titre de conduite :</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
+        <p><strong>Numéro de permis :</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
       </div>
 
       <p class="text-dark-center">Vous avez sélectionné la licence MotorsLeague niveau {{coverageForm.get('coverageLevel')?.value}}</p>
