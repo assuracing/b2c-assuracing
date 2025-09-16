@@ -62,3 +62,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: #ffffff;
   border-radius: 8px;
 }
+
+.cdk-overlay-pane.login-dialog .container-app {
+  max-width:80%;
+} 

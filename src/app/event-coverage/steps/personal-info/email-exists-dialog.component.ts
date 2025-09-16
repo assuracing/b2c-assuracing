@@ -49,7 +49,11 @@ export class EmailExistsDialogComponent {
 
   showLogin() {
     setTimeout(() => {
-      const dialogRef = this.dialog.open(LoginComponent, { width: '400px' });
+      const dialogRef = this.dialog.open(LoginComponent, {
+        width: '600px',
+        maxWidth: '90vw',
+        panelClass: 'login-dialog',
+       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.userService.getAccount().subscribe(() => {
