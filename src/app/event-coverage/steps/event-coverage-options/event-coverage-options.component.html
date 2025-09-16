@@ -15,7 +15,7 @@
           [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
           matTooltipPosition="above">
-          Garantie I A I (Intempéries, Annulation & Interruption)
+          Intempéries, Annulation & Interruption
         </mat-slide-toggle>
       </ng-container>
 
@@ -34,8 +34,8 @@
                >
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'iai' || !activeSection ? onCartClick('iai') : null">
-              Garantie I A I (Intempéries, Annulation & Interruption)
-              <mat-icon [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
+              Intempéries, Annulation & Interruption
+              <mat-icon [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getIAIAmount()) }}
               </span>
@@ -62,7 +62,7 @@
             (input)="onReservationAmountChange()"
             min="0"
             max="1500"
-            step="0.01"
+            step="1"
             placeholder="Montant max. 1500 €">
           <mat-hint align="end">Montant max. 1500 €</mat-hint>
         </mat-form-field>
@@ -73,12 +73,12 @@
               Non disponible pour cet organisateur
             </small>
             <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-              Non disponible pour les dates de roulage à moins de 3 semaines de l'événement
+              Non disponible car l'évènement a lieu dans moins de 3 semaines.
             </small>
             <div class="risk-details">
               <ul>
-                <li>100% en cas d'annulation</li>
-                <li>70% en cas de roulage sous la pluie</li>
+                <li>100 % en cas d'annulation</li>
+                <li>70 % en cas de roulage sous la pluie</li>
               </ul>
               <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
             </div>
@@ -90,16 +90,16 @@
                 Non disponible pour cet organisateur
               </small>
               <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
-                Non disponible pour les dates de roulage à moins de 3 semaines de l'événement
+                Non disponible car l'évènement a lieu dans moins de 3 semaines.
               </small>
               <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
-                Non disponible pour les inscriptions aux évènements de plus de 15 jours.
+                Non disponible car votre inscription a été effectuée il y a plus de 15 jours.
               </small>
             <div class="risk-details">
               <ul>
-                <li>100% en cas d'Accident corporel et d'Hospitalisation</li>
-                <li>100% en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
-                <li>80% autres motifs de santé</li>
+                <li>100 % en cas d'Accident corporel et d'Hospitalisation</li>
+                <li>100 % en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
+                <li>80 % autres motifs de santé</li>
               </ul>
               <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
             </div>
@@ -134,7 +134,7 @@
           [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
           [matTooltipPosition]="'above'"
           [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
-          Protection Corporelle
+          Protection Corporelle (Individuelle Accident)
         </mat-slide-toggle>
       </ng-container>
 
@@ -152,8 +152,8 @@
                [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
-              Protection Corporelle
-              <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">shopping_cart</mat-icon>
+              Protection Corporelle (Individuelle Accident)
+              <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getProtectionPiloteAmount()) }}
               </span>
@@ -166,7 +166,7 @@
         <p class="description">
           La garantie corporelle la plus complète du marché
           <app-adaptive-tooltip
-            text="Notre Protection corporelle pilote comprend les garanties suivantes :&#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+            text="La garantie comprend : &#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
           </app-adaptive-tooltip>
         </p>
 
@@ -237,7 +237,7 @@
 
       <div class="risk-details" *ngIf="activeSection === 'responsabiliteRecours'">
         <div class="responsabilite-civile">
-          <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true">Responsabilité Civile participants</mat-slide-toggle>
+          <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true">Responsabilité Civile (RC - obligatoire)</mat-slide-toggle>
           <app-adaptive-tooltip 
             [blink]="true"
             *ngIf="vehicleType === 'auto'"
@@ -248,7 +248,7 @@
             *ngIf="vehicleType === 'moto'"
             text="Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans">
           </app-adaptive-tooltip>
-          <p class="inclus" style="font-weight: normal; font-size: 12px; color: #0ba2cf; margin-top: 2px; margin-left: 32px;">Inclus dans votre inscription !</p>
+          <p class="inclus" style="font-weight: normal; font-size: 12px; color: #0ba2cf; margin-top: 2px; margin-left: 32px;">Incluse dans votre inscription !</p>
         </div>
         <div class="defense-recours">
           <mat-slide-toggle 
@@ -256,7 +256,7 @@
             formControlName="defenseRecours"
             (change)="onDefenseRecoursToggle($event)"
             [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
-            Défense Recours - Protection Juridique
+            Protection Juridique
           </mat-slide-toggle>
           <small *ngIf="isProductUnavailable('DEFENSE_RECOURS')" class="toggle-unavailable">
             Non disponible pour cet organisateur

@@ -92,32 +92,32 @@
       <div class="login-form">
         <h2 class="text-dark">Résumé de la commande</h2>
         <div class="summary-container">
-          <p><strong>Nom:</strong> {{personalForm.get('lastname')?.value}}</p>
-          <p><strong>Prénom:</strong> {{personalForm.get('firstname')?.value}}</p>
-          <p><strong>Adresse:</strong> {{personalForm.get('address')?.value}}</p>
-          <p><strong>Nationalité:</strong> {{personalForm.get('nationality')?.value}}</p>
-          <p><strong>Email:</strong> {{personalForm.get('email')?.value}}</p>
-          <p><strong>Téléphone:</strong> {{personalForm.get('phone')?.value}}</p>
+          <p><strong>Nom :</strong> {{personalForm.get('lastname')?.value}}</p>
+          <p><strong>Prénom :</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p><strong>Adresse :</strong> {{personalForm.get('address')?.value}}</p>
+          <p><strong>Nationalité :</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p><strong>Email :</strong> {{personalForm.get('email')?.value}}</p>
+          <p><strong>Téléphone :</strong> {{personalForm.get('phone')?.value}}</p>
         </div>
 
         <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-container">
             <div class="vehicle-info">
-              <p><strong>Titre de conduite:</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
-              <p><strong>Numéro de permis:</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
-              <p *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" ><strong>Véhicule:</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
-            </div>
+              <p><strong>Titre de conduite :</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
+              <p><strong>Numéro de permis :</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
+              <p *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" ><strong>Véhicule :</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
+            </div>    
         </div>
 
         <div *ngIf="this.trackdayForm.get('role')?.value == 'passager'" class="summary-section">
           <div class="vehicle-info">
-            <p><strong>Véhicule:</strong> {{formatVehicleType(trackdayForm.get('vehicleType')?.value)}}</p>
+            <p><strong>Véhicule :</strong> {{formatVehicleType(trackdayForm.get('vehicleType')?.value)}}</p>
           </div>
         </div>
 
         <p class="text-dark" [innerHTML]="formatCoverageSummary()"></p>
 
         <p class="text-dark">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
-          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance <a href="https://www.assuracing.com/documents" target="_blank">des éléments contractuels</a> du/des produit(s) indiqué ci-dessus et confirme valider ma souscription aux garanties listées :
+          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance <a href="https://www.assuracing.com/documents" target="_blank">des éléments contractuels</a> du/des produit(s) indiqué(s) ci-dessus et confirme valider ma souscription aux garanties listées :
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
 

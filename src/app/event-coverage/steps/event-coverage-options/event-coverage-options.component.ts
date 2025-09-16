@@ -216,7 +216,7 @@ export class EventCoverageOptionsComponent {
 
   formatPrice(price: number | undefined): string {
     if (price === undefined) return '-- € ';
-    return price % 1 === 0 ? `${price}€` : price.toFixed(2).replace('.', ',') + '€';
+    return price % 1 === 0 ? `${price} €` : price.toFixed(2).replace('.', ',') + ' €';
   }
 
   PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
