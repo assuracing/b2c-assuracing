@@ -15,7 +15,7 @@
           [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
           matTooltipPosition="above">
-          Intempéries, Annulation & Interruption
+          <strong class="toggle-label-strong">Intempéries, Annulation & Interruption</strong>
         </mat-slide-toggle>
       </ng-container>
 
@@ -68,7 +68,7 @@
         </mat-form-field>
   
           <div class="risk-group">
-            <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">Risques Intempéries</mat-slide-toggle>
+            <mat-slide-toggle labelPosition="before" formControlName="intemperies" [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul"><strong class="toggle-label-medium">Risques Intempéries</strong></mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
               Non disponible pour cet organisateur
             </small>
@@ -85,7 +85,7 @@
           </div>
   
           <div class="risk-group">
-            <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">Risques Annulation</mat-slide-toggle>
+            <mat-slide-toggle labelPosition="before" formControlName="annulation" [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')"><strong class="toggle-label-medium">Risques Annulation</strong></mat-slide-toggle>
               <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
                 Non disponible pour cet organisateur
               </small>
@@ -106,7 +106,7 @@
           </div>
   
           <div class="risk-group">
-            <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isProductUnavailable('INTERRUPTION')">Risques Interruption</mat-slide-toggle>
+            <mat-slide-toggle labelPosition="before" formControlName="interruption" [disabled]="isProductUnavailable('INTERRUPTION')"><strong class="toggle-label-medium">Risques Interruption</strong></mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
               Non disponible pour cet organisateur
             </small>
@@ -199,7 +199,7 @@
        [class.disabled-section]="activeSection && activeSection !== 'responsabiliteRecours'">
     <div class="risk-group">
       <ng-container *ngIf="!validatedSections['responsabiliteRecours'] && !wasResponsabiliteRecoursValidated">
-        <mat-slide-toggle
+          <mat-slide-toggle
           labelPosition="before"
           [checked]="activeSection === 'responsabiliteRecours'" 
           [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
@@ -207,7 +207,7 @@
           [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'"
           matTooltipPosition="above">
-          Garantie Responsabilité / Recours
+          <strong class="toggle-label-strong">Garantie Responsabilité / Recours</strong>
         </mat-slide-toggle>
       </ng-container>
 
@@ -236,8 +236,8 @@
       </ng-container>
 
       <div class="risk-details" *ngIf="activeSection === 'responsabiliteRecours'">
-        <div class="responsabilite-civile">
-          <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true">Responsabilité Civile (RC - obligatoire)</mat-slide-toggle>
+        <div class="risk-group">
+          <mat-slide-toggle labelPosition="before" class="inclus-toggle" disabled="true"><strong class="toggle-label-medium">Responsabilité Civile (RC - obligatoire)</strong></mat-slide-toggle>
           <app-adaptive-tooltip 
             [blink]="true"
             *ngIf="vehicleType === 'auto'"
@@ -250,13 +250,13 @@
           </app-adaptive-tooltip>
           <p class="inclus" style="font-weight: normal; font-size: 12px; color: #0ba2cf; margin-top: 2px; margin-left: 32px;">Incluse dans votre inscription !</p>
         </div>
-        <div class="defense-recours">
+        <div class="risk-group">
           <mat-slide-toggle 
             labelPosition="before" 
             formControlName="defenseRecours"
             (change)="onDefenseRecoursToggle($event)"
             [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
-            Protection Juridique
+            <strong class="toggle-label-medium">Protection Juridique</strong>
           </mat-slide-toggle>
           <small *ngIf="isProductUnavailable('DEFENSE_RECOURS')" class="toggle-unavailable">
             Non disponible pour cet organisateur

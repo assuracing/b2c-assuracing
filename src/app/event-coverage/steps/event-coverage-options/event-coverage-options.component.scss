@@ -315,22 +315,6 @@
         padding: 10px 0;
         border-top: 1px solid #eee;
 
-        .responsabilite-civile {
-          margin-bottom: 1rem;
-
-          .inclus {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-          }
-
-          .inclus-toggle {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-          }
-        }
-
         .defense-recours {
           .prime {
             color: #03a9f4;
@@ -342,3 +326,19 @@
     }
   }
 }
+
+.toggle-label {
+  color: #0ba2cf;
+  font-weight: bold;
+}
+
+.toggle-label-strong {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.toggle-label-medium {
+  font-weight: 500;
+  font-size: 15px;
+}
+
