@@ -7,19 +7,12 @@
     }
   }
 
-  .iai-options {
-    background: #f1f1f1;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    padding: 16px;
-    margin-bottom: 20px;
-
-    .date-group {
-      margin-bottom: 15px;
-    }
-
-    .reservation-amount {
-      margin-bottom: 15px;
+  .date-group, .amount-group {
+    margin-top: 20px;
+    
+    mat-form-field {
+      width: 100%;
+      max-width: 300px; 
     }
   }
 
@@ -315,22 +308,6 @@
         padding: 10px 0;
         border-top: 1px solid #eee;
 
-        .responsabilite-civile {
-          margin-bottom: 1rem;
-
-          .inclus {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-          }
-
-          .inclus-toggle {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-          }
-        }
-
         .defense-recours {
           .prime {
             color: #03a9f4;
@@ -342,3 +319,20 @@
     }
   }
 }
+
+.toggle-label {
+  color: #0ba2cf;
+  font-weight: bold;
+}
+
+.toggle-label-strong {
+  font-weight: 600;
+  font-size: 16px;
+  color: #02556e;
+} 
+
+.toggle-label-medium {  
+  font-weight: 500;
+  font-size: 15px;
+}
+
