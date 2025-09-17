@@ -425,6 +425,21 @@ export class EventCoverageComponent {
     }
   }
 
+  changeRoleText(role: string): string {
+    switch(role){
+      case 'PILOTE':
+        return 'pilote';
+      case 'PASSAGER':
+        return 'passager';
+      case 'PHOTOGRAPHE_VIDEASTE':
+        return 'photographe-vidéaste';
+      case 'MECANICIEN':
+        return 'mécanicien';
+      default:
+        return role;
+    }
+  }
+
   goToNextStep(): void {
     if (this.stepper && this.stepper.selectedIndex === 2) {
 
@@ -433,7 +448,7 @@ export class EventCoverageComponent {
       
       if (birthDate && trackdayForm) {
         const age = this.calculateAge(new Date(birthDate));
-        const role = trackdayForm.get('role')?.value;
+        const role = this.changeRoleText(trackdayForm.get('role')?.value);
 
         if (age < 16 && role) {
           this.dialog.open(AgeRestrictionDialogComponent, {
@@ -641,7 +656,7 @@ export class EventCoverageComponent {
   onSubmit(): void {
     const forms = [this.personalForm, this.eventCoverageForm];
     
-    if (this.trackdayForm.get('role')?.value === 'pilote') {
+    if (this.trackdayForm.get('role')?.value === 'PILOTE') {
       forms.push(this.vehicleForm);
     }
     
@@ -748,7 +763,6 @@ export class EventCoverageComponent {
         chassisNumber: this.vehicleForm.get('chassisNumber')?.value,
         serieNumber: this.vehicleForm.get('serieNumber')?.value,
         titreConduite: this.vehicleForm.get('titreConduite')?.value,
-        titreNumber: this.vehicleForm.get('titreNumber')?.value
       };
       
       this.vehicleInfo.onSaveVehicle();

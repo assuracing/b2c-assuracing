@@ -242,11 +242,11 @@ export class TrackdayComponent implements OnInit {
     }
   }
   get isPilot() {
-    return this.form.get('role')?.value === 'pilote';
+    return this.form.get('role')?.value === 'PILOTE';
   }
 
   get isPassenger() {
-    return this.form.get('role')?.value === 'passager';
+    return this.form.get('role')?.value === 'PASSAGER';
   }
 
   private updateVehicleTypeValidator() {
@@ -263,7 +263,7 @@ export class TrackdayComponent implements OnInit {
   onRoleChange(event: any) {
     const role = event.value;
     this.updateVehicleTypeValidator();
-    if (role !== 'pilote' && role !== 'passager') {
+    if (role !== 'PILOTE' && role !== 'PASSAGER') {
       this.form.get('vehicleType')?.reset();
     }
   }

@@ -71,7 +71,7 @@
       </div>
     </mat-step>
   
-    <mat-step *ngIf="trackdayForm.get('role')?.value == 'pilote'" [stepControl]="vehicleForm">
+    <mat-step *ngIf="trackdayForm.get('role')?.value == 'PILOTE'" [stepControl]="vehicleForm">
       <ng-template matStepLabel>Vos Risques</ng-template>
       <form [formGroup]="vehicleForm">
         <app-vehicle-info 
@@ -100,14 +100,14 @@
           <p><strong>Téléphone :</strong> {{personalForm.get('phone')?.value}}</p>
         </div>
 
-        <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-container">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'PILOTE'" class="summary-container">
             <div class="vehicle-info">
               <p><strong>Titre de conduite :</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
-              <p *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" ><strong>Véhicule :</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
+              <p *ngIf="this.trackdayForm.get('role')?.value == 'PILOTE'" ><strong>Véhicule :</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
             </div>    
         </div>
 
-        <div *ngIf="this.trackdayForm.get('role')?.value == 'passager'" class="summary-section">
+        <div *ngIf="this.trackdayForm.get('role')?.value == 'PASSAGER'" class="summary-section">
           <div class="vehicle-info">
             <p><strong>Véhicule :</strong> {{formatVehicleType(trackdayForm.get('vehicleType')?.value)}}</p>
           </div>
