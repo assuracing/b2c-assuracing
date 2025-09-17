@@ -188,7 +188,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         chassisNumber: this.vehicleForm.get('chassisNumber')?.value,
         serieNumber: this.vehicleForm.get('serieNumber')?.value,
         titreConduite: this.vehicleForm.get('titreConduite')?.value,
-        titreNumber: this.vehicleForm.get('titreNumber')?.value
       };
       
       this.vehicleInfo.onSaveVehicle();
@@ -241,7 +240,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       chassisNumber: ['', Validators.required],
       serieNumber: ['', Validators.required],
       titreConduite: [''],
-      titreNumber: [''],
       hasCasm: [''],
       hasPermisB: ['']
     });
@@ -271,12 +269,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       if (value === 'Oui') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
-        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
-      } else {
-        this.vehicleForm.get('titreNumber')?.clearValidators();
-        this.vehicleForm.get('titreNumber')?.setValue('');
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       }
     });
 
@@ -284,12 +276,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       if (value === 'Oui') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
-        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
-      } else {
-        this.vehicleForm.get('titreNumber')?.clearValidators();
-        this.vehicleForm.get('titreNumber')?.setValue('');
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       }
     });
 
@@ -350,7 +336,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         type: this.vehicleForm.get('type')?.value,
         identificationNumber: this.vehicleForm.get('identificationNumber')?.value,
         titreConduite: this.vehicleForm.get('titreConduite')?.value,
-        titreNumber: this.vehicleForm.get('titreNumber')?.value
       },
       coverageInfo: {
         level: this.coverageForm.get('coverageLevel')?.value

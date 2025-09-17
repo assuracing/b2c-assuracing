@@ -262,7 +262,6 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
         chassisNumber: this.form.get('chassisNumber')?.value,
         serieNumber: this.form.get('serieNumber')?.value,
         titreConduite: this.form.get('titreConduite')?.value,
-        titreNumber: this.form.get('titreNumber')?.value
       };
       
       this.vehicleService.addVehicle(vehicle);
