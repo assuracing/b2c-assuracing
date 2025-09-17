@@ -260,7 +260,6 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
         chassisNumber: this.form.get('chassisNumber')?.value,
         serieNumber: this.form.get('serieNumber')?.value,
         titreConduite: this.form.get('titreConduite')?.value,
-        titreNumber: this.form.get('titreNumber')?.value
       };
       
       this.vehicleService.addVehicle(vehicle);
@@ -312,24 +311,4 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  shouldShowTitreNumber(): boolean {
-    if (!this.form) return false;
-    
-    const type = this.form.get('type')?.value;
-    if (!type) return false;
-    
-    const hasCasm = this.form.get('hasCasm')?.value === 'Oui';
-    const hasPermisB = this.form.get('hasPermisB')?.value === 'Oui';
-    const isMoto = type === 'moto';
-    const isAuto = type === 'auto';
-    const isAdult = this.userAge !== undefined && this.userAge >= 18;
-
-    if (isMoto) {
-      return hasCasm || isAdult;
-    } else if (isAuto) {
-      return hasPermisB;
-    }
-    
-    return false;
-  }
 }

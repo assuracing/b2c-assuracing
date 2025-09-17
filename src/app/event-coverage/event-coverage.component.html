@@ -103,7 +103,6 @@
         <div *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" class="summary-container">
             <div class="vehicle-info">
               <p><strong>Titre de conduite :</strong> {{formatPermisType(vehicleForm.get('titreConduite')?.value)}}</p>
-              <p><strong>Numéro de permis :</strong> {{vehicleForm.get('titreNumber')?.value}}</p>
               <p *ngIf="this.trackdayForm.get('role')?.value == 'pilote'" ><strong>Véhicule :</strong> {{formatVehicleType(vehicleForm.get('type')?.value)}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - {{vehicleForm.get('immatNumber')?.value}}</p>
             </div>    
         </div>

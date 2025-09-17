@@ -328,19 +328,12 @@ export class EventCoverageComponent {
       chassisNumber: [''],
       serieNumber: [''],
       titreConduite: ['', Validators.required],
-      titreNumber: ['']
     });
 
     this.vehicleForm.get('hasCasm')?.valueChanges.subscribe(value => {
       if(value === 'Oui') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
-        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
-      } else {
-        this.vehicleForm.get('titreNumber')?.clearValidators();
-        this.vehicleForm.get('titreNumber')?.setValue('');
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       }
     });
 
@@ -348,12 +341,6 @@ export class EventCoverageComponent {
       if(value === 'Oui') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
-        this.vehicleForm.get('titreNumber')?.setValidators([Validators.required]);
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
-      } else {
-        this.vehicleForm.get('titreNumber')?.clearValidators();
-        this.vehicleForm.get('titreNumber')?.setValue('');
-        this.vehicleForm.get('titreNumber')?.updateValueAndValidity();
       }
     });
 
@@ -567,7 +554,6 @@ export class EventCoverageComponent {
         type: this.vehicleForm.get('type')?.value,
         identificationNumber: this.vehicleForm.get('identificationNumber')?.value,
         titreConduite: this.vehicleForm.get('titreConduite')?.value,
-        titreNumber: this.vehicleForm.get('titreNumber')?.value
       },
       coverageInfo: {
         level: this.eventCoverageForm.get('coverageLevel')?.value
