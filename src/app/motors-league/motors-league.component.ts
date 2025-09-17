@@ -53,6 +53,7 @@ interface Contract {
     licencePermisA: string;
     numeroPermisB: string;
     ffsaPermisB: string;
+    nationalite: string;
   };
   marque: string;
   modele: string;
@@ -424,6 +425,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         licencePermisA: this.vehicleForm.get('licencePermisA')?.value || 'NC',
         numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || 'NC',
         ffsaPermisB: this.vehicleForm.get('ffsaPermisB')?.value || 'NC',
+        nationalite: this.personalForm.get('nationality')?.value,
       },
       marque: this.vehicleForm.get('brand')?.value || 'NC',
       modele: this.vehicleForm.get('model')?.value || 'NC',

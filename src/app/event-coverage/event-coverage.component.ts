@@ -70,6 +70,7 @@ interface Contract {
     licencePermisA: string;
     numeroPermisB: string;
     ffsaPermisB: string;
+    nationalite: string;
   };
   marque: string;
   modele: string;
@@ -708,6 +709,7 @@ export class EventCoverageComponent {
         licencePermisA: vehicleData.licencePermisA || '',
         numeroPermisB: vehicleData.numeroPermisB || '',
         ffsaPermisB: vehicleData.ffsaPermisB || '',
+        nationalite: this.personalForm.get('nationality')?.value,
       },
       marque: vehicleData.brand || 'ND',
       modele: vehicleData.model || 'ND',
