@@ -116,8 +116,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._allCountries = [...this.countries];
-    this.filteredCountries = [...this.countries];
-    
+    this.filteredCountries = [...this.countries];    
       
     if (this.userService.isLoggedIn()) {
 
@@ -170,11 +169,17 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     if (this.postalCodeInput) {
       this.setupPostalCodeInput();
     }
+    if(this.userService.isLoggedIn()) {
+      this.form.get('email')?.disable();
+      this.form.get('firstname')?.disable();
+      this.form.get('lastname')?.disable();
+    }
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.postalCodeSubs.unsubscribe();
+    if (this.checkEmailSub) this.checkEmailSub.unsubscribe();
   }
 
   getStartDate() {
@@ -260,6 +265,10 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     const email = this.emailControl?.value;
     if (!email || typeof email !== 'string' || !email.includes('@')) return;
     const login = email.split('@')[0];
+    
+    if (this.userService.isLoggedIn()) {
+      return;
+    }
     if (this.checkEmailSub) this.checkEmailSub.unsubscribe();
     this.checkEmailSub = this.userService.checkEmail(email, login).subscribe((exists) => {
       if (exists) {
@@ -269,9 +278,13 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
               return;
             }
             const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-            disableClose: true
-          });
+              disableClose: true
+            });
+            
             dialogRef.afterClosed().subscribe((result) => {
+              if (result?.success && result.adherent) {
+                this.updateFormWithAdherentData(result.adherent);
+              }
               if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
                 this.emailControl?.setValue('');
               } else if (result && typeof result === 'object' && result.email) {
@@ -281,9 +294,13 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
           },
           error: () => {
             const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-            disableClose: true
-          });
+              disableClose: true
+            });
+            
             dialogRef.afterClosed().subscribe((result) => {
+              if (result?.success && result.adherent) {
+                this.updateFormWithAdherentData(result.adherent);
+              }
               if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
                 this.emailControl?.setValue('');
               } else if (result && typeof result === 'object' && result.email) {
@@ -327,5 +344,27 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       return 'Ce champ doit contenir au moins 2 caractères';
     }
     return '';
+  }
+  
+  private updateFormWithAdherentData(adherent: any): void {
+    if (!adherent) return;
+
+    if (adherent.user?.['login']) this.form.get('email')?.setValue(adherent.user['login']);
+    if (adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
+    if (adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
+    if (adherent.dateNaissance) this.form.get('birthdate')?.setValue(adherent.dateNaissance);
+    if (adherent.telPortable) this.form.get('phone')?.setValue(adherent.telPortable);
+    if (adherent.adresse) this.form.get('address')?.setValue(adherent.adresse);
+    if (adherent.codepostal) this.form.get('postalCode')?.setValue(adherent.codepostal);
+    if (adherent.ville) this.form.get('city')?.setValue(adherent.ville);
+    if (adherent.pays) this.form.get('country')?.setValue(adherent.pays);
+    if (adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
+    if (adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
+    
+    this.form.get('email')?.disable();
+    this.form.get('firstname')?.disable();
+    this.form.get('lastname')?.disable();
+    
+    this.form.markAllAsTouched();
   }
 }
