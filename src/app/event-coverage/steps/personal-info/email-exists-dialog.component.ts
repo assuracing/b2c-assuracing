@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../../../login/login.component';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../../services/user.service';
-import { EnvironmentService } from '../../../core/services/environment.service'; 
+import { EnvironmentService } from '../../../core/services/environment.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-email-exists-dialog',
@@ -53,21 +54,23 @@ export class EmailExistsDialogComponent {
         width: '600px',
         maxWidth: '90vw',
         panelClass: 'login-dialog',
-       });
+      });
+      
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
-          this.userService.getAccount().subscribe(() => {
-            const token = this.userService.getToken();
-            if (token) {
-              this.http.get<any>(`${this.apiUrl}/api/account`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              }).subscribe((account) => {
-                this.dialogRef.close({ email: account.email });
+          this.userService.getAccount().pipe(
+            switchMap(() => this.userService.getAdherentId()),
+            switchMap(() => this.userService.getAdherentInfo())
+          ).subscribe({
+            next: (adherent) => {
+              this.dialogRef.close({ 
+                success: true,
+                adherent: adherent
               });
-            } else {
-              this.http.get<any>(`${this.apiUrl}/api/account`).subscribe((account) => {
-                this.dialogRef.close({ email: account.email });
-              });
+            },
+            error: (error) => {
+              console.error('Erreur lors du chargement des informations du compte:', error);
+              this.dialogRef.close({ success: false });
             }
           });
         }
