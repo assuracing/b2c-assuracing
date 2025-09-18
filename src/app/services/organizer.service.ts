@@ -22,11 +22,7 @@ export class OrganizerService {
     PROTECTION_3_COMP: 37,
     PROTECTION_4_COMP: 38,
     PROTECTION_5_COMP: 39,
-    
-    DEFENSE_RECOURS: 40,
-    ANNULATION: 41,
     INTEMPERIES: 43,
-    INTERRUPTION: 42
   };
 
   constructor(
