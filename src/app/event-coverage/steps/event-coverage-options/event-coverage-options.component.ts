@@ -210,7 +210,7 @@ export class EventCoverageOptionsComponent {
       annulation: this.garantiePrices['ANNULATION'],
       interruption: this.garantiePrices['INTERRUPTION'],
       intemperies: this.garantiePrices['INTEMPERIES'],
-      responsabiliteRecours: this.garantiePrices['DEFENSE_RECOURS']
+      responsabiliteCivile: this.garantiePrices['RC']
     };
   }
 
@@ -348,10 +348,7 @@ export class EventCoverageOptionsComponent {
 
     this.isCheckingAvailability = true;
     const productKeys: (keyof typeof this.organizerService['PRODUCT_CODES'])[] = [
-      'DEFENSE_RECOURS',
-      'ANNULATION',
       'INTEMPERIES',
-      'INTERRUPTION',
       'PROTECTION_1',
       'PROTECTION_2',
       'PROTECTION_3',
@@ -388,22 +385,6 @@ export class EventCoverageOptionsComponent {
   private updateFormControlsAvailability(): void {
     const controls = this.form.controls;
     
-    const defenseRecoursAvailable = this.productAvailability['DEFENSE_RECOURS'] !== false;
-    if (defenseRecoursAvailable) {
-      controls['defenseRecours'].enable();
-    } else {
-      controls['defenseRecours'].disable();
-      controls['defenseRecours'].setValue(false);
-    }
-
-    const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
-    if (annulationAvailable) {
-      controls['annulation'].enable();
-    } else {
-      controls['annulation'].disable();
-      controls['annulation'].setValue(false);
-    }
-
     const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
     if (intemperiesAvailable) {
       controls['intemperies'].enable();
@@ -411,15 +392,7 @@ export class EventCoverageOptionsComponent {
       controls['intemperies'].disable();
       controls['intemperies'].setValue(false);
     }
-
-    const interruptionAvailable = this.productAvailability['INTERRUPTION'] !== false;
-    if (interruptionAvailable) {
-      controls['interruption'].enable();
-    } else {
-      controls['interruption'].disable();
-      controls['interruption'].setValue(false);
-    }
-  }
+  } 
 
   private resetProductAvailability(): void {
     this.productAvailability = {};
@@ -438,15 +411,17 @@ export class EventCoverageOptionsComponent {
   }
 
   get totalPrime(): number {
-    const { intemperies, annulation, interruption, protectionPilote, defenseRecours } = this.form.value;
+    const { intemperies, annulation, interruption, protectionPilote, defenseRecours, responsabiliteCivile } = this.form.value;
     const protectionPrime = protectionPilote ? this.getProtectionLevelPrice(protectionPilote) : 0;
     return (
       (intemperies ? this.PRIME_RATES.intemperies : 0) +
       (annulation ? this.PRIME_RATES.annulation : 0) +
       (interruption ? this.PRIME_RATES.interruption : 0) +
       protectionPrime +
-      (defenseRecours ? this.PRIME_RATES.defenseRecours : 0)
+      (defenseRecours ? this.PRIME_RATES.defenseRecours : 0) +
+      (responsabiliteCivile ? this.PRIME_RATES.responsabiliteCivile : 0)
     );
+    
   }
 
   getIAIAmount(): number {
@@ -462,7 +437,7 @@ export class EventCoverageOptionsComponent {
   }
 
   getResponsabiliteRecoursAmount(): number {
-    return this.form.get('defenseRecours')?.value ? this.PRIME_RATES.defenseRecours : 0;
+    return (this.form.get('defenseRecours')?.value ? this.PRIME_RATES.defenseRecours : 0) + (this.form.get('responsabiliteCivile')?.value ? this.PRIME_RATES.responsabiliteCivile : 0); 
   }
 
   onToggleChange(section: 'iai' | 'protectionPilote' | 'responsabiliteRecours', checked: boolean): void {
@@ -516,6 +491,7 @@ export class EventCoverageOptionsComponent {
     } else if (section === 'responsabiliteRecours') {
       patchValues.responsabiliteRecours = false;
       patchValues.defenseRecours = false;
+      patchValues.responsabiliteCivile = false;
       this.wasResponsabiliteRecoursValidated = false;
     }
 
@@ -542,7 +518,7 @@ export class EventCoverageOptionsComponent {
     } else if (section === 'protectionPilote') {
       shouldValidate = this.form.get('protectionPilote')?.value > 0;
     } else if (section === 'responsabiliteRecours') {
-      shouldValidate = !!this.form.get('defenseRecours')?.value;
+      shouldValidate = !!this.form.get('defenseRecours')?.value || !!this.form.get('responsabiliteCivile')?.value;
     }
 
     if (!shouldValidate) {
@@ -596,10 +572,4 @@ export class EventCoverageOptionsComponent {
     });
   }
 
-  onResponsabiliteRecoursToggle(event: any): void {
-    this.defenseRecoursChange.emit({
-      isChecked: event.checked,
-      garantieType: 'RESPONSABILITE_RECURS'
-    });
-  }
 }

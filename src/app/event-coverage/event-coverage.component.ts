@@ -187,7 +187,7 @@ export class EventCoverageComponent {
 
   async onContinueGuaranteeStep(stepper: MatStepper) {
     const form = this.coverageOptionsForm;
-    const hasGuarantee = form.get('intemperies')?.value || form.get('annulation')?.value || form.get('interruption')?.value || (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value;
+    const hasGuarantee = form.get('intemperies')?.value || form.get('annulation')?.value || form.get('interruption')?.value || (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
     
     if (!hasGuarantee) {
       const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
@@ -287,8 +287,8 @@ export class EventCoverageComponent {
       annulation: [false],
       interruption: [false],
       protectionPilote: [0],
-      responsabiliteRecours: [false],
-      defenseRecours: [false]
+      defenseRecours: [false],
+      responsabiliteCivile: [false]
     });
 
     this.coverageOptionsForm.valueChanges.subscribe(() => {
@@ -297,8 +297,8 @@ export class EventCoverageComponent {
       const interruptionPrime = this.coverageOptionsForm.get('interruption')?.value ? 3 : 0;
       const protectionPrime = this.coverageOptionsForm.get('protectionPilote')?.value ? 15 : 0;
       const defenseRecoursPrime = this.coverageOptionsForm.get('defenseRecours')?.value ? 14 : 0;
-      const responsabiliteRecoursPrime = this.coverageOptionsForm.get('responsabiliteRecours')?.value ? 14 : 0;
-      const totalPrime = intemperiesPrime + annulationPrime + interruptionPrime + protectionPrime + defenseRecoursPrime + responsabiliteRecoursPrime;
+      const responsabiliteCivilePrime = this.coverageOptionsForm.get('responsabiliteCivile')?.value ? 14 : 0;
+      const totalPrime = intemperiesPrime + annulationPrime + interruptionPrime + protectionPrime + defenseRecoursPrime + responsabiliteCivilePrime;
       this.coverageOptionsForm.patchValue({ totalPrime });
     });
 
@@ -632,11 +632,12 @@ export class EventCoverageComponent {
   
   private getSelectedProducts(coverageData: any): number[] {
     const products: number[] = [];
-    
+        
     if (coverageData.intemperies) products.push(this.GARANTIE_CODES.INTEMPERIES);
     if (coverageData.annulation) products.push(this.GARANTIE_CODES.ANNULATION);
     if (coverageData.interruption) products.push(this.GARANTIE_CODES.INTERRUPTION);
     if (coverageData.defenseRecours) products.push(this.GARANTIE_CODES.DEFENSE_RECOURS);
+    if (coverageData.responsabiliteCivile) products.push(this.GARANTIE_CODES.RC);
     
     const protectionLevel = coverageData.protectionPilote;
     if (protectionLevel && protectionLevel > 0) {
