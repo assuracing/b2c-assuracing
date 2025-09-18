@@ -340,8 +340,10 @@ export class EventCoverageOptionsComponent {
     this.destroy$.complete();
   }
 
-  public checkProductsAvailability(organizerId: string): void {
-    if (!organizerId) {
+  public checkProductsAvailability(organizerName: string): void {
+    this.organizerName = organizerName || '';
+    
+    if (!organizerName) {
       this.resetProductAvailability();
       return;
     }
@@ -361,7 +363,7 @@ export class EventCoverageOptionsComponent {
       'PROTECTION_5_COMP'
     ];
 
-    this.organizerService.checkProductsAvailability(organizerId, productKeys)
+    this.organizerService.checkProductsAvailability(organizerName, productKeys)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (availability) => {
@@ -382,8 +384,17 @@ export class EventCoverageOptionsComponent {
       });
   }
 
+  public organizerName: string = '';
+
   private updateFormControlsAvailability(): void {
     const controls = this.form.controls;
+    
+    if (this.organizerName && this.organizerName.toLowerCase() === 'lh racing'.toLowerCase()) {
+      controls['responsabiliteCivile'].disable();
+      controls['responsabiliteCivile'].setValue(false);
+    } else {
+      controls['responsabiliteCivile'].enable();
+    }
     
     const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
     if (intemperiesAvailable) {
@@ -392,7 +403,7 @@ export class EventCoverageOptionsComponent {
       controls['intemperies'].disable();
       controls['intemperies'].setValue(false);
     }
-  } 
+  }
 
   private resetProductAvailability(): void {
     this.productAvailability = {};

@@ -382,7 +382,7 @@ export class EventCoverageComponent {
   }
 
   GARANTIE_CODES = {
-    RC : 1,
+    RC: 1,
     DEFENSE_RECOURS: 350,
     ANNULATION: 351,
     INTEMPERIES: 352,
