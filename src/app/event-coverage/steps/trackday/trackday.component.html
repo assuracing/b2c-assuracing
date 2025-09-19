@@ -1,13 +1,16 @@
 <form [formGroup]="form" class="login-form">
   <div class="form-group">
-    <mat-form-field
-      appearance="outline" style="width: 100%;">
+    <mat-form-field appearance="outline" style="width: 100%;">
       <mat-label>Type d'événement</mat-label>
       <mat-select formControlName="eventType">
-        <mat-option value="ROULAGE_ENTRAINEMENT">Roulage entrainement</mat-option>
-        <mat-option value="COMPETITION">Compétition</mat-option>
-        <mat-option value="COACHING">Coaching</mat-option>
-        <mat-option value="STAGE_PILOTAGE">Stage de pilotage</mat-option>
+        <mat-select-trigger>
+          <mat-icon>{{ getEventTypeIcon(form.get('eventType')?.value) }}</mat-icon>
+          {{ getEventTypeLabel(form.get('eventType')?.value) }}
+        </mat-select-trigger>
+    
+        <mat-option *ngFor="let e of eventTypes" [value]="e.value">
+          <mat-icon>{{ e.icon }}</mat-icon> {{ e.label }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -71,7 +74,7 @@
       </mat-form-field>
 
       <div class="duration-group">
-        <mat-label >Durée événement <strong>({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</strong>
+        <mat-label>Durée événement <strong>({{ form.get('duration')?.value }} jour{{ form.get('duration')?.value === 1 ? '' : 's' }})</strong>
           <span *ngIf="form.get('eventDate')?.value"> Date de fin : {{ getScheduledEndDate() | date:'dd MMMM yyyy' }}</span>
         </mat-label>
         <mat-slider style="width: 95%;" [min]="1" [max]="5" [step]="1" thumbLabel>
@@ -81,24 +84,32 @@
     </div>
 
     <div class="role-group">
-      <mat-form-field 
-        appearance="outline" style="width: 100%;">
+      <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label>Vous êtes</mat-label>
-        <mat-select formControlName="role" (selectionChange)="onRoleChange($event)">
-          <mat-option value="PILOTE">Pilote</mat-option>
-          <mat-option value="PASSAGER">Passager</mat-option>
-          <mat-option value="MECANICIEN">Mécanicien</mat-option>
-          <mat-option value="PHOTOGRAPHE_VIDEASTE">Photographe-Vidéaste</mat-option>
+        <mat-select formControlName="role">
+          <mat-select-trigger>
+            <mat-icon>{{ getRoleIcon(form.get('role')?.value) }}</mat-icon>
+            {{ getRoleLabel(form.get('role')?.value) }}
+          </mat-select-trigger>
+      
+          <mat-option *ngFor="let r of roles" [value]="r.value">
+            <mat-icon>{{ r.icon }}</mat-icon> {{ r.label }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
 
       <div *ngIf="isPilot || isPassenger" class="vehicle-group">
-        <mat-form-field 
-          appearance="outline" style="width: 100%;">
+        <mat-form-field appearance="outline" style="width: 100%;">
           <mat-label>Votre véhicule</mat-label>
           <mat-select formControlName="vehicleType">
-            <mat-option value="moto">Moto</mat-option>
-            <mat-option value="auto">Auto</mat-option>
+            <mat-select-trigger>
+              <mat-icon>{{ getVehicleIcon(form.get('vehicleType')?.value) }}</mat-icon>
+              {{ getVehicleLabel(form.get('vehicleType')?.value) }}
+            </mat-select-trigger>
+        
+            <mat-option *ngFor="let v of vehicleTypes" [value]="v.value">
+              <mat-icon>{{ v.icon }}</mat-icon> {{ v.label }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
