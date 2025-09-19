@@ -38,9 +38,19 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   showDriveLicenseTooltip = false;
 
   vehicleTypes = [
-    { value: 'auto', label: 'Auto' },
-    { value: 'moto', label: 'Moto' }
+    { value: 'auto', label: 'Auto', icon: 'directions_car' },
+    { value: 'moto', label: 'Moto', icon: 'two_wheeler' }
   ];
+
+  getVehicleIcon(type: string): string {
+    const vehicleType = this.vehicleTypes.find(t => t.value === type);
+    return vehicleType ? vehicleType.icon : 'directions_car';
+  }
+
+  getVehicleLabel(type: string): string {
+    const vehicleType = this.vehicleTypes.find(t => t.value === type);
+    return vehicleType ? vehicleType.label : 'Sélectionner';
+  }
 
   licenseTypes: Record<'auto' | 'moto', { value: string; label: string }[]> = {
     auto: [
