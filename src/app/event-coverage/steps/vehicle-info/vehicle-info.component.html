@@ -9,9 +9,14 @@
         <label for="type"></label>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Type véhicule</mat-label>
-            <mat-select formControlName="type" [disabled]="showVehicleTypeTooltip" >
+            <mat-select formControlName="type" [disabled]="showVehicleTypeTooltip">
+              <mat-select-trigger>
+                <mat-icon>{{ getVehicleIcon(form.get('type')?.value) }}</mat-icon>
+                {{ getVehicleLabel(form.get('type')?.value) }}
+              </mat-select-trigger>
               <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
-                {{type.label}}
+                <mat-icon>{{ type.icon }}</mat-icon>
+                <span>{{ type.label }}</span>
               </mat-option>
             </mat-select>
           </mat-form-field>

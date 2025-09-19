@@ -38,9 +38,19 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Output() vehicleRemoved = new EventEmitter<any>();
   vehicles: any[] = [];
   vehicleTypes = [
-    { value: 'auto', label: 'Auto' },
-    { value: 'moto', label: 'Moto' }
+    { value: 'auto', label: 'Auto', icon: 'directions_car' },
+    { value: 'moto', label: 'Moto', icon: 'two_wheeler' }
   ];
+
+  getVehicleIcon(type: string): string {
+    const vehicle = this.vehicleTypes.find(v => v.value === type);
+    return vehicle ? vehicle.icon : '';
+  }
+
+  getVehicleLabel(type: string): string {
+    const vehicle = this.vehicleTypes.find(v => v.value === type);
+    return vehicle ? vehicle.label : 'Sélectionner';
+  }
   @ViewChild('stepper') stepper!: MatStepper;
   @ViewChild('brandSearchInput') brandSearchInput!: any;
   private subscription?: Subscription;

@@ -170,3 +170,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+mat-icon {
+  color: #0ba2cf;
+}
+
+mat-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

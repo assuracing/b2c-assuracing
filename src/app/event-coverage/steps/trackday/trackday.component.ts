@@ -267,4 +267,55 @@ export class TrackdayComponent implements OnInit {
       this.form.get('vehicleType')?.reset();
     }
   }
+
+  eventTypes = [
+    { value: 'ROULAGE_ENTRAINEMENT', label: 'Roulage entraînement', icon: 'two_wheeler' },
+    { value: 'COMPETITION', label: 'Compétition', icon: 'emoji_events' },
+    { value: 'COACHING', label: 'Coaching', icon: 'record_voice_over' },
+    { value: 'STAGE_PILOTAGE', label: 'Stage de pilotage', icon: 'school' }
+  ];
+
+  roles = [
+    { value: 'PILOTE', label: 'Pilote', icon: 'sports_motorsports' },
+    { value: 'PASSAGER', label: 'Passager', icon: 'airline_seat_recline_normal' },
+    { value: 'MECANICIEN', label: 'Mécanicien', icon: 'build' },
+    { value: 'PHOTOGRAPHE_VIDEASTE', label: 'Photographe-Vidéaste', icon: 'photo_camera' }
+  ];
+
+  vehicleTypes = [
+    { value: 'moto', label: 'Moto', icon: 'two_wheeler' },
+    { value: 'auto', label: 'Auto', icon: 'directions_car' }
+  ];
+
+  getEventTypeLabel(value: string): string {
+    const item = this.eventTypes.find(e => e.value === value);
+    return item ? item.label : '';
+  }
+
+  getEventTypeIcon(value: string): string {
+    const item = this.eventTypes.find(e => e.value === value);
+    return item ? item.icon : '';
+  }
+
+  getRoleLabel(value: string): string {
+    const item = this.roles.find(e => e.value === value);
+    return item ? item.label : '';
+  }
+
+  getRoleIcon(value: string): string {
+    const item = this.roles.find(e => e.value === value);
+    return item ? item.icon : '';
+  }
+
+  getVehicleLabel(value: string): string {
+    const item = this.vehicleTypes.find(e => e.value === value);
+    return item ? item.label : '';
+  }
+
+  getVehicleIcon(value: string): string {
+    const item = this.vehicleTypes.find(e => e.value === value);
+    return item ? item.icon : '';
+  }
+  
 }
+
