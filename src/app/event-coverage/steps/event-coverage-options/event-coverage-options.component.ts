@@ -391,7 +391,7 @@ export class EventCoverageOptionsComponent {
     
     if (this.organizerName && this.organizerName.toLowerCase() === 'lh racing'.toLowerCase()) {
       controls['responsabiliteCivile'].disable();
-      controls['responsabiliteCivile'].setValue(false);
+      controls['responsabiliteCivile'].setValue(true);
     } else {
       controls['responsabiliteCivile'].enable();
     }

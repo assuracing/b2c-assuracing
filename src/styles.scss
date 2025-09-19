@@ -9,7 +9,11 @@
     selected-handle-color: white,            
     selected-hover-handle-color: white,      
     selected-pressed-handle-color: white,    
-    selected-focus-handle-color: white       
+    selected-focus-handle-color: white,
+    disabled-selected-track-color: #0ba2cf,
+    disabled-selected-icon-color: #02556e,
+    disabled-selected-handle-opacity: 0.6,
+    disabled-track-opacity: 0.2,
   ));
   @include mat.slider-overrides((
     handle-color: #0ba2cf,
