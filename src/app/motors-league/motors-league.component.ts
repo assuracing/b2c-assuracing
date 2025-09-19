@@ -387,11 +387,22 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       return `${year}-${month}-${day}`;
     };
 
+    const levelToProductCode: { [key: number]: string } = {
+      1: '354',
+      2: '355',
+      3: '356',
+      4: '357',
+      5: '358'
+    };
+
+    const selectedLevel = this.coverageForm?.get('coverageLevel')?.value || 1;
+    const productCode = levelToProductCode[selectedLevel] || '354';
+
     const contract: Contract = {
       selectedCircuit: 'France, Union Européenne',
       nbrjour: 0,
       datedebutroulage: formatISODate(new Date().toISOString()),
-      codeProduit: ["354"],
+      codeProduit: [productCode],
       c: {
         adresse: this.personalForm.get('address')?.value,
         complementadresse: this.personalForm.get('addressComplement')?.value,
