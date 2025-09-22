@@ -14,6 +14,40 @@ export interface PrixDTO {
   commissionApporteur: number;
 }
 
+export interface ContractDetail {
+  id: number;
+  transactionUID: string;
+  dateAdhesion: string;
+  dateFin: string;
+  dateSaisie: string;
+  validated: boolean;
+  autre: string | null;
+  montantGarantie: number;
+  clientPrenom: string;
+  clientEmail: string;
+  vehicule: {
+    id: number;
+    type: string | null;
+    marque: string | null;
+    model: string;
+    immatriculation: string | null;
+    numeroserie: string | null;
+    numerochassis: string | null;
+  };
+  circuit: {
+    id: number;
+    nom: string;
+  };
+  produit: {
+    id: number;
+    nom: string;
+  };
+  client: {
+    id: number;
+    nom: string;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +74,32 @@ export class ContractService {
       `${this.apiUrl}/getPrix`, 
       data, 
       getAuthHeaders()
+    );
+  }
+
+  getContractDetails(contractId: number): Observable<ContractDetail> {
+    return this.http.get<ContractDetail>(
+      `${this.apiUrl}/contrats/${contractId}`, 
+      { ...getAuthHeaders() }
+    );
+  }
+
+  getContractFiles(contractId: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/fichiers?contratId=${contractId}`, 
+      { ...getAuthHeaders() }
+    );
+  }
+
+  initiateContractPayment(transactionUID: string, email: string, montant?: number): string {
+    let paymentUrl = `${this.envService.appUrl}/payment-confirm?orderid=${transactionUID}&email=${encodeURIComponent(email)}&language=fr`;    
+    return paymentUrl;
+  }
+
+  getVehiculeDetails(vehiculeId: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/vehicules/${vehiculeId}`, 
+      { ...getAuthHeaders() }
     );
   }
 }
