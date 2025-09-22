@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-contracts',
@@ -28,6 +29,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     CustomDatePipe
   ],  
   templateUrl: './user-contracts.component.html',
@@ -45,7 +47,8 @@ export class UserContractsComponent implements AfterViewInit {
     'adherentnomCliententreprise', 
     'nomcontrat', 
     'circuit', 
-    'valide'
+    'valide',
+    'actions'
   ];
   
   years: number[] = [];
@@ -68,16 +71,16 @@ export class UserContractsComponent implements AfterViewInit {
 
   ngOnInit(): void {
     this.userService.getAllContracts().subscribe((contracts) => {
-      this.contracts = contracts.sort((a: any, b: any) => {
-        const dateA = new Date(a.dateSaisie).getTime();
-        const dateB = new Date(b.dateSaisie).getTime();
-        return dateB - dateA;
-      });
-      
-      this.filteredContracts = [...this.contracts];
-      this.initializeDataSource();
-      this.initializeYearFilter();
-      this.applyFilters();
+        this.contracts = contracts.sort((a: any, b: any) => {
+          const dateA = new Date(a.dateSaisie).getTime();
+          const dateB = new Date(b.dateSaisie).getTime();
+          return dateB - dateA;
+        });
+        
+        this.filteredContracts = [...this.contracts];
+        this.initializeDataSource();
+        this.initializeYearFilter();
+        this.applyFilters();
     });
     
     this.yearFilter.valueChanges.subscribe(() => this.applyFilters());

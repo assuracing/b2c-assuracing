@@ -10,6 +10,7 @@ import { PaymentConfirmComponent } from './payment-confirm/payment-confirm.compo
 import { UserProfilInfoComponent } from './user-profil-info/user-profil-info.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UserContractsComponent } from './user-contracts/user-contracts.component';
+import { ContractDetailsComponent } from './contract-details/contract-details.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'event-coverage', component: EventCoverageComponent },
     { path: 'payment-confirm', component: PaymentConfirmComponent },
     { path: 'user-contracts', component: UserContractsComponent },
+    { path: 'contracts/:id', component: ContractDetailsComponent },
     { path: 'user-profil-info', component: UserProfilInfoComponent },
     { path: 'reset-password', component: ResetPasswordComponent }
 ];
