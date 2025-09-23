@@ -54,6 +54,7 @@ export class UserContractsComponent implements AfterViewInit {
   years: number[] = [];
   yearFilter = new FormControl<number | null>(null);
   searchFilter = new FormControl('');
+  validationFilter = new FormControl<string | null>(null);
 
   constructor(private userService: UserService, private paginatorIntl: MatPaginatorIntl) {
     this.paginatorIntl.itemsPerPageLabel = 'Contrats par page';
@@ -85,6 +86,7 @@ export class UserContractsComponent implements AfterViewInit {
     
     this.yearFilter.valueChanges.subscribe(() => this.applyFilters());
     this.searchFilter.valueChanges.subscribe(() => this.applyFilters());
+    this.validationFilter.valueChanges.subscribe(() => this.applyFilters());
   }
   
   private initializeYearFilter(): void {
@@ -115,6 +117,11 @@ export class UserContractsComponent implements AfterViewInit {
       });
     }
     
+    if (this.validationFilter.value !== null) {
+      const filterValue = this.validationFilter.value === 'true';
+      result = result.filter(contract => contract.valide === filterValue);
+    }
+    
     const searchTerm = (this.searchFilter.value || '').toLowerCase();
     if (searchTerm) {
       result = result.filter(contract => 
@@ -130,6 +137,10 @@ export class UserContractsComponent implements AfterViewInit {
   
   clearYearFilter(): void {
     this.yearFilter.setValue(null);
+  }
+
+  clearValidationFilter(): void {
+    this.validationFilter.setValue(null);
   }
 
   ngAfterViewInit() {
