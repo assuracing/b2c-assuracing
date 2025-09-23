@@ -10,17 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   selector: 'app-adaptive-tooltip',
   templateUrl: './adaptive-tooltip.component.html',
-  styleUrls: ['./adaptive-tooltip.component.scss', '../app.component.scss'],
+  styleUrls: ['./adaptive-tooltip.component.scss'],
   imports: [CommonModule, MatTooltipModule, MatButtonModule, MatMenuModule, MatIconModule],
 })
 export class AdaptiveTooltipComponent {
-  @Input() text: string = ''; 
+  @Input() text: string = '';
+  @Input() icon: string = 'info';
+  @Input() showIcon: boolean = true;
   @Input() blink: boolean = false;
 
-
   isMobile(): boolean {
-    const isSmallScreen = window.innerWidth < 768; 
-    return isSmallScreen;
+    return window.innerWidth < 768;
   }
-  
 }

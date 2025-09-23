@@ -1,5 +1,6 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { ProductMappingService } from '../services/product-mapping.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -11,9 +12,11 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AdaptiveTooltipComponent } from '../adaptive-tooltip/adaptive-tooltip.component';
 
 @Component({
   selector: 'app-user-contracts',
@@ -27,10 +30,12 @@ import { RouterModule } from '@angular/router';
     MatIconModule,
     MatSelectModule,
     MatButtonModule,
+    MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    CustomDatePipe
+    CustomDatePipe,
+    AdaptiveTooltipComponent
   ],  
   templateUrl: './user-contracts.component.html',
   styleUrls: ['./user-contracts.component.scss']
@@ -39,24 +44,35 @@ export class UserContractsComponent implements AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
 
   contracts: any[] = [];
+  groupedContracts: any[] = [];
   filteredContracts: any[] = [];
-  dataSource = new MatTableDataSource(this.contracts);
-  displayedColumns: string[] = [
+  dataSource = new MatTableDataSource(this.groupedContracts);
+  
+  desktopColumns: string[] = [
     'dateAdhesion', 
     'dateSaisie', 
     'adherentnomCliententreprise', 
-    'nomcontrat', 
+    'products', 
     'circuit', 
     'valide',
     'actions'
   ];
+  
+  mobileColumns: string[] = [
+    'dateAdhesion',
+    'circuit',
+    'products',
+    'actions'
+  ];
+  
+  displayedColumns: string[] = [];
   
   years: number[] = [];
   yearFilter = new FormControl<number | null>(null);
   searchFilter = new FormControl('');
   validationFilter = new FormControl<string | null>(null);
 
-  constructor(private userService: UserService, private paginatorIntl: MatPaginatorIntl) {
+  constructor(private userService: UserService, private productMappingService: ProductMappingService, private paginatorIntl: MatPaginatorIntl) {
     this.paginatorIntl.itemsPerPageLabel = 'Contrats par page';
     this.paginatorIntl.firstPageLabel = 'Première page';
     this.paginatorIntl.lastPageLabel = 'Dernière page';
@@ -70,23 +86,35 @@ export class UserContractsComponent implements AfterViewInit {
     };
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.updateDisplayedColumns(window.innerWidth);
+  }
+
   ngOnInit(): void {
     this.userService.getAllContracts().subscribe((contracts) => {
-        this.contracts = contracts.sort((a: any, b: any) => {
-          const dateA = new Date(a.dateSaisie).getTime();
-          const dateB = new Date(b.dateSaisie).getTime();
-          return dateB - dateA;
-        });
-        
-        this.filteredContracts = [...this.contracts];
-        this.initializeDataSource();
-        this.initializeYearFilter();
-        this.applyFilters();
+      this.contracts = contracts.sort((a: any, b: any) => {
+        const dateA = new Date(a.dateSaisie).getTime();
+        const dateB = new Date(b.dateSaisie).getTime();
+        return dateB - dateA;
+      });
+      
+      this.groupContracts();
+      this.filteredContracts = [...this.groupedContracts];
+      this.initializeDataSource();
+      this.initializeYearFilter();
+      this.applyFilters();
+      
+      this.updateDisplayedColumns(window.innerWidth);
     });
     
     this.yearFilter.valueChanges.subscribe(() => this.applyFilters());
     this.searchFilter.valueChanges.subscribe(() => this.applyFilters());
     this.validationFilter.valueChanges.subscribe(() => this.applyFilters());
+  }
+  
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.onResize);
   }
   
   private initializeYearFilter(): void {
@@ -101,34 +129,115 @@ export class UserContractsComponent implements AfterViewInit {
     this.years = Array.from(yearsSet).sort((a, b) => b - a);
   }
   
+  private groupContracts(): void {
+    const grouped: {[key: string]: any} = {};
+    
+    if (!this.contracts || !Array.isArray(this.contracts)) {
+      this.groupedContracts = [];
+      return;
+    }
+    
+    this.contracts.forEach(contract => {
+      if (!contract) return;
+      
+      const key = `${contract.dateAdhesion || ''}_${contract.circuit || ''}`;
+      
+      if (!grouped[key]) {
+        grouped[key] = {
+          ...contract,
+          products: [{
+            nomcontrat: contract.nomcontrat,
+            contratID: contract.contratID,
+            valide: contract.valide === true || contract.valide === 'true'
+          }],
+          allValid: contract.valide === true || contract.valide === 'true',
+          dateAdhesion: contract.dateAdhesion,
+          circuit: contract.circuit,
+          dateSaisie: contract.dateSaisie,
+          adherentnomCliententreprise: contract.adherentnomCliententreprise
+        };
+      } else {
+        const isValid = contract.valide === true || contract.valide === 'true';
+        grouped[key].products.push({
+          nomcontrat: contract.nomcontrat,
+          contratID: contract.contratID,
+          valide: isValid
+        });
+        grouped[key].allValid = grouped[key].allValid && isValid;
+      }
+    });
+    
+    this.groupedContracts = Object.values(grouped).sort((a: any, b: any) => {
+      const dateA = a.dateSaisie ? new Date(a.dateSaisie).getTime() : 0;
+      const dateB = b.dateSaisie ? new Date(b.dateSaisie).getTime() : 0;
+      return dateB - dateA;
+    });
+    
+    this.filteredContracts = [...this.groupedContracts];
+  }
+  
+  private updateDisplayedColumns(width: number): void {
+    const isMobile = width <= 959;
+    this.displayedColumns = isMobile ? this.mobileColumns : this.desktopColumns;
+    
+    if (this.dataSource) {
+      this.dataSource.data = [...this.dataSource.data];
+    }
+  }
+  
   private initializeDataSource(): void {
     this.dataSource = new MatTableDataSource(this.filteredContracts);
     this.dataSource.paginator = this.paginator;
   }
   
   private applyFilters(): void {
-    let result = [...this.contracts];
+    if (!this.groupedContracts || this.groupedContracts.length === 0) {
+      this.groupContracts();
+    }
     
-    if (this.yearFilter.value) {
+    let result = [...(this.groupedContracts || [])];
+    
+    if (this.yearFilter && this.yearFilter.value) {
       const selectedYear = this.yearFilter.value;
-      result = result.filter(contract => {
-        if (!contract.dateSaisie) return false;
-        return new Date(contract.dateSaisie).getFullYear() === selectedYear;
+      result = result.filter(group => {
+        if (!group.dateSaisie) return false;
+        try {
+          return new Date(group.dateSaisie).getFullYear() === selectedYear;
+        } catch (e) {
+          console.error('Erreur de format de date:', group.dateSaisie, e);
+          return false;
+        }
       });
     }
     
-    if (this.validationFilter.value !== null) {
+    if (this.validationFilter && this.validationFilter.value !== null) {
       const filterValue = this.validationFilter.value === 'true';
-      result = result.filter(contract => contract.valide === filterValue);
+      result = result.filter(group => {
+        return group.products && Array.isArray(group.products) 
+          ? group.products.some((p: any) => p.valide === filterValue)
+          : false;
+      });
     }
     
-    const searchTerm = (this.searchFilter.value || '').toLowerCase();
+    const searchTerm = (this.searchFilter?.value || '').toLowerCase().trim();
     if (searchTerm) {
-      result = result.filter(contract => 
-        (contract.adherentnomCliententreprise?.toLowerCase().includes(searchTerm)) ||
-        (contract.nomcontrat?.toLowerCase().includes(searchTerm)) ||
-        (contract.circuit?.toLowerCase().includes(searchTerm))
-      );
+      result = result.filter(group => {
+        const matchesName = group.adherentnomCliententreprise 
+          ? group.adherentnomCliententreprise.toLowerCase().includes(searchTerm)
+          : false;
+          
+        const matchesProducts = group.products && Array.isArray(group.products)
+          ? group.products.some((p: any) => 
+              p.nomcontrat && p.nomcontrat.toLowerCase().includes(searchTerm)
+            )
+          : false;
+          
+        const matchesCircuit = group.circuit 
+          ? group.circuit.toLowerCase().includes(searchTerm)
+          : false;
+          
+        return matchesName || matchesProducts || matchesCircuit;
+      });
     }
     
     this.filteredContracts = result;
@@ -142,13 +251,33 @@ export class UserContractsComponent implements AfterViewInit {
   clearValidationFilter(): void {
     this.validationFilter.setValue(null);
   }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+  
+  getProductIcon(productName: string): string {
+    return this.productMappingService.getProductIcon(productName);
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  getProductDiminutif(productName: string): string {
+    return this.productMappingService.getProductDiminutif(productName);
+  }
+
+  getProductLabel(productName: string): string {
+    return this.productMappingService.getProductLabel(productName);
+  }
+
+  trackByContractId(index: number, contract: any): string {
+    return contract.contratID;
+  }
+  isMobileView(): boolean {
+    return window.innerWidth <= 959;
+  }
+
+  ngAfterViewInit() {
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+    }
+    
+    setTimeout(() => {
+      this.updateDisplayedColumns(window.innerWidth);
+    });
   }
 }

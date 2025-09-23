@@ -1,12 +1,94 @@
-.blink-tooltip {
-    animation: blink 1s infinite;
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.tooltip-container, .menu-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
   
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
   
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  ::ng-deep {
+    .mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.menu-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  
+  button[mat-icon-button] {
+    width: 100%;
+    height: 100%;
+    min-width: 28px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    
+    .mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+::ng-deep .mat-mdc-menu-panel {
+  max-width: 280px !important;
+  min-width: 0 !important;
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  
+  .menu-content {
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+.blink-tooltip {
+  animation: blink 1s infinite;
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}
+
 mat-icon {
     color: #0ba2cf;
 }
