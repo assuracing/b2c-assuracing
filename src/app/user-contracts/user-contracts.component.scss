@@ -230,6 +230,26 @@ tr:last-child td {
 .row-valid { background-color: rgba(200, 230, 201, 0.1); }
 .row-invalid { background-color: rgba(255, 205, 210, 0.1); }
 
+.product-item, .mobile-product-icon {
+  text-decoration: none;
+  color: inherit;
+}
+
+.mobile-product-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  .product-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 @media (max-width: 959px) {
   .table-container {
     overflow-x: hidden;
