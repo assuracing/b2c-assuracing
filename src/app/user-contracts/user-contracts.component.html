@@ -66,29 +66,29 @@
                 <td mat-cell *matCellDef="let element" data-label="Produits">
                     <div class="products-container">
                         <ng-container *ngIf="!isMobileView()">
-                            <div *ngFor="let product of element.products" class="product-item">
+                            <div *ngFor="let product of element.products; trackBy: trackByProductId" class="product-item">
                                 <div class="product-icon-container">
                                     <mat-icon 
-                                    [matTooltip]="getProductLabel(product.nomcontrat)"
+                                    [matTooltip]="getProductLabel(product.produitID)"
                                     class="product-icon"
                                     [class.valid-icon]="product.valide"
                                     [class.invalid-icon]="!product.valide">
-                                    {{ getProductIcon(product.nomcontrat) }}
+                                    {{ getProductIcon(product.produitID) }}
                                   </mat-icon>
                                 </div>
-                                    <span class="product-name">
-                                    {{getProductDiminutif(product.nomcontrat)}}
-                                    </span>
+                                <span class="product-name">
+                                    {{getProductDiminutif(product.produitID)}}
+                                </span>
                             </div>
                         </ng-container>
                         <div *ngIf="isMobileView()" class="mobile-products">
-                            <div *ngFor="let product of element.products" class="mobile-product-icon">
-                                <app-adaptive-tooltip [text]="getProductLabel(product.nomcontrat)" [showIcon]="false">
+                            <div *ngFor="let product of element.products; trackBy: trackByProductId" class="mobile-product-icon">
+                                <app-adaptive-tooltip [text]="getProductLabel(product.produitID)" [showIcon]="false">
                                     <mat-icon 
                                         class="product-icon"
                                         [class.valid-icon]="product.valide"
                                         [class.invalid-icon]="!product.valide">
-                                        {{getProductIcon(product.nomcontrat)}}
+                                        {{getProductIcon(product.produitID)}}
                                     </mat-icon>
                                 </app-adaptive-tooltip>
                             </div>

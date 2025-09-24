@@ -136,8 +136,8 @@ export class UserContractsComponent implements AfterViewInit {
       this.groupedContracts = [];
       return;
     }
-    
-    this.contracts.forEach(contract => {
+        
+    this.contracts.forEach((contract, index) => {
       if (!contract) return;
       
       const key = `${contract.dateAdhesion || ''}_${contract.circuit || ''}`;
@@ -145,9 +145,9 @@ export class UserContractsComponent implements AfterViewInit {
       if (!grouped[key]) {
         grouped[key] = {
           ...contract,
-          products: [{
+products: [{
             nomcontrat: contract.nomcontrat,
-            contratID: contract.contratID,
+            produitID: contract.produitID,
             valide: contract.valide === true || contract.valide === 'true'
           }],
           allValid: contract.valide === true || contract.valide === 'true',
@@ -160,7 +160,7 @@ export class UserContractsComponent implements AfterViewInit {
         const isValid = contract.valide === true || contract.valide === 'true';
         grouped[key].products.push({
           nomcontrat: contract.nomcontrat,
-          contratID: contract.contratID,
+          produitID: contract.produitID,
           valide: isValid
         });
         grouped[key].allValid = grouped[key].allValid && isValid;
@@ -252,20 +252,27 @@ export class UserContractsComponent implements AfterViewInit {
     this.validationFilter.setValue(null);
   }
   
-  getProductIcon(productName: string): string {
-    return this.productMappingService.getProductIcon(productName);
+  getProductIcon(productId: string | number): string {
+    const icon = this.productMappingService.getProductIcon(String(productId));
+    return icon;
   }
 
-  getProductDiminutif(productName: string): string {
-    return this.productMappingService.getProductDiminutif(productName);
+  getProductDiminutif(productId: string | number): string {
+    const diminutif = this.productMappingService.getProductDiminutif(String(productId));
+    return diminutif;
   }
 
-  getProductLabel(productName: string): string {
-    return this.productMappingService.getProductLabel(productName);
+  getProductLabel(productId: string | number): string {
+    const label = this.productMappingService.getProductLabel(String(productId));
+    return label;
   }
 
   trackByContractId(index: number, contract: any): string {
     return contract.contratID;
+  }
+
+  trackByProductId(index: number, product: any): string {
+    return product.produitID || index;
   }
   isMobileView(): boolean {
     return window.innerWidth <= 959;
