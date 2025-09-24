@@ -16,7 +16,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AdaptiveTooltipComponent } from '../adaptive-tooltip/adaptive-tooltip.component';
 
 @Component({
   selector: 'app-user-contracts',
@@ -35,7 +34,6 @@ import { AdaptiveTooltipComponent } from '../adaptive-tooltip/adaptive-tooltip.c
     ReactiveFormsModule,
     RouterModule,
     CustomDatePipe,
-    AdaptiveTooltipComponent
   ],  
   templateUrl: './user-contracts.component.html',
   styleUrls: ['./user-contracts.component.scss']
@@ -55,14 +53,12 @@ export class UserContractsComponent implements AfterViewInit {
     'products', 
     'circuit', 
     'valide',
-    'actions'
   ];
   
   mobileColumns: string[] = [
     'dateAdhesion',
     'circuit',
     'products',
-    'actions'
   ];
   
   displayedColumns: string[] = [];
@@ -142,28 +138,31 @@ export class UserContractsComponent implements AfterViewInit {
       
       const key = `${contract.dateAdhesion || ''}_${contract.circuit || ''}`;
       
+      const isValid = contract.valide === true || contract.valide === 'true';
+      
       if (!grouped[key]) {
         grouped[key] = {
           ...contract,
-products: [{
+          products: [{
             nomcontrat: contract.nomcontrat,
             produitID: contract.produitID,
-            valide: contract.valide === true || contract.valide === 'true'
+            valide: isValid,
+            contratID: contract.contratID
           }],
-          allValid: contract.valide === true || contract.valide === 'true',
+          allValid: isValid,
           dateAdhesion: contract.dateAdhesion,
           circuit: contract.circuit,
           dateSaisie: contract.dateSaisie,
           adherentnomCliententreprise: contract.adherentnomCliententreprise
         };
       } else {
-        const isValid = contract.valide === true || contract.valide === 'true';
         grouped[key].products.push({
           nomcontrat: contract.nomcontrat,
           produitID: contract.produitID,
-          valide: isValid
+          valide: isValid,
+          contratID: contract.contratID
         });
-        grouped[key].allValid = grouped[key].allValid && isValid;
+        grouped[key].allValid = grouped[key].products.every((p: any) => p.valide === true);
       }
     });
     
