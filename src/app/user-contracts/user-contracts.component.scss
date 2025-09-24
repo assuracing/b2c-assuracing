@@ -92,6 +92,9 @@
         justify-content: center;
         width: 20px;
         height: 20px;
+
+        .valid-icon { background-color: #e8f5e9; color: #6abf69; }
+        .invalid-icon { background-color: #ffebee; color: #e57373; }
         
         app-adaptive-tooltip {
           display: flex;
@@ -137,6 +140,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        
+        &.valid-name { color: #6abf69; }
+        &.invalid-name { color: #e57373; }
       }
     }
 
@@ -175,8 +181,8 @@
         }
       }
       
-      .valid-icon { background-color: #e8f5e9; color: #0ba2cf; }
-      .invalid-icon { background-color: #ffebee; color: #0ba2cf; }
+      .valid-icon { background-color: #e8f5e9; color: #6abf69; }
+      .invalid-icon { background-color: #ffebee; color: #e57373; }
     }
   }
 }
@@ -210,23 +216,6 @@ th, td {
 tr:last-child td {
   border-bottom: none;
 }
-
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 60px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-align: center;
-
-  &.valid { background-color: #e8f5e9; color: #2e7d32; }
-  &.invalid { background-color: #ffebee; color: #c62828; }
-}
-
 .row-valid { background-color: rgba(200, 230, 201, 0.1); }
 .row-invalid { background-color: rgba(255, 205, 210, 0.1); }
 

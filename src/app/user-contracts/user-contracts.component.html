@@ -80,7 +80,9 @@
                                     {{ getProductIcon(product.produitID) }}
                                   </mat-icon>
                                 </div>
-                                <span class="product-name">
+                                <span class="product-name"
+                                [class.valid-name]="product.valide"
+                                [class.invalid-name]="!product.valide">
                                     {{getProductDiminutif(product.produitID)}}
                                 </span>
                             </a>
@@ -109,34 +111,6 @@
                 <td mat-cell *matCellDef="let element" data-label="Circuit">
                     <div class="mat-cell-content">
                         {{element.circuit || 'N/A'}}
-                    </div>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="valide">
-                <th mat-header-cell *matHeaderCellDef>Validé</th>
-                <td mat-cell *matCellDef="let element" data-label="Validé">
-                    <div class="mat-cell-content">
-                        <span class="status-badge" 
-                              [class.valid]="element.allValid" 
-                              [class.invalid]="!element.allValid"
-                              [attr.aria-label]="element.allValid ? 'Contrat validé' : 'Contrat non validé'">
-                            {{element.allValid ? 'Oui' : 'Non'}}
-                        </span>
-                    </div>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let element" data-label="Actions">
-                    <div class="mat-cell-content">
-                        <a mat-icon-button 
-                           [routerLink]="['/contracts', element.products[0]?.contratID]" 
-                           matTooltip="Voir les détails"
-                           aria-label="Voir les détails du contrat">
-                            <mat-icon>visibility</mat-icon>
-                        </a>
                     </div>
                 </td>
             </ng-container>

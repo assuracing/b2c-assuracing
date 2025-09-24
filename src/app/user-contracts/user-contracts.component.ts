@@ -52,7 +52,6 @@ export class UserContractsComponent implements AfterViewInit {
     'adherentnomCliententreprise', 
     'products', 
     'circuit', 
-    'valide',
   ];
   
   mobileColumns: string[] = [
