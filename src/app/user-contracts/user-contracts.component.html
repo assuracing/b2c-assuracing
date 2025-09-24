@@ -1,36 +1,42 @@
 <div class="container">
+    <div class="header-actions">
+      <button mat-stroked-button color="primary" (click)="onBack()" class="back-button">
+        <mat-icon>arrow_back_ios</mat-icon> Retour à l'accueil
+      </button>
+    </div>
+    
     <div class="filter-container">
         <div class="filters-row">
             <mat-form-field appearance="outline" class="search-field">
                 <mat-label>Rechercher un contrat</mat-label>
-                <input matInput [formControl]="searchFilter" placeholder="Rechercher par entreprise, contrat..." #input>
-                <mat-icon matSuffix>search</mat-icon>
-            </mat-form-field>
-            
-                <mat-form-field appearance="outline" class="year-filter">
-                    <mat-label>Année</mat-label>
-                    <mat-select [formControl]="yearFilter">
-                        <mat-option [value]="null">Toutes</mat-option>
-                        <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
-                    </mat-select>
-                    <button mat-icon-button matSuffix (click)="clearYearFilter()" *ngIf="yearFilter.value">
-                        <mat-icon>close</mat-icon>
-                    </button>
+                    <input matInput [formControl]="searchFilter" placeholder="Rechercher par entreprise, contrat..." #input>
+                    <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
                 
-                <mat-form-field appearance="outline" class="validation-filter">
-                    <mat-label>Validé</mat-label>
-                    <mat-select [formControl]="validationFilter">
-                        <mat-option [value]="null">Tous</mat-option>
-                        <mat-option [value]="'true'">Oui</mat-option>
-                        <mat-option [value]="'false'">Non</mat-option>
-                    </mat-select>
-                    <button mat-icon-button matSuffix (click)="clearValidationFilter()" *ngIf="validationFilter.value !== null">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                </mat-form-field>
+                    <mat-form-field appearance="outline" class="year-filter">
+                        <mat-label>Année</mat-label>
+                        <mat-select [formControl]="yearFilter">
+                            <mat-option [value]="null">Toutes</mat-option>
+                            <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+                        </mat-select>
+                        <button mat-icon-button matSuffix (click)="clearYearFilter()" *ngIf="yearFilter.value">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline" class="validation-filter">
+                        <mat-label>Validé</mat-label>
+                        <mat-select [formControl]="validationFilter">
+                            <mat-option [value]="null">Tous</mat-option>
+                            <mat-option [value]="'true'">Oui</mat-option>
+                            <mat-option [value]="'false'">Non</mat-option>
+                        </mat-select>
+                        <button mat-icon-button matSuffix (click)="clearValidationFilter()" *ngIf="validationFilter.value !== null">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+            </div>
         </div>
-    </div>
 
     <div class="table-container" [class.mobile-view]="isMobileView()">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">

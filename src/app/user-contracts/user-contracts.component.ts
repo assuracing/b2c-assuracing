@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-contracts',
@@ -36,7 +36,7 @@ import { RouterModule } from '@angular/router';
     CustomDatePipe,
   ],  
   templateUrl: './user-contracts.component.html',
-  styleUrls: ['./user-contracts.component.scss']
+  styleUrls: ['./user-contracts.component.scss', '../app-second.component.scss']
 })
 export class UserContractsComponent implements AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
@@ -67,7 +67,7 @@ export class UserContractsComponent implements AfterViewInit {
   searchFilter = new FormControl('');
   validationFilter = new FormControl<string | null>(null);
 
-  constructor(private userService: UserService, private productMappingService: ProductMappingService, private paginatorIntl: MatPaginatorIntl) {
+  constructor(private userService: UserService, private productMappingService: ProductMappingService, private paginatorIntl: MatPaginatorIntl, private router: Router) {
     this.paginatorIntl.itemsPerPageLabel = 'Contrats par page';
     this.paginatorIntl.firstPageLabel = 'Première page';
     this.paginatorIntl.lastPageLabel = 'Dernière page';
@@ -274,6 +274,10 @@ export class UserContractsComponent implements AfterViewInit {
   }
   isMobileView(): boolean {
     return window.innerWidth <= 959;
+  }
+
+  onBack(): void {
+    this.router.navigate(['/']);
   }
 
   ngAfterViewInit() {

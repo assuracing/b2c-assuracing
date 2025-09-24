@@ -19,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     DatePipe
   ],
   templateUrl: './contract-details.component.html',
-  styleUrls: ['./contract-details.component.scss', '../app.component.scss']
+  styleUrls: ['./contract-details.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
 export class ContractDetailsComponent implements OnInit {
   contractId: number | null = null;
