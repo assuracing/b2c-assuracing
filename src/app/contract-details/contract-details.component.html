@@ -20,7 +20,7 @@
 
   <mat-card *ngIf="!loading && !error && contract" class="contract-card">
     <mat-card-header>
-      <mat-card-title>Détails du contrat #{{ contract.id }}</mat-card-title>
+      <mat-card-title>Détails du contrat {{ getProductLabel(contract.produit.id) }}  #{{ contract.id }}</mat-card-title>
       <mat-card-subtitle>
         État: 
         <span class="status-badge" [class.validated]="contract.validated" [class.pending]="!contract.validated">
@@ -38,6 +38,17 @@
             Informations générales
           </h3>
           <div class="detail-row">
+            <span class="detail-label">Circuit : </span>
+            <span class="detail-value" style="display: flex; align-items: center">
+              <ng-container *ngIf="contract.circuit.pays">
+                <img [src]="countryFlagService.getCountryFlagUrl(contract.circuit.pays)" 
+                     [alt]="'Drapeau ' + contract.circuit.pays"
+                     style="width: 20px; height: 20px; margin-right: 8px;">
+              </ng-container>
+              {{ contract.circuit.nom || 'Non spécifié' }}
+            </span>
+          </div>
+          <div class="detail-row">
             <span class="detail-label">Date de début : </span>
             <span class="detail-value">{{ contract.dateAdhesion | date:'d MMMM yyyy' }}</span>
           </div>
@@ -48,6 +59,14 @@
           <div class="detail-row">
             <span class="detail-label">Date de saisie : </span>
             <span class="detail-value">{{ contract.dateSaisie | date:'d MMMM yyyy' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Montant inscription roulage garantie : </span>
+            <span class="detail-value"> {{ contract.montantGarantie }} €</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Client : </span>
+            <span class="detail-value">{{ contract.client.nom || 'Non spécifié' }}</span>
           </div>
           <div class="detail-row" *ngIf="contract.autre">
             <span class="detail-label">Autre : </span>
@@ -85,29 +104,6 @@
                 <span class="detail-label">Numéro de châssis: </span>
                 <span class="detail-value">{{ vehiculeDetails.numeroChassis || 'ND' }}</span>
             </div>
-        </div>
-
-        <div class="detail-section">
-          <h3 class="section-title">
-            <mat-icon>info</mat-icon>
-            Informations complémentaires
-          </h3>
-          <div class="detail-row">
-            <span class="detail-label">Montant inscription roulage garantie : </span>
-            <span class="detail-value"> {{ contract.montantGarantie }} €</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Circuit : </span>
-            <span class="detail-value">{{ contract.circuit.nom || 'Non spécifié' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Produit : </span>
-            <span class="detail-value">{{ contract.produit.nom || 'Non spécifié' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Client : </span>
-            <span class="detail-value">{{ contract.client.nom || 'Non spécifié' }}</span>
-          </div>
         </div>
       </div>
 

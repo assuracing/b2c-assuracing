@@ -6,6 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProductMappingService } from '../services/product-mapping.service';
+import { CountryFlagService } from '../services/country-flag.service';
 
 @Component({
   selector: 'app-contract-details',
@@ -32,7 +34,9 @@ export class ContractDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private productMappingService: ProductMappingService,
+    public countryFlagService: CountryFlagService
   ) {}
 
   ngOnInit(): void {
@@ -122,5 +126,9 @@ export class ContractDetailsComponent implements OnInit {
         montantGarantie: this.contract?.montantGarantie
       });
     }
+  }
+
+  getProductLabel(productId: number): string {
+    return this.productMappingService.getProductLabel(productId);
   }
 }
