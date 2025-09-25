@@ -205,20 +205,6 @@ th, td {
   border-bottom: 1px solid #e0e0e0;
   text-align: center;
   vertical-align: middle;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  
-  .mat-cell-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-    width: 100%;
-  }
-}
-
-tr:last-child td {
   border-bottom: none;
 }
 .row-valid { background-color: rgba(200, 230, 201, 0.1); }
@@ -227,6 +213,45 @@ tr:last-child td {
 .product-item, .mobile-product-icon {
   text-decoration: none;
   color: inherit;
+}
+
+.mat-cell-content {
+  padding: 8px;
+  
+  .event-date {
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  
+  .event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #555;
+    
+    .event-circuit,
+    .event-type {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 4px;
+      
+      .event-type-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #0b8fcf;
+      }
+      
+      span {
+        line-height: 1.2;
+      }
+    }
+  }
 }
 
 .mobile-product-icon {
@@ -261,13 +286,10 @@ tr:last-child td {
     padding: 8px;
   }
 
-  .mat-column-dateAdhesion { width: 10%; }
-  .mat-column-dateSaisie { width: 15%; }
-  .mat-column-adherentnomCliententreprise { width: 20%; }
-  .mat-column-products { width: 15%; }
-  .mat-column-circuit { width: 15%; }
-  .mat-column-valide { width: 10%; }
-  .mat-column-actions { width: 10%; }
+  .mat-column-products { 
+    width: 40%; 
+
+  }
 
   .mat-row, .mat-header-row { 
     display: table-row !important; 
@@ -316,5 +338,44 @@ tr:last-child td {
     word-wrap: break-word;
     overflow-wrap: anywhere;
     font-size: 0.7rem;
+  }
+}
+
+.event-types-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  .event-type-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+    
+    .event-type-icon {
+      font-size: 20px;
+      color: #0ba2cf;
+      margin-right: 8px;
+      width: 24px;
+      text-align: center;
+    }
+  }
+}
+
+.event-details {
+  .event-type-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.8rem;
+    color: #555;
+  }
+
+  .event-type-icon {
+    color: #0ba2cf;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

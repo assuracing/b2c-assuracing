@@ -49,14 +49,14 @@ export class UserContractsComponent implements AfterViewInit {
   desktopColumns: string[] = [
     'dateAdhesion', 
     'dateSaisie', 
-    'adherentnomCliententreprise', 
+    'adherentnomCliententreprise',
+    'circuit',
     'products', 
-    'circuit', 
+    'eventType'
   ];
   
   mobileColumns: string[] = [
     'dateAdhesion',
-    'circuit',
     'products',
   ];
   
@@ -131,8 +131,13 @@ export class UserContractsComponent implements AfterViewInit {
       this.groupedContracts = [];
       return;
     }
+    
+    const filteredContracts = this.contracts.filter(contract => {
+      if (!contract) return false;
+      return !this.productMappingService.isMotorsLeagueProduct(contract.produitID);
+    });
         
-    this.contracts.forEach((contract, index) => {
+    filteredContracts.forEach((contract) => {
       if (!contract) return;
       
       const key = `${contract.dateAdhesion || ''}_${contract.circuit || ''}`;
@@ -148,12 +153,15 @@ export class UserContractsComponent implements AfterViewInit {
             valide: isValid,
             contratID: contract.contratID
           }],
+          eventTypes: contract.typeEvenement ? [contract.typeEvenement] : [],
           allValid: isValid,
           dateAdhesion: contract.dateAdhesion,
           circuit: contract.circuit,
           dateSaisie: contract.dateSaisie,
           adherentnomCliententreprise: contract.adherentnomCliententreprise
         };
+      } else if (contract.typeEvenement && !grouped[key].eventTypes.includes(contract.typeEvenement)) {
+        grouped[key].eventTypes.push(contract.typeEvenement);
       } else {
         grouped[key].products.push({
           nomcontrat: contract.nomcontrat,
@@ -273,7 +281,26 @@ export class UserContractsComponent implements AfterViewInit {
     return product.produitID || index;
   }
   isMobileView(): boolean {
-    return window.innerWidth <= 959;
+    return window.innerWidth <= 768;
+  }
+
+  eventTypes = [
+    { value: 'ROULAGE_ENTRAINEMENT', label: 'Roulage', icon: 'two_wheeler' },
+    { value: 'COMPETITION', label: 'Compétition', icon: 'emoji_events' },
+    { value: 'COACHING', label: 'Coaching', icon: 'record_voice_over' },
+    { value: 'STAGE_PILOTAGE', label: 'Stage de pilotage', icon: 'school' }
+  ];
+
+  formatEventType(eventType: string | null | undefined): string | null {
+    if (!eventType) return null;
+    const item = this.eventTypes.find(e => e.value === eventType);
+    return item ? item.label : eventType;
+  }
+
+  getEventTypeIcon(eventType: string | null | undefined): string {
+    if (!eventType) return '';
+    const item = this.eventTypes.find(e => e.value === eventType);
+    return item ? item.icon : '';
   }
 
   onBack(): void {

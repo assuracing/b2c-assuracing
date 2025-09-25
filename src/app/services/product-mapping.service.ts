@@ -173,4 +173,9 @@ export class ProductMappingService {
   getProductIcon(productCode: string | number): string {
     return this.getProductInfo(productCode).icon;
   }
+
+  isMotorsLeagueProduct(productCode: string | number): boolean {
+    const code = String(productCode);
+    return code.startsWith('4') && parseInt(code) >= 44 && parseInt(code) <= 48;
+  }
 }

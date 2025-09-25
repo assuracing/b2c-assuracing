@@ -44,7 +44,18 @@
                 <th mat-header-cell *matHeaderCellDef>Date de roulage</th>
                 <td mat-cell *matCellDef="let element" data-label="Date de roulage">
                     <div class="mat-cell-content">
-                        {{element.dateAdhesion | customDate}}
+                        <div class="event-date">{{element.dateAdhesion | customDate}}</div>
+                        <div class="event-details" *ngIf="isMobileView()">
+                            <div *ngIf="element.circuit">
+                                {{element.circuit}}
+                            </div>
+                            <div class="event-types" *ngIf="element.eventTypes && element.eventTypes.length > 0">
+                                <div *ngFor="let type of element.eventTypes" class="event-type-mobile">
+                                    <mat-icon class="event-type-icon">{{getEventTypeIcon(type)}}</mat-icon>
+                                    <span style>{{formatEventType(type)}}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </td>
             </ng-container>
@@ -117,6 +128,22 @@
                 <td mat-cell *matCellDef="let element" data-label="Circuit">
                     <div class="mat-cell-content">
                         {{element.circuit || 'N/A'}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="eventType">
+                <th mat-header-cell *matHeaderCellDef>Événement</th>
+                <td mat-cell *matCellDef="let element" data-label="Événement">
+                    <div class="mat-cell-content">
+                        <div *ngIf="element.eventTypes && element.eventTypes.length > 0" class="event-types-container">
+                            <div *ngFor="let type of element.eventTypes" class="event-type-item">
+                                <mat-icon class="event-type-icon">
+                                    {{getEventTypeIcon(type)}}
+                                </mat-icon>
+                                <span>{{formatEventType(type) || ''}}</span>
+                            </div>
+                        </div>
                     </div>
                 </td>
             </ng-container>
