@@ -137,6 +137,9 @@
         font-weight: 500;
         color: #555;
         min-width: 160px;
+        max-width: 160px;
+        padding-right: 16px;
+        word-break: break-word;
       }
   
       .detail-value {
