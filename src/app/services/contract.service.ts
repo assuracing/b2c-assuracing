@@ -37,6 +37,7 @@ export interface ContractDetail {
   circuit: {
     id: number;
     nom: string;
+    pays?: string;
   };
   produit: {
     id: number;
