@@ -1,35 +1,84 @@
-<nav id="my-first" class="navbar navbar-expand-lg navbar-light bg-light" #navbarRef>
-  <ul>
-    <a href=""><img src="images/assuracing.png" width="50%" alt="Logo assuracing"></a>
-    
-    <li class="burger" (click)="toggleMenu()">
-      <i class="material-icons">{{ isMenuOpen ? "close" : "menu" }}</i>
-    </li>
+<nav class="navbar" #navbarRef>
+  <div class="navbar-container">
+    <!-- Logo -->
+    <a href="/" class="logo">
+      <img src="images/assuracing.png" alt="Logo assuracing" />
+    </a>
 
-    <li class="menu" [class.is-open]="isMenuOpen">
-      <a href="" class="menu-item" style="display: flex; align-items: center; gap: 8px;">
-        <mat-icon>home</mat-icon> Accueil
-      </a>
+    <!-- Menu principal -->
+    <div class="menu-container">
+      <ul class="menu" aria-label="Menu principal">
+        <!-- Accueil -->
+        <li class="menu-item desktop-only">
+          <a routerLink="/" class="menu-link">
+            <mat-icon>home</mat-icon>
+            <span>Accueil</span>
+          </a>
+        </li>
 
-      <div class="dropdown-wrapper" (click)="toggleLangueDropdown()" tabindex="0">
-        <a class="menu-item" style="display: flex; align-items: center; gap: 8px;">
-          <mat-icon>flag</mat-icon> Langue
-        </a>
-        <div class="dropdown" *ngIf="isLangueDropdownOpen">
-          <a class="dropdown-item" (click)="changerLangue('fr')">Français</a>
-          <a class="dropdown-item" (click)="changerLangue('en')">Anglais</a>
-        </div>
-      </div>
+        <!-- Langue -->
+        <li class="menu-item language-item">
+          <a (click)="toggleLangueDropdown($event)" class="language-selector">
+            <img
+              *ngIf="langue === 'fr'"
+              src="flags/france.png"
+              alt="Français"
+              class="flag-icon"
+            />
+            <img
+              *ngIf="langue !== 'fr'"
+              src="flags/royaume-uni.png"
+              alt="English"
+              class="flag-icon"
+            />
+            <span class="language-code desktop-only">{{
+              langue.toUpperCase()
+            }}</span>
+          </a>
+          <div
+            class="dropdown"
+            *ngIf="isLangueDropdownOpen"
+            (click)="$event.stopPropagation()"
+          >
+            <a class="dropdown-item" (click)="changerLangue('fr')">
+              <img src="flags/france.png" alt="Français" class="flag-icon" />
+              Français
+            </a>
+            <a class="dropdown-item" (click)="changerLangue('en')">
+              <img
+                src="flags/royaume-uni.png"
+                alt="English"
+                class="flag-icon"
+              />
+              English
+            </a>
+          </div>
+        </li>
 
-      <div class="dropdown-wrapper" (click)="toggleCompteDropdown()" tabindex="0">
-        <a class="menu-item" style="display: flex; align-items: center; gap: 8px;">
-          <mat-icon>person</mat-icon> Compte
-        </a>
-        <div class="dropdown" *ngIf="isCompteDropdownOpen">
-          <a class="dropdown-item" *ngIf="authService.isLoggedIn()" (click)="authService.logout()">Se déconnecter</a>
-          <a class="dropdown-item" *ngIf="!authService.isLoggedIn()" href="/login">S'authentifier</a>
-        </div>
-      </div>
-    </li>
-  </ul>
+        <!-- Section utilisateur connecté -->
+        <li class="menu-item user-item" *ngIf="userService.isLoggedIn()">
+          <div class="user-greeting" [class.welcome-animation]="showWelcome">
+            <mat-icon class="welcome-icon">waving_hand</mat-icon>
+            <span class="desktop-only">Bonjour, {{ userService.getUser()?.firstName }}</span>
+            <span class="mobile-only">{{ userService.getUser()?.firstName }}</span>
+          </div>
+          <button
+            mat-button
+            (click)="authService.logout()"
+            class="logout-button">
+            <mat-icon>logout</mat-icon>
+            <span class="desktop-only">Déconnexion</span>
+          </button>
+        </li>
+
+        <!-- Section utilisateur non connecté -->
+        <li class="menu-item login-item" *ngIf="!userService.isLoggedIn()">
+          <a href="/login" class="login-button">
+            <mat-icon>person</mat-icon>
+            <span>Se connecter</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
