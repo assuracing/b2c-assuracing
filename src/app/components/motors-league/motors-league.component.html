@@ -1,0 +1,190 @@
+<mat-card class="motors-league-card">
+  <mat-card-header>
+    <div class="header-content">
+      <mat-card-title>Motors League</mat-card-title>
+      <div class="header-image">
+        <img [src]="'images/motors-league.png'" alt="Motors League" class="logo" [class.logo-active]="isActive">
+      </div>
+    </div>
+  </mat-card-header>
+  
+  <mat-card-content>
+    <!-- Cas 1: Pas client -->
+    <div *ngIf="!hasContract">
+      <mat-accordion>
+        <mat-expansion-panel [expanded]="true" class="no-contract-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon style="color: #02556e;">info</mat-icon>
+              <span>Votre statut Motors League</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <div class="no-contract-content">
+            <p>Vous n'avez pas encore de contrat Motors League.</p>
+            <mat-expansion-panel style="margin-bottom: 16px;">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon style="color: #02556e;">star</mat-icon>
+                  <span>Les avantages Motors League</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              
+              <div class="benefits-section">
+                <div class="benefit-item">
+                  <img src="images/gilet-airbag.svg" alt="Gilet airbag" class="benefit-icon">
+                  <div class="benefit-content">
+                    <h4>Airbag</h4>
+                    <p>Protection optimale en cas d'accident</p>
+                  </div>
+                </div>
+
+                <div class="benefit-item">
+                  <img src="images/avoir.svg" alt="Avoir" class="benefit-icon">
+                  <div class="benefit-content">
+                    <h4>Un avoir de 150 euros</h4>
+                    <p>À utiliser pour vos prochaines factures</p>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+            <button routerLink="/motors-league" class="btn btn-primary d-flex align-items-center justify-content-center mx-auto">
+              <mat-icon class="me-2">card_membership</mat-icon>
+              OBTENIR MON TOKKEN
+            </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    
+    <!-- Cas 2 & 3: Client -->
+    <div *ngIf="hasContract" [class.expired]="!isActive">
+      <div class="token-info">
+        <p>Tokken numéro: <strong>{{ activeContract?.tokken || 'Chargement...' }}</strong></p>
+        
+        <button *ngIf="!isActive" 
+                mat-raised-button 
+                color="primary" 
+                (click)="renewContract()"
+                
+                class="btn btn-primary d-flex align-items-center justify-content-center mx-auto">
+                <mat-icon class="me-2">autorenew</mat-icon>
+          RENOUVELER MON CONTRAT
+        </button>
+      </div>
+      
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon style="color: #02556e;">description</mat-icon>
+              <span>Mes éléments contractuels</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <mat-accordion>
+            <!-- Section Avantages -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon style="color: #02556e;">star</mat-icon>
+                  <span>Mes avantages</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              
+              <div class="benefits-section">
+                <div class="benefit-item">
+                  <img src="images/gilet-airbag.svg" alt="Gilet airbag" class="benefit-icon">
+                  <div class="benefit-content">
+                    <h4>Airbag</h4>
+                    <p>Protection optimale en cas d'accident</p>
+                  </div>
+                </div>
+
+                <div class="benefit-item">
+                  <img src="images/avoir.svg" alt="Avoir" class="benefit-icon">
+                  <div class="benefit-content">
+                    <h4>Un avoir de 150 euros</h4>
+                    <p>À utiliser pour vos prochaines factures</p>
+                  </div>
+                </div>
+
+                <div class="benefit-item">
+                  <img src="images/quick-racing.png" alt="Quick Racing" class="benefit-icon">
+                  <div class="benefit-content">
+                    <h4>Quick Racing</h4>
+                    <p>Un abonnement Quick Racing premium</p>
+                  </div>
+                </div>
+
+              </div>
+            </mat-expansion-panel>
+            
+            <!-- Section Détails du contrat -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon style="color: #02556e;">info</mat-icon>
+                  <span>Détails du contrat</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              
+              <div class="contract-details">
+                <div class="detail-row">
+                  <span class="detail-label">Date de début :</span>
+                  <span class="detail-value">{{ activeContract?.dateAdhesionContrat | date:'dd/MM/yyyy' }}</span>
+                </div>
+                
+                <div class="detail-row">
+                  <span class="detail-label">Date de fin :</span>
+                  <span class="detail-value" [class.expired]="!isActive">
+                    {{ activeContract?.dateFin | date:'dd/MM/yyyy' }}
+                    <span *ngIf="!isActive" class="expired-badge">Expiré</span>
+                  </span>
+                </div>
+                
+                <div class="detail-row">
+                  <span class="detail-label">Statut :</span>
+                  <span class="detail-value">
+                    <span [class.status-active]="isActive" [class.status-inactive]="!isActive">
+                      {{ isActive ? 'Actif' : 'Inactif' }}
+                    </span>
+                  </span>
+                </div>
+                
+                <div class="detail-row" *ngIf="activeContract && activeContract['produitID']">
+                  <span class="detail-label">Produit :</span>
+                  <span class="detail-value">
+                    <span class="product-badge">{{ getProductName(activeContract['produitID']) }}</span>
+                  </span>
+                </div>
+              </div>
+            </mat-expansion-panel>
+            
+            <!-- Section Documents -->
+            <!-- <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon style="color: #02556e;">description</mat-icon>
+                  <span>Documents</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              
+              <div class="documents-section">
+                <button mat-button color="primary">
+                  <mat-icon>picture_as_pdf</mat-icon>
+                  Télécharger le contrat
+                </button>
+                
+                <button mat-button color="primary">
+                  <mat-icon>receipt</mat-icon>
+                  Conditions générales
+                </button>
+              </div>
+            </mat-expansion-panel> -->
+          </mat-accordion>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-card-content>
+</mat-card>

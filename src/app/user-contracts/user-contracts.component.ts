@@ -13,9 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { MotorsLeagueComponent } from '../components/motors-league/motors-league.component';
 
 @Component({
   selector: 'app-user-contracts',
@@ -30,10 +33,13 @@ import { Router, RouterModule } from '@angular/router';
     MatSelectModule,
     MatButtonModule,
     MatTooltipModule,
+    MatCardModule,
+    MatExpansionModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
     CustomDatePipe,
+    MotorsLeagueComponent,
   ],  
   templateUrl: './user-contracts.component.html',
   styleUrls: ['./user-contracts.component.scss', '../app-second.component.scss']

@@ -1,0 +1,409 @@
+.motors-league-card {
+  margin: 16px 0;
+  border-left: 4px solid #0ba2cf;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  .mat-mdc-card-header {
+    padding: 0;
+    background-color: #f5f5f5;
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 16px 16px 0;
+      
+      .header-image {
+        .logo {
+          height: 50px;
+          width: auto;
+          object-fit: contain;
+          transition: filter 0.3s ease;
+          filter: grayscale(100%) opacity(0.6);
+          
+          &.logo-active {
+            filter: none;
+          }
+        }
+      }
+    }
+    
+    .mat-mdc-card-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+  
+  .mat-mdc-card-content {
+    padding: 16px;
+    
+    .benefits-preview {
+      margin: 16px 0;
+      
+      h4 {
+        color: #333;
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+      
+      .benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.benefits-section {
+  padding: 8px 0;
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    color: #555;
+    
+    .benefit-icon {
+      margin-right: 16px;
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      flex-shrink: 0;
+      margin-top: 4px;
+      
+      &[src*='avoir'],
+      &[src*='gilet-airbag'] {
+        filter: brightness(0) saturate(100%) invert(58%) sepia(47%) saturate(2599%) hue-rotate(156deg) brightness(95%) contrast(101%);
+      }
+    }
+    
+    .benefit-content {
+      flex: 1;
+      
+      h4 {
+        margin: 0 0 4px 0;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+/* Style pour le panneau non-client */
+.no-contract-panel {
+  .mat-expansion-panel-header {
+    background-color: #f5f5f5;
+    
+    &[aria-disabled='true'] {
+      opacity: 1;
+    }
+  }
+  
+  .no-contract-content {
+    padding: 16px;
+    
+    p {
+      margin: 0 0 16px 0;
+      color: #666;
+    }
+    
+    .benefits-preview {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 16px;
+      
+      h4 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 1rem;
+      }
+      
+      ul {
+        margin: 0;
+        padding-left: 20px;
+        
+        li {
+          margin-bottom: 4px;
+          color: #555;
+          font-size: 0.9rem;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+    
+    .action-button {
+      margin-top: 8px;
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.token-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  
+  p {
+    margin: 0;
+    color: #666;
+  }
+  
+  strong {
+    color: #333;
+  }
+}
+
+.action-button, .renew-button {
+  margin-top: 8px;
+}
+
+.benefits-section {
+  padding: 8px 0;
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    mat-icon {
+      color: #0ba2cf;
+      margin-top: 2px;
+    }
+    
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 1rem;
+      color: #333;
+    }
+    
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+}
+
+.contract-details {
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      font-weight: 500;
+      color: #666;
+    }
+    
+    .detail-value {
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .expired-badge {
+        background-color: #ffebee;
+        color: #d32f2f;
+        font-size: 0.75rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-weight: 500;
+      }
+      
+      .status-active, .status-inactive {
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      
+      .status-active {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
+      
+      .status-inactive {
+        background-color: #ffebee;
+        color: #d32f2f;
+      }
+    }
+  }
+}
+
+.documents-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+  
+  button {
+    justify-content: flex-start;
+    padding: 8px 16px;
+    
+    mat-icon {
+      margin-right: 8px;
+      color: #1976d2;
+    }
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.5;
+  min-width: 200px;
+  border: none;
+  cursor: pointer;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-primary {
+  background-color: #0ba2cf;
+  color: white;
+  
+  &:hover, &:focus {
+    background-color: #0988b1;
+  }
+}
+
+.btn-outline-primary {
+  color: #0ba2cf;
+  border: 1px solid #0ba2cf;
+  background-color: transparent;
+  
+  &:hover, &:focus {
+    background-color: rgba(11, 162, 207, 0.1);
+    color: #0988b1;
+    border-color: #0988b1;
+  }
+}
+
+::ng-deep {
+  .mat-expansion-panel {
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px !important;
+    margin-bottom: 8px;
+    
+    &-header {
+      padding: 0 16px;
+      height: 56px;
+      
+      .mat-content {
+        align-items: center;
+      }
+      
+      mat-icon {
+        margin-right: 12px;
+        color: #666;
+      }
+      
+      .mat-expansion-indicator::after {
+        color: #666;
+      }
+    }
+    
+    &-body {
+      padding: 0 16px 16px;
+    }
+  }
+}
+
+.product-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.expired {
+  opacity: 0.7;
+  
+  .motors-league-card {
+    border-left-color: #e0e0e0;
+  }
+}
+
+.product-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (max-width: 503px) {
+  .detail-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+    margin-bottom: 12px;
+    
+    .detail-value {
+      width: 100% !important;
+      text-align: left !important;
+      word-break: break-word;
+    }
+    
+    .product-badge {
+      white-space: normal;
+      margin-top: 4px;
+    }
+  }
+}
