@@ -23,7 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
@@ -111,7 +111,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private toastService: ToastService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -128,6 +129,12 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
     this.initializeBirthdateSubscription();
     
+    this.route.queryParams.subscribe((params: any) => {
+      if (params['page'] === '2') {
+        this.step1Page = 2;
+      }
+    });
+
     this.vehicleForm.get('type')?.valueChanges.subscribe(type => {
       if (type) {
         this.vehicleType = type;
