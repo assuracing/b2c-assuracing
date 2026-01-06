@@ -76,19 +76,19 @@
              [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">thunderstorm</mat-icon>
-              <strong class="toggle-label-medium">Risques Intempéries</strong>
+              <strong class="toggle-label-medium">Risque Intempérie</strong>
             </span>
             </mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
               Non disponible pour cet organisateur
             </small>
             <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-              Non disponible car l'évènement a lieu dans moins de 3 semaines.
+              Non disponible car l'évènement a lieu dans moins de 3 semaines. 
             </small>
             <div class="risk-details">
               <ul>
-                <li>100 % en cas d'annulation</li>
-                <li>70 % en cas de roulage sous la pluie</li>
+                <li>80 % en cas d'annulation</li>
+                <li>50 % en cas de roulage sous la pluie</li>
               </ul>
               <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
             </div>
@@ -101,7 +101,7 @@
              [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">event_busy</mat-icon>
-              <strong class="toggle-label-medium">Risques Annulation</strong>
+              <strong class="toggle-label-medium">Risque Annulation</strong>
             </span>
             </mat-slide-toggle>
               <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
@@ -117,7 +117,7 @@
               <ul>
                 <li>100 % en cas d'Accident corporel et d'Hospitalisation</li>
                 <li>100 % en cas d'Accident du véhicule, Décès, Naissance, autres motifs prévus au contrat</li>
-                <li>80 % autres motifs de santé</li>
+                <li>70 % autres motifs de santé</li>
               </ul>
               <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
             </div>
