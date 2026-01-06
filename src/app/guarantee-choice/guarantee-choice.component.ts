@@ -17,5 +17,9 @@ export class GuaranteeChoiceComponent {
 
   navigateToEventGuarantee() {
     this.router.navigate(['/event-coverage']);
-  } 
+  }
+
+  navigateToHome() {
+    this.router.navigate(['/']);
+  }
 }
