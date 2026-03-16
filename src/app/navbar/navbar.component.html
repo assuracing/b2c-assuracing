@@ -10,7 +10,7 @@
       <ul class="menu" aria-label="Menu principal">
         <!-- Accueil -->
         <li class="menu-item desktop-only">
-          <a routerLink="/" class="menu-link">
+          <a class="menu-link" (click)="goHome(); $event.preventDefault();">
             <mat-icon>home</mat-icon>
             <span>Accueil</span>
           </a>
