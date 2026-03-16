@@ -583,4 +583,9 @@ export class EventCoverageOptionsComponent {
     });
   }
 
+  isPartnerOrganizer(): boolean {
+  const partners = ['lh racing'];
+  return !!this.organizerName && partners.includes(this.organizerName.toLowerCase());
+  }
+
 }
