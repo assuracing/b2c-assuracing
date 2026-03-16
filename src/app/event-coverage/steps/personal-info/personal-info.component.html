@@ -91,7 +91,7 @@
             id="postalCode" 
             class="form-control" 
             required
-            appNumbersOnly 
+            [appNumbersOnly]="form.get('country')?.value === 'France'" 
             [maxLength]="form.get('country')?.value === 'France' ? 5 : 8"
             (focus)="onPostalCodeInput()"
             (blur)="onPostalCodeBlur()">

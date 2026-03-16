@@ -1,13 +1,17 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
   selector: '[appNumbersOnly]',
   standalone: true
 })
 export class NumbersOnlyDirective {
+  @Input('appNumbersOnly') enabled: boolean | string = true;
+
   constructor(private el: ElementRef) {}
 
   @HostListener('keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
+    if (this.enabled === false || this.enabled === 'false') return;
+
     const allowedKeys = [
       'Backspace', 'Tab', 'Enter', 'Escape', 'Delete',
       'ArrowLeft', 'ArrowRight', 'Home', 'End'
@@ -26,6 +30,8 @@ export class NumbersOnlyDirective {
   }
   
   @HostListener('paste', ['$event']) onPaste(event: ClipboardEvent) {
+    if (this.enabled === false || this.enabled === 'false') return;
+
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const pastedInput = clipboardData.getData('text');
 
