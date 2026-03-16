@@ -11,7 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PersonalInfoComponent } from '../event-coverage/steps/personal-info/personal-info.component';
 import { VehicleInfoComponent } from '../steps/vehicle-info/vehicle-info.component';
-import { CoverageOptionsComponent } from '../steps/coverage-options/coverage-options.component';
+import { MotorsLeagueCoverageOptionsComponent } from './motors-league-coverage-options/motors-league-coverage-options.component';
 import { PaymentComponent } from '../steps/payment/payment.component';
 import { CommonModule } from '@angular/common';
 import { RepresentativeLegalComponent } from "../steps/representative-legal/representative-legal.component";
@@ -29,6 +29,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
+
+import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
 
 interface Contract {
   selectedCircuit: string;
@@ -72,7 +74,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, CoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, AdaptiveTooltipComponent],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, AdaptiveTooltipComponent],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
@@ -80,7 +82,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   public nationalities: string[] = [
     'Française','Allemande','Autrichienne','Belge','Britannique','Bulgare','Chypriote','Croate','Danoise','Espagnole','Estonienne','Finlandaise','Grecque','Hongroise','Irlandaise','Italienne','Lettonne','Lituanienne','Luxembourgeoise','Maltaise','Néerlandaise','Polonaise','Portugaise','Roumaine','Slovaque','Slovène','Suédoise','Suisse','Tchèque'
   ];
-  @ViewChild(CoverageOptionsComponent) coverageOptions!: CoverageOptionsComponent;
+  @ViewChild(MotorsLeagueCoverageOptionsComponent) coverageOptions!: MotorsLeagueCoverageOptionsComponent;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   @ViewChild(MatStepper) stepper!: MatStepper;
 
@@ -92,13 +94,18 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   summaryForm!: FormGroup;
   step1Page: number = 1;
   step2Page: number = 1;
+  sectionInProgress: boolean = false;
   
   vehicles: any[] = [];
+  vehicleTypes = [
+    { value: 'auto', label: 'Auto', icon: 'directions_car' },
+    { value: 'moto', label: 'Moto', icon: 'two_wheeler' }
+  ];
   acceptTerms: boolean = false;
   private subscription?: Subscription;
   private apiUrl: string;
   labelPosition: 'end' | 'bottom' = 'end';
-  vehicleType: 'auto' | 'moto' = 'auto';
+  vehicleType: 'auto' | 'moto' | '' = '';
   userAge: number = 0;
 
   constructor(
@@ -146,6 +153,44 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  onSectionInProgress(isInProgress: boolean): void {
+    this.sectionInProgress = isInProgress;
+  }
+
+  async onContinueGuaranteeStep(stepper: MatStepper) {
+    const form = this.coverageForm;
+    const hasGuarantee = (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
+    
+    if (!hasGuarantee) {
+      const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
+        width: '400px',
+        disableClose: true
+      });
+      // Handle observable consistently
+      const result = await dialogRef.afterClosed().toPromise();
+      if (result) {
+        this.router.navigate(['/']);
+      }
+      return;
+    }
+    stepper.next();
+  }
+
+  onVehicleTypeChange(type: 'auto' | 'moto'): void {
+    this.vehicleType = type;
+    this.vehicleForm?.get('type')?.setValue(type);
+  }
+
+  getVehicleIcon(type: string): string {
+    const vt = this.vehicleTypes.find(v => v.value === type);
+    return vt ? vt.icon : '';
+  }
+
+  getVehicleLabel(type: string): string {
+    const vt = this.vehicleTypes.find(v => v.value === type);
+    return vt ? vt.label : 'Sélectionnez un véhicule';
   }
 
   goToYearlyGuarantee(): void {
@@ -287,7 +332,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     });
 
     this.coverageForm = new FormGroup({
-      coverageLevel: new FormControl(null, [Validators.required])
     });
 
     this.RepresentativeLegalForm = this.fb.group({
@@ -368,6 +412,34 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return levelData ? levelData.price : undefined;
   }
 
+  getTotalPrime(): number {
+    if (this.coverageOptions && this.coverageOptions.totalPrime) {
+      return this.coverageOptions.totalPrime;
+    }
+    
+    const defenseRecours = this.coverageForm.get('defenseRecours')?.value;
+    const responsabiliteCivile = this.coverageForm.get('responsabiliteCivile')?.value;
+    const protectionPilote = this.coverageForm.get('protectionPilote')?.value;
+    
+    let total = 0;
+    if (protectionPilote) {
+      total += this.getLevelPrice(protectionPilote) || 0;
+    }
+    if (defenseRecours && this.coverageOptions) {
+      total += this.coverageOptions.PRIME_RATES.defenseRecours;
+    } else if (defenseRecours) {
+      total += 14; 
+    }
+    
+    if (responsabiliteCivile && this.coverageOptions) {
+      total += this.coverageOptions.PRIME_RATES.responsabiliteCivile;
+    } else if (responsabiliteCivile) {
+      total += 14;
+    }
+    
+    return total;
+  }
+
   onSubmit(): void {
     const forms = [this.personalForm, this.vehicleForm, this.coverageForm];
     const allFormsValid = forms.every(form => form?.valid);
@@ -402,14 +474,31 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       5: '358'
     };
 
-    const selectedLevel = this.coverageForm?.get('coverageLevel')?.value || 1;
-    const productCode = levelToProductCode[selectedLevel] || '354';
+    const selectedLevel = this.coverageForm?.get('protectionPilote')?.value;
+    const rcAnnuelle = this.coverageForm?.get('responsabiliteCivile')?.value;
+    const defenseRecours = this.coverageForm?.get('defenseRecours')?.value;
+
+    const productCodes: string[] = [];
+
+    if (selectedLevel) {
+      if (levelToProductCode[selectedLevel]) {
+         productCodes.push(levelToProductCode[selectedLevel]);
+      }
+    }
+
+    if (rcAnnuelle) {
+      productCodes.push('83');
+    }
+
+    if (defenseRecours) {
+      productCodes.push('398');
+    }
 
     const contract: Contract = {
       selectedCircuit: 'France, Union Européenne',
       nbrjour: 0,
       datedebutroulage: formatISODate(new Date().toISOString()),
-      codeProduit: [productCode],
+      codeProduit: productCodes,
       c: {
         adresse: this.personalForm.get('address')?.value,
         complementadresse: this.personalForm.get('addressComplement')?.value,
@@ -465,7 +554,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   }
   
   goToNextStep(): void {
-    if (this.stepper && this.stepper.selectedIndex === 1) {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
       const birthDate = this.personalForm?.get('birthdate')?.value;
       
       if (birthDate) {

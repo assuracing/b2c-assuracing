@@ -1,0 +1,165 @@
+<form [formGroup]="form" class="coverage-options-form">
+  <div class="total-prime">
+    <h3>Total : {{ formatPrice(totalPrime) }}</h3>
+  </div>
+
+  <div class="protection-pilote" [class.disabled-section]="activeSection && activeSection !== 'protectionPilote'">
+    <div class="risk-group">
+      <ng-container *ngIf="!validatedSections['protectionPilote'] && !wasProtectionPiloteValidated">
+        <mat-slide-toggle 
+        labelPosition="before" 
+        [checked]="activeSection === 'protectionPilote'" 
+        [disabled]="activeSection && activeSection !== 'protectionPilote'"
+        (change)="onToggleChange('protectionPilote', $event.checked)"
+        [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+        [matTooltipPosition]="'above'"
+        [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
+        <span class="toggle-label-wrapper">
+          <mat-icon class="toggle-icon-large">health_and_safety</mat-icon>
+          <strong class="toggle-label-strong">Protection Corporelle Annuelle (Individuelle Accident)</strong>
+        </span>
+      </mat-slide-toggle>
+      </ng-container>
+
+      <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
+        <div class="validated-toggle" 
+             style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
+             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltipPosition]="'above'"
+             [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
+          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+               [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
+               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltipPosition]="'above'"
+               [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
+            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+                 (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
+              Protection Corporelle Annuelle (Individuelle Accident)
+              <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
+                {{ formatPrice(getProtectionPiloteAmount()) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="risk-details" *ngIf="activeSection === 'protectionPilote'">
+        <p class="description">
+          La garantie corporelle la plus complète du marché
+          <app-adaptive-tooltip
+            text="La garantie comprend : &#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+          </app-adaptive-tooltip>
+        </p>
+
+        <div class="protection-levels">
+          <div *ngFor="let level of [1, 2, 3, 4, 5]" 
+               class="level-option"
+               [class.selected]="form.get('protectionPilote')?.value === level"
+               (click)="onProtectionLevelChange(level)">
+            <div class="level-number">Niveau {{ level }}</div>
+            <div class="coverage-details">
+              <div class="coverage-item">
+                <span class="label">Décès :</span>
+                <span class="amount">{{ PROTECTION_LEVELS[level].death | number }} €</span>
+              </div>
+              <div class="coverage-item">
+                <span class="label">Invalidité :</span>
+                <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
+              </div>
+            </div>
+            <div class="price">{{ formatPrice(PROTECTION_LEVELS[level].price) }}</div>
+          </div>
+        </div>
+
+        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">Valider</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="protection-pilote" [class.disabled-section]="activeSection && activeSection !== 'responsabiliteRecours'">
+    <div class="risk-group">
+      <ng-container *ngIf="!validatedSections['responsabiliteRecours'] && !wasResponsabiliteRecoursValidated">
+          <mat-slide-toggle
+          labelPosition="before"
+          [checked]="activeSection === 'responsabiliteRecours'" 
+          [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
+          (change)="onToggleChange('responsabiliteRecours', $event.checked)"
+          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'"
+          matTooltipPosition="above">
+          <span class="toggle-label-wrapper">
+            <mat-icon class="toggle-icon-large">handshake</mat-icon>
+            <strong class="toggle-label-strong">Garantie Responsabilité / Recours Annuelle</strong>
+          </span>
+        </mat-slide-toggle>
+      </ng-container>
+
+      <ng-container *ngIf="(validatedSections['responsabiliteRecours'] || wasResponsabiliteRecoursValidated)">
+        <div class="validated-toggle" 
+             style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
+             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltipPosition]="'above'"
+             [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
+          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+               [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
+               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltipPosition]="'above'"
+               [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
+            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+                 (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
+              Garantie Responsabilité / Recours Annuelle
+              <mat-icon [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
+                {{ formatPrice(getResponsabiliteRecoursAmount()) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="risk-details" *ngIf="activeSection === 'responsabiliteRecours'">
+        <div class="risk-group">
+          <mat-slide-toggle
+            labelPosition="before"
+            formControlName="responsabiliteCivile"
+            class="inclus-toggle">
+            <span class="toggle-label-wrapper">
+              <mat-icon class="toggle-icon">security</mat-icon>
+              <strong class="toggle-label-medium">Responsabilité Civile Annuelle</strong>
+            </span>
+          </mat-slide-toggle>
+          <app-adaptive-tooltip
+            [blink]="true"
+            *ngIf="vehicleType === 'auto'"
+            text="Il est possible d'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans">
+          </app-adaptive-tooltip>
+          <app-adaptive-tooltip
+            [blink]="true"
+            *ngIf="vehicleType === 'moto'"
+            text="Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans">
+          </app-adaptive-tooltip>
+          <p>Prime : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
+        </div>
+        <div class="risk-group">
+          <mat-slide-toggle
+          labelPosition="before"
+          formControlName="defenseRecours"
+          [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
+          <span class="toggle-label-wrapper">
+            <mat-icon class="toggle-icon">gavel</mat-icon>
+            <strong class="toggle-label-medium">Protection Juridique Annuelle</strong>
+          </span>
+        </mat-slide-toggle>
+          <div class="risk-details">
+            <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
+            <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
+          </div>
+        </div>
+        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">Valider</button>
+      </div>
+    </div>
+  </div>
+</form>

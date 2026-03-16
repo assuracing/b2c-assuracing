@@ -1,0 +1,255 @@
+import { Component, Input, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ContractService } from '../../services/contract.service';
+import { OrganizerService } from '../../services/organizer.service';
+import { Subject, takeUntil } from 'rxjs';
+import { AdaptiveTooltipComponent } from '../../adaptive-tooltip/adaptive-tooltip.component';
+import { ResetGuaranteeDialogComponent } from '../../event-coverage/steps/event-coverage-options/reset-guarantee-dialog.component';
+
+interface ProtectionLevel {
+  death: number;
+  disability: number;
+  price: number;
+}
+
+@Component({
+  selector: 'app-motors-league-coverage-options',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSlideToggleModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    AdaptiveTooltipComponent
+  ],
+  templateUrl: './motors-league-coverage-options.component.html',
+  styleUrls: ['../../event-coverage/steps/event-coverage-options/event-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options2.scss',  '../../app.component.scss']
+})
+export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
+  @Input() isCalculatingPrice: boolean = false;
+  @Input() garantiePrices: { [key: string]: number } = {
+    'PROTECTION_PILOTE': 15,
+    'DEFENSE_RECOURS': 14,
+    'RC': 14
+  };
+  @Input() form!: FormGroup;
+  @Input() vehicleType?: string;
+  @Output() defenseRecoursChange = new EventEmitter<{isChecked: boolean, garantieType: string}>();
+  @Output() sectionInProgress = new EventEmitter<boolean>();
+
+  get PRIME_RATES() {
+    return {
+      protectionPilote: this.garantiePrices['PROTECTION_PILOTE'],
+      defenseRecours: this.garantiePrices['DEFENSE_RECOURS'],
+      responsabiliteCivile: this.garantiePrices['RC']
+    };
+  }
+
+  formatPrice(price: number | undefined): string {
+    if (price === undefined) return '-- € ';
+    return price % 1 === 0 ? `${price} €` : price.toFixed(2).replace('.', ',') + ' €';
+  }
+
+  PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
+    1: { death: 7600, disability: 18500, price: 15 },
+    2: { death: 25000, disability: 37500, price: 38 },
+    3: { death: 100000, disability: 150000, price: 60 },
+    4: { death: 150000, disability: 200000, price: 85 },
+    5: { death: 200000, disability: 300000, price: 120 }
+  };
+
+  private destroy$ = new Subject<void>();
+
+  activeSection: 'protectionPilote' | 'responsabiliteRecours' | null = null;
+  validatedSections: { [key: string]: boolean } = {
+    protectionPilote: false,
+    responsabiliteRecours: false
+  };
+
+  wasProtectionPiloteValidated = false;
+  wasResponsabiliteRecoursValidated = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog
+  ) {}
+
+  ngOnInit() {
+    if (!this.form) {
+      this.initializeForm();
+    } else {
+      if (!this.form.get('protectionPilote')) this.form.addControl('protectionPilote', this.fb.control(0));
+      if (!this.form.get('defenseRecours')) this.form.addControl('defenseRecours', this.fb.control(false));
+      if (!this.form.get('responsabiliteCivile')) this.form.addControl('responsabiliteCivile', this.fb.control(false));
+      if (!this.form.get('responsabiliteRecours')) this.form.addControl('responsabiliteRecours', this.fb.control(false));
+    }
+
+    this.form.valueChanges.subscribe(() => {
+    });
+  }
+
+  private initializeForm() {
+    this.form = this.fb.group({
+      protectionPilote: [0],
+      defenseRecours: [false],
+      responsabiliteRecours: [false],
+      responsabiliteCivile: [false]
+    });
+  }
+
+  getProtectionLevelPrice(level: number): number {
+    return this.PROTECTION_LEVELS[level]?.price || 0;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  isProductUnavailable(productKey: string): boolean {
+    return false;
+  }
+
+  onProtectionLevelChange(level: number): void {
+    const current = this.form.get('protectionPilote')?.value;
+    this.form.patchValue({ protectionPilote: current === level ? 0 : level });
+  }
+
+  get totalPrime(): number {
+    const { protectionPilote, defenseRecours, responsabiliteCivile } = this.form.value;
+    const protectionPrime = protectionPilote ? this.getProtectionLevelPrice(protectionPilote) : 0;
+    return (
+      protectionPrime +
+      (defenseRecours ? this.PRIME_RATES.defenseRecours : 0) +
+      (responsabiliteCivile ? this.PRIME_RATES.responsabiliteCivile : 0)
+    );
+  }
+
+  getProtectionPiloteAmount(): number {
+    return this.getProtectionLevelPrice(this.form.get('protectionPilote')?.value);
+  }
+
+  getResponsabiliteRecoursAmount(): number {
+    return (this.form.get('defenseRecours')?.value ? this.PRIME_RATES.defenseRecours : 0) + 
+           (this.form.get('responsabiliteCivile')?.value ? this.PRIME_RATES.responsabiliteCivile : 0);
+  }
+
+  onToggleChange(section: 'protectionPilote' | 'responsabiliteRecours', checked: boolean): void {
+    if (checked) {
+      this.activeSection = section;
+      this.form.patchValue({
+        protectionPilote: section === 'protectionPilote' ? this.form.get('protectionPilote')?.value || 0 : this.form.get('protectionPilote')?.value,   
+        responsabiliteRecours: section === 'responsabiliteRecours'
+      });
+      this.sectionInProgress.emit(true);
+    } else {
+      this.activeSection = null;
+      this.resetSection(section);
+    }
+  }
+
+  async confirmResetSection(section: 'protectionPilote' | 'responsabiliteRecours') {
+    const labelMap = {
+      protectionPilote: 'Protection Pilote',
+      responsabiliteRecours: 'Garantie Responsabilité / Recours'
+    };
+    const dialogRef = this.dialog.open(ResetGuaranteeDialogComponent, {
+      width: '400px',
+      disableClose: true,
+      data: { label: labelMap[section] }
+    });
+    
+    // Convert to promise properly depending on rxjs version
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.resetSection(section);
+    });
+  }
+
+  resetSection(section: 'protectionPilote' | 'responsabiliteRecours'): void {
+    const patchValues: any = {};
+    this.validatedSections[section] = false;
+    this.sectionInProgress.emit(false);
+    
+    if (section === 'protectionPilote') {
+      patchValues.protectionPilote = 0;
+      this.wasProtectionPiloteValidated = false;
+      this.form.get('protectionPilote')?.setValue(0);
+    } else if (section === 'responsabiliteRecours') {
+      patchValues.responsabiliteRecours = false;
+      patchValues.defenseRecours = false;
+      patchValues.responsabiliteCivile = false;
+      this.wasResponsabiliteRecoursValidated = false;
+    }
+
+    this.form.patchValue(patchValues);
+    this.validatedSections[section] = false;
+
+    if (this.activeSection === section) {
+      this.activeSection = null;
+    }
+  }
+
+  validateSection(section: 'protectionPilote' | 'responsabiliteRecours'): void {
+    this.sectionInProgress.emit(false);
+    this.activeSection = null;
+
+    let shouldValidate = true;
+
+    if (section === 'protectionPilote') {
+      shouldValidate = this.form.get('protectionPilote')?.value > 0;
+    } else if (section === 'responsabiliteRecours') {
+      shouldValidate = !!this.form.get('defenseRecours')?.value || !!this.form.get('responsabiliteCivile')?.value;
+    }
+
+    if (!shouldValidate) {
+      this.validatedSections[section] = false;
+      if (section === 'protectionPilote') this.wasProtectionPiloteValidated = false;
+      if (section === 'responsabiliteRecours') this.wasResponsabiliteRecoursValidated = false;
+      return;
+    }
+
+    this.validatedSections[section] = true;
+
+    if (section === 'protectionPilote') this.wasProtectionPiloteValidated = true;
+    if (section === 'responsabiliteRecours') this.wasResponsabiliteRecoursValidated = true;
+  }
+
+  onCartClick(section: 'protectionPilote' | 'responsabiliteRecours'): void {
+    if (this.activeSection === section) {
+      this.activeSection = null;
+    } else {
+      this.activeSection = section;
+    }
+
+    this.activeSection = section;
+    this.validatedSections[section] = false;
+    this.sectionInProgress.emit(true);
+
+    if (section === 'responsabiliteRecours') this.form.patchValue({ responsabiliteRecours: true });
+  }
+
+}
