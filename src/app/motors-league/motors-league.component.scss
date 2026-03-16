@@ -103,5 +103,18 @@ li {
   p {
     color: #000000 !important;
   }
+  li {
+    color: #111 !important;
+  }
   margin-bottom: 1rem !important;
+}
+
+mat-icon {
+  color: #0ba2cf;
+}
+
+mat-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
