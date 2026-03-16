@@ -147,6 +147,17 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         this.vehicleType = type;
       }
     });
+
+    this.personalForm.get('country')?.valueChanges.subscribe((country: string) => {
+      const postalCodeControl = this.personalForm.get('postalCode');
+      if (!postalCodeControl) return;
+      if (country === 'France') {
+        postalCodeControl.setValidators([Validators.required, Validators.pattern('^[0-9]{5}$')]);
+      } else {
+        postalCodeControl.setValidators([Validators.required, Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
+      }
+      postalCodeControl.updateValueAndValidity();
+    });
   }
 
   ngOnDestroy() {

@@ -310,11 +310,21 @@ export class EventCoverageComponent {
       phone: '',
       address: [''],
       addressComplement: '',
-      postalCode: ['', [Validators.pattern('^[0-9]{4,8}$')]],
+      postalCode: ['', [Validators.pattern('^[0-9]{5}$')]],
       city: [''],
       birthdate: [''],
       nationality: '',
       country: 'France',
+    });
+    this.personalForm.get('country')?.valueChanges.subscribe((country: string) => {
+      const postalCodeControl = this.personalForm.get('postalCode');
+      if (!postalCodeControl) return;
+      if (country === 'France') {
+        postalCodeControl.setValidators([Validators.pattern('^[0-9]{5}$')]);
+      } else {
+        postalCodeControl.setValidators([Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
+      }
+      postalCodeControl.updateValueAndValidity();
     });
 
     this.vehicleForm = this.fb.group({

@@ -15,4 +15,8 @@ export class YearlyGuaranteeComponent {
     this.router.navigate(['/motors-league']);
   }
 
+  onBack() {
+    this.router.navigate(['/guarantee-choice']);
+  }
+
 }
