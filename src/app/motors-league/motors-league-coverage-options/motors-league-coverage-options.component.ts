@@ -51,10 +51,10 @@ interface ProtectionLevel {
 })
 export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   @Input() isCalculatingPrice: boolean = false;
-  @Input() garantiePrices: { [key: string]: number } = {
-    'PROTECTION_PILOTE': 15,
-    'DEFENSE_RECOURS': 14,
-    'RC': 14
+  garantiePrices: { [key: string]: number } = {
+    'PROTECTION_PILOTE': 0,
+    'DEFENSE_RECOURS': 0,
+    'RC': 0
   };
   @Input() form!: FormGroup;
   @Input() vehicleType?: string;
@@ -75,11 +75,11 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   }
 
   PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
-    1: { death: 7600, disability: 18500, price: 15 },
-    2: { death: 25000, disability: 37500, price: 38 },
-    3: { death: 100000, disability: 150000, price: 60 },
-    4: { death: 150000, disability: 200000, price: 85 },
-    5: { death: 200000, disability: 300000, price: 120 }
+    1: { death: 7600, disability: 18500, price: 0 },
+    2: { death: 25000, disability: 37500, price: 0 },
+    3: { death: 100000, disability: 150000, price: 0 },
+    4: { death: 150000, disability: 200000, price: 0 },
+    5: { death: 200000, disability: 300000, price: 0 }
   };
 
   private destroy$ = new Subject<void>();
@@ -95,7 +95,8 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private contractService: ContractService
   ) {}
 
   ngOnInit() {
@@ -128,6 +129,81 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  public initializeProtectionPrices(): void {
+    if (!this.vehicleType) {
+      console.error('vehicleType is not defined');
+      return;
+    }
+
+    const today = new Date();
+    const datedebutroulage = today.getFullYear() + '-' + 
+                            String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                            String(today.getDate()).padStart(2, '0');
+
+    const basePayload = {
+      annual: true,
+      c: { id: null },
+      datedebutroulage: datedebutroulage,
+      immatriculation: "",
+      marque: "",
+      modele: "",
+      nbrjour: 0,
+      param_n_chassis: "",
+      param_n_serie: "",
+      selectedCircuit: "",
+      typevehicule: this.vehicleType,
+      montantganrantie: 0
+    };
+
+    const levelToProductCode: { [key: number]: number } = {
+      1: 354, 2: 355, 3: 356, 4: 357, 5: 358
+    };
+
+    Object.keys(levelToProductCode).forEach(level => {
+      const levelNum = parseInt(level, 10);
+      const productCode = levelToProductCode[levelNum];
+
+      const payload = { ...basePayload, codeProduit: [productCode] };
+      this.contractService.calculatePrice(payload).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
+          this.PROTECTION_LEVELS[levelNum].price = montant;
+        },
+        error: (err: any) => {
+          console.error(`Erreur lors du calcul du prix pour le niveau ${levelNum}`, err);
+        }
+      });
+    });
+
+    // RC (83)
+    this.contractService
+      .calculatePrice({ ...basePayload, codeProduit: [83] })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
+          this.garantiePrices['RC'] = montant;
+        },
+        error: (err: any) => {
+          console.error('Erreur lors du calcul du prix RC (83)', err);
+        }
+      });
+
+    // PJ / Défense-Recours (398)
+    this.contractService
+      .calculatePrice({ ...basePayload, codeProduit: [398] })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
+          this.garantiePrices['DEFENSE_RECOURS'] = montant;
+        },
+        error: (err: any) => {
+          console.error('Erreur lors du calcul du prix PJ/DEFENSE_RECOURS (398)', err);
+        }
+      });
   }
 
   isProductUnavailable(productKey: string): boolean {

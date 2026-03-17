@@ -145,6 +145,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.vehicleForm.get('type')?.valueChanges.subscribe(type => {
       if (type) {
         this.vehicleType = type;
+        if (this.coverageOptions) {
+          this.coverageOptions.initializeProtectionPrices();
+        }
       }
     });
 
