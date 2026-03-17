@@ -137,15 +137,17 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const today = new Date();
-    const datedebutroulage = today.getFullYear() + '-' + 
-                            String(today.getMonth() + 1).padStart(2, '0') + '-' + 
-                            String(today.getDate()).padStart(2, '0');
+  const today = new Date();
+  const datedebutroulage = today.getFullYear() + '-' + 
+              String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+              String(today.getDate()).padStart(2, '0');
+  const dateInscriptionRoulage = datedebutroulage;
 
     const basePayload = {
       annual: true,
       c: { id: null },
       datedebutroulage: datedebutroulage,
+      dateInscriptionRoulage: dateInscriptionRoulage,
       immatriculation: "",
       marque: "",
       modele: "",

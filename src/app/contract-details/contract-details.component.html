@@ -20,7 +20,7 @@
 
   <mat-card *ngIf="!loading && !error && contract" class="contract-card">
     <mat-card-header>
-      <mat-card-title>Détails du contrat {{ getProductLabel(contract.produit.id) }}  #{{ contract.id }}</mat-card-title>
+  <mat-card-title>Détails du contrat {{ getProductLabel(contract.produit.id, contract.produit.nom) }}  #{{ contract.id }}</mat-card-title>
       <mat-card-subtitle>
         État: 
         <span class="status-badge" [class.validated]="contract.validated" [class.pending]="!contract.validated">
@@ -116,9 +116,10 @@
           <div *ngFor="let file of files" class="file-item">
             <mat-icon>description</mat-icon>
             <span class="file-name">{{ file.nom || 'Fichier sans nom' }}</span>
-            <a [href]="" target="_blank" mat-button color="primary">
+            <a [href]="file.url" target="_blank" mat-button color="primary" *ngIf="file.url">
               <mat-icon>download</mat-icon> Télécharger
             </a>
+            <span *ngIf="!file.url" class="file-unavailable">Non disponible</span>
           </div>
         </div>
       </div>

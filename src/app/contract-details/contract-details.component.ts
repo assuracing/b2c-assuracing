@@ -128,7 +128,11 @@ export class ContractDetailsComponent implements OnInit {
     }
   }
 
-  getProductLabel(productId: number): string {
-    return this.productMappingService.getProductLabel(productId);
+  getProductLabel(productId: number, nomContrat?: string): string {
+    let label = this.productMappingService.getProductLabel(productId);
+    if (label.startsWith('Produit inconnu') && nomContrat) {
+      label = nomContrat;
+    }
+    return label;
   }
 }

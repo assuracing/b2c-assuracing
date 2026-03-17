@@ -264,18 +264,31 @@ export class UserContractsComponent implements AfterViewInit {
     this.validationFilter.setValue(null);
   }
   
-  getProductIcon(productId: string | number): string {
-    const icon = this.productMappingService.getProductIcon(String(productId));
+
+  getProductIcon(productId: string | number, nomContrat?: string): string {
+    let icon = this.productMappingService.getProductIcon(String(productId));
+    if (!icon || icon === 'help_outline') {
+      icon = this.productMappingService.getIconByContractName(nomContrat);
+    }
     return icon;
   }
 
-  getProductDiminutif(productId: string | number): string {
-    const diminutif = this.productMappingService.getProductDiminutif(String(productId));
+  getProductDiminutif(productId: string | number, nomContrat?: string): string {
+    let diminutif = this.productMappingService.getProductDiminutif(String(productId));
+    if (!diminutif || diminutif === String(productId)) {
+      diminutif = this.productMappingService.getDiminutifByContractName(nomContrat);
+    }
     return diminutif;
   }
 
-  getProductLabel(productId: string | number): string {
-    const label = this.productMappingService.getProductLabel(String(productId));
+  getProductLabel(productId: string | number, nomContrat?: string): string {
+    let label = this.productMappingService.getProductLabel(String(productId));
+    if (label.startsWith('Produit inconnu')) {
+      // Fallback: use contract name if available
+      if (nomContrat) {
+        label = nomContrat;
+      }
+    }
     return label;
   }
 

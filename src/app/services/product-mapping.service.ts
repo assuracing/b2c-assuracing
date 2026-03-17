@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 
 export interface ProductMapping {
   code: string;
@@ -7,9 +7,7 @@ export interface ProductMapping {
   icon: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProductMappingService {
   private productMappings: { [key: string]: ProductMapping } = {
     // RC
@@ -147,7 +145,7 @@ export class ProductMappingService {
       diminutif: 'ML5',
       label: 'Adhésion MOTORS LEAGUE (niveau 5)',
       icon: 'flag'
-    },
+    }
   };
 
   constructor() {}
@@ -177,5 +175,38 @@ export class ProductMappingService {
   isMotorsLeagueProduct(productCode: string | number): boolean {
     const code = String(productCode);
     return code.startsWith('4') && parseInt(code) >= 44 && parseInt(code) <= 48;
+  }
+
+  getIconByContractName(nomContrat?: string | null): string {
+    if (!nomContrat) return 'help_outline';
+    const name = nomContrat.toLowerCase();
+    if (name.includes('rc')) return 'security';
+    if (name.includes('protection juridique') || name.includes('défense recours') || name.includes('defense recours') || name.includes('pj')) return 'gavel';
+    if (name.includes('annulation')) return 'event_busy';
+    if (name.includes('intempéries') || name.includes('intemperies')) return 'thunderstorm';
+    if (name.includes('individuelle accident') || name.includes('ia')) return 'health_and_safety';
+    return 'help_outline';
+  }
+
+  getDiminutifByContractName(nomContrat?: string | null): string {
+    if (!nomContrat) return '?';
+    const name = nomContrat.toLowerCase();
+    if (name.includes('rc')) return 'RC';
+    if (name.includes('protection juridique') || name.includes('défense recours') || name.includes('defense recours') || name.includes('pj')) return 'PJ';
+    if (name.includes('annulation')) return 'ANN';
+    if (name.includes('intempéries') || name.includes('intemperies')) return 'INT';
+    if (name.includes('individuelle accident') || name.includes('ia') || name.includes('ia gsl')) {
+      let num = '';
+      if (name.includes('annuelle')) {
+        const match = name.match(/niveau\s*(\d+)/);
+        if (match) num = match[1];
+        return 'IAA' + num;
+      } else {
+        const match = name.match(/formule\s*(\d+)/);
+        if (match) num = match[1];
+        return 'IA' + num;
+      }
+    }
+    return '?';
   }
 }
