@@ -20,7 +20,7 @@
 
   <mat-card *ngIf="!loading && !error && contract" class="contract-card">
     <mat-card-header>
-      <mat-card-title>Détails du contrat {{ getProductLabel(contract.produit.id) }}  #{{ contract.id }}</mat-card-title>
+  <mat-card-title>Détails du contrat {{ getProductLabel(contract.produit.id, contract.produit.nom) }}  #{{ contract.id }}</mat-card-title>
       <mat-card-subtitle>
         État: 
         <span class="status-badge" [class.validated]="contract.validated" [class.pending]="!contract.validated">

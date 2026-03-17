@@ -85,39 +85,39 @@
                 <td mat-cell *matCellDef="let element" data-label="Produits">
                     <div class="products-container">
                         <ng-container *ngIf="!isMobileView()">
-                            <a *ngFor="let product of element.products; trackBy: trackByProductId" 
-                               [routerLink]="['/contracts', product.contratID]"
-                               class="product-item"
-                               [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID)"
-                               [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID)">
-                                <div class="product-icon-container">
-                                    <mat-icon 
-                                    class="product-icon"
-                                    [class.valid-icon]="product.valide"
-                                    [class.invalid-icon]="!product.valide"
-                                    [attr.aria-hidden]="true">
-                                    {{ getProductIcon(product.produitID) }}
-                                  </mat-icon>
-                                </div>
-                                <span class="product-name"
-                                [class.valid-name]="product.valide"
-                                [class.invalid-name]="!product.valide">
-                                    {{getProductDiminutif(product.produitID)}}
-                                </span>
-                            </a>
+                                                        <a *ngFor="let product of element.products; trackBy: trackByProductId" 
+                                                             [routerLink]="['/contracts', product.contratID]"
+                                                             class="product-item"
+                                                             [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)"
+                                                             [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)">
+                                                                <div class="product-icon-container">
+                                                                        <mat-icon 
+                                                                        class="product-icon"
+                                                                        [class.valid-icon]="product.valide"
+                                                                        [class.invalid-icon]="!product.valide"
+                                                                        [attr.aria-hidden]="true">
+                                                                        {{ getProductIcon(product.produitID, product.nomcontrat) }}
+                                                                    </mat-icon>
+                                                                </div>
+                                                                <span class="product-name"
+                                                                [class.valid-name]="product.valide"
+                                                                [class.invalid-name]="!product.valide">
+                                                                        {{getProductDiminutif(product.produitID, product.nomcontrat)}}
+                                                                </span>
+                                                        </a>
                         </ng-container>
                         <div *ngIf="isMobileView()" class="mobile-products">
                             <a *ngFor="let product of element.products; trackBy: trackByProductId" 
                                [routerLink]="['/contracts', product.contratID]"
                                class="mobile-product-icon"
-                               [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID)"
-                               [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID)">
+                               [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)"
+                               [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)">
                                 <mat-icon 
                                     class="product-icon"
                                     [class.valid-icon]="product.valide"
                                     [class.invalid-icon]="!product.valide"
                                     [attr.aria-hidden]="true">
-                                    {{getProductIcon(product.produitID)}}
+                                    {{getProductIcon(product.produitID, product.nomcontrat)}}
                                 </mat-icon>
                             </a>
                         </div>
