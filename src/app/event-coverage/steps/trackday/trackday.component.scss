@@ -1,14 +1,21 @@
+.login-form {
+  margin-bottom: 0 !important;
+  padding-bottom: 2px !important;
+}
+.role-group, .vehicle-group {
+  margin-bottom: 2px !important;
+}
 .circuit-select-field, .organizer-select-field {
   width: 100%;
 }
 
 .organizer-field {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   
   .organizer-container {
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 4px;
-    padding: 16px;
+    padding: 10px;
     background-color: #f1f1f1;
     transition: all 0.3s ease;
     
@@ -32,9 +39,9 @@
 .date-duration-container {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
-  padding: 16px;
+  padding: 10px;
   background-color: #f1f1f1;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   transition: all 0.3s ease;
   
   &:hover {
@@ -44,19 +51,23 @@
   
   .mat-form-field {
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
   }
   
   .duration-group {
-    margin-top: 16px;
+    margin-top: 4px;
     
     mat-label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
       color: rgba(0, 0, 0, 0.87);
-      font-size: 14px;
+      font-size: 13px;
     }
     
+    .mat-slider {
+      height: 24px !important;
+      margin-bottom: 0 !important;
+    }
   }
 }
 
