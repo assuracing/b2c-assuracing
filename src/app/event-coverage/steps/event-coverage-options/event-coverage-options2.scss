@@ -1,4 +1,3 @@
-
 .disabled-cart {
     opacity: 0.9;
     cursor: default !important;
@@ -22,6 +21,7 @@
   .validated-toggle {
     cursor: default;
     
+    
     mat-icon[color="warn"] {
       cursor: pointer;
     }
@@ -29,6 +29,10 @@
     .disabled-cart {
       cursor: default !important;
     }
+  }
+
+  .validated-toggle span {
+  white-space: nowrap;
   }
 
   .toggle-unavailable {
@@ -56,24 +60,97 @@
         font-size: 14px;
       }
     }
+
+    .toggle-label-wrapper {
+      gap: 6px;
+    }
+
+    .toggle-label-wrapper .price-amount-group {
+      flex-wrap: nowrap;
+    }
+
+    .toggle-label-wrapper app-adaptive-tooltip {
+      margin-left: 4px;
+      position: relative;
+      right: 0;
+      top: 0;
+    }
   }
 
   .toggle-label-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
   }
-  
+
+  .toggle-label-wrapper .toggle-icon,
+  .toggle-label-wrapper .toggle-icon-large {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .toggle-label-wrapper .toggle-label-strong,
+  .toggle-label-wrapper .toggle-label-medium,
+  .toggle-label-wrapper strong {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  .toggle-label-wrapper .price-amount-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+    margin-left: 8px;
+  }
+
+  .toggle-label-wrapper .price-amount {
+    font-weight: 600;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .toggle-label-wrapper .euro-sign {
+    font-size: 1em;
+    margin-left: 2px;
+    color: #1565c0;
+    font-weight: 600;
+  }
+
+  .toggle-label-wrapper app-adaptive-tooltip {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-left: 4px;
+    display: inline-flex;
+  }
+
   .toggle-icon {
     font-size: 20px;
     height: 20px;
     width: 20px;
     color: #0ba2cf;
   }
-  
-  .toggle-icon-large {
-    font-size: 24px; 
-    height: 24px;
-    width: 24px;
-    color: #02556e;
+
+  .toggle-icon-large,
+  .toggle-icon {
+    flex: 0 0 auto;
+    vertical-align: middle;
+  }
+
+  .view-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: #0ba2cf;
+    flex: 0 0 auto;
+  }
+
+  .disabled-cart .view-icon,
+  .view-icon.mat-icon-disabled {
+    color: #a0a0a0 !important;
   }

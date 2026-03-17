@@ -74,7 +74,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, AdaptiveTooltipComponent],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
