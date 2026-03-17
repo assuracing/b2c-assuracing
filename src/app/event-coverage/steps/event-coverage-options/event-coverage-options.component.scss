@@ -336,3 +336,12 @@
   font-size: 15px;
 }
 
+@media (max-width: 480px) {
+  .toggle-label-strong {
+    font-size: 15px;
+  }
+
+  .toggle-label-medium {
+    font-size: 14px;
+  }
+}
