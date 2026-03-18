@@ -145,6 +145,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
               if(adherent.pays) this.form.get('country')?.setValue(adherent.pays);
               if(adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
               if(adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
+              if(adherent.nationalite) this.form.get('nationality')?.setValue(adherent.nationalite);
             }
           })
         );
