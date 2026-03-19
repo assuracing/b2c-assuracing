@@ -457,6 +457,14 @@
   gap: 12px;
   width: 100%;
   
+  .guarantee-icon {
+    color: #0ba2cf;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  
   .guarantee-name {
     font-weight: 500;
     color: #333;

@@ -185,6 +185,19 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
     }
   }
 
+  getGuaranteeIcon(guaranteeId: string): string {
+    switch (guaranteeId) {
+      case 'rc':
+        return 'security';
+      case 'ia':
+        return 'medical_services';
+      case 'pj':
+        return 'gavel';
+      default:
+        return 'info';
+    }
+  }
+
   getContractDetailsText(contractsCount: number): string {
     return contractsCount === 1 
       ? 'Voir les détails du contrat' 
