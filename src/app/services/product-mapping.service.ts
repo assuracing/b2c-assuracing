@@ -22,35 +22,35 @@ export class ProductMappingService {
       code: 'IA_GSL',
       diminutif: 'IA1',
       label: 'Individuelle accident (niveau 1)',
-      icon: 'health_and_safety'
+      icon: 'medical_services'
     },
     // IA GSL (Formule 2)
     '31': {
       code: 'IA_GSL',
       diminutif: 'IA2',
       label: 'Individuelle accident (niveau 2)',
-      icon: 'health_and_safety'
+      icon: 'medical_services'
     },
     // IA GSL (Formule 3)
     '32': {
       code: 'IA_GSL',
       diminutif: 'IA3',
       label: 'Individuelle accident (niveau 3)',
-      icon: 'health_and_safety'
+      icon: 'medical_services'
     },
     // IA GSL (Formule 4)
     '33': {
       code: 'IA_GSL',
       diminutif: 'IA4',
       label: 'Individuelle accident (niveau 4)',
-      icon: 'health_and_safety'
+      icon: 'medical_services'
     },
     // IA GSL (Formule 5)
     '34': {
       code: 'IA_GSL',
       diminutif: 'IA5',
       label: 'Individuelle accident (niveau 5)',
-      icon: 'health_and_safety'
+      icon: 'medical_services'
     },
     // IA GSL compétition (niveau 1)
     '35': {
@@ -106,7 +106,7 @@ export class ProductMappingService {
       code: 'INTERRUPTION',
       diminutif: 'Interruption',
       label: 'Interruption',
-      icon: 'block'
+      icon: 'personal_injury'
     },
     // Intempéries
     '43': {
@@ -183,8 +183,9 @@ export class ProductMappingService {
     if (name.includes('rc')) return 'security';
     if (name.includes('protection juridique') || name.includes('défense recours') || name.includes('defense recours') || name.includes('pj')) return 'gavel';
     if (name.includes('annulation')) return 'event_busy';
+    if (name.includes('interruption')) return 'personal_injury';
     if (name.includes('intempéries') || name.includes('intemperies')) return 'thunderstorm';
-    if (name.includes('individuelle accident') || name.includes('ia')) return 'health_and_safety';
+    if (name.includes('individuelle accident') || name.includes('ia')) return 'medical_services';
     return 'help_outline';
   }
 
@@ -194,6 +195,7 @@ export class ProductMappingService {
     if (name.includes('rc')) return 'RC';
     if (name.includes('protection juridique') || name.includes('défense recours') || name.includes('defense recours') || name.includes('pj')) return 'PJ';
     if (name.includes('annulation')) return 'ANN';
+    if (name.includes('interruption')) return 'ITR';
     if (name.includes('intempéries') || name.includes('intemperies')) return 'INT';
     if (name.includes('individuelle accident') || name.includes('ia') || name.includes('ia gsl')) {
       let num = '';
