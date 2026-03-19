@@ -132,24 +132,20 @@ export class UserContractsComponent implements AfterViewInit {
   
   private groupContracts(): void {
     const grouped: {[key: string]: any} = {};
-    
     if (!this.contracts || !Array.isArray(this.contracts)) {
       this.groupedContracts = [];
       return;
     }
-    
     const filteredContracts = this.contracts.filter(contract => {
       if (!contract) return false;
+      const circuit = contract.circuit ? contract.circuit.trim().toLowerCase() : '';
+      if (circuit === 'france, union européenne') return false;
       return !this.productMappingService.isMotorsLeagueProduct(contract.produitID);
     });
-        
     filteredContracts.forEach((contract) => {
       if (!contract) return;
-      
       const key = `${contract.dateAdhesion || ''}_${contract.circuit || ''}`;
-      
       const isValid = contract.valide === true || contract.valide === 'true';
-      
       if (!grouped[key]) {
         grouped[key] = {
           ...contract,
@@ -178,13 +174,11 @@ export class UserContractsComponent implements AfterViewInit {
         grouped[key].allValid = grouped[key].products.every((p: any) => p.valide === true);
       }
     });
-    
     this.groupedContracts = Object.values(grouped).sort((a: any, b: any) => {
       const dateA = a.dateSaisie ? new Date(a.dateSaisie).getTime() : 0;
       const dateB = b.dateSaisie ? new Date(b.dateSaisie).getTime() : 0;
       return dateB - dateA;
     });
-    
     this.filteredContracts = [...this.groupedContracts];
   }
   
