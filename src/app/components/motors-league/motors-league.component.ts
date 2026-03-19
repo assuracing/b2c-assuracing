@@ -1,12 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';import { MatTooltipModule } from '@angular/material/tooltip';import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { ProductMappingService } from '../../services/product-mapping.service';
+import { AnnualContractDataService } from '../../services/annual-contract-data.service';
 
 interface Contract {
   contratID: string;
@@ -18,6 +18,15 @@ interface Contract {
   [key: string]: any;
 }
 
+interface AnnualGuarantee {
+  id: string;
+  label: string;
+  status: 'en-cours' | 'non-souscrit' | 'resilié';
+  contracts: Contract[];
+  productIds: number[];
+  benefits: Array<{ icon: string; title: string; description: string }>;
+}
+
 @Component({
   selector: 'app-motors-league',
   standalone: true,
@@ -27,23 +36,51 @@ interface Contract {
     MatCardModule,
     MatExpansionModule,
     MatIconModule,
+    MatTooltipModule,
     RouterModule
   ],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss']
 })
-export class MotorsLeagueComponent implements OnChanges {
+export class MotorsLeagueComponent implements OnInit, OnChanges {
   @Input() contracts: Contract[] = [];
 
   constructor(
     private router: Router,
-    private productMappingService: ProductMappingService
+    private productMappingService: ProductMappingService,
+    private annualContractDataService: AnnualContractDataService
   ) {}
 
-  
   activeContract: Contract | null = null;
   hasContract = false;
   isActive = false;
+
+  annualGuarantees: AnnualGuarantee[] = [
+    {
+      id: 'rc',
+      label: 'Responsabilité civile',
+      status: 'non-souscrit',
+      contracts: [],
+      productIds: [83],
+      benefits: []
+    },
+    {
+      id: 'ia',
+      label: 'Individuelle accident',
+      status: 'non-souscrit',
+      contracts: [],
+      productIds: [354, 355, 356, 357, 358],
+      benefits: []
+    },
+    {
+      id: 'pj',
+      label: 'Protection juridique',
+      status: 'non-souscrit',
+      contracts: [],
+      productIds: [398],
+      benefits: []
+    }
+  ];
   
   ngOnInit() {
     this.checkMotorsLeagueStatus();
@@ -52,6 +89,7 @@ export class MotorsLeagueComponent implements OnChanges {
   private checkMotorsLeagueStatus() {
     if (!this.contracts || !Array.isArray(this.contracts)) {
       this.hasContract = false;
+      this.updateAnnualGuarantees();
       return;
     }
     
@@ -76,6 +114,36 @@ export class MotorsLeagueComponent implements OnChanges {
         this.activeContract.tokken = `Motors-${year}${this.activeContract.contratID}`;
       }
     }
+    
+    this.updateAnnualGuarantees();
+  }
+
+  private updateAnnualGuarantees() {
+    const today = new Date();
+    
+    this.annualGuarantees.forEach(guarantee => {
+      const guaranteeContracts = this.contracts.filter(contract => {
+        const productId = parseInt(contract.produitID, 10);
+        return guarantee.productIds.includes(productId);
+      });
+      
+      guarantee.contracts = guaranteeContracts;
+      
+      if (guaranteeContracts.length === 0) {
+        guarantee.status = 'non-souscrit';
+      } else {
+        const activeContracts = guaranteeContracts.filter(contract => {
+          const endDate = new Date(contract.dateFin);
+          return endDate >= today;
+        });
+        
+        if (activeContracts.length > 0) {
+          guarantee.status = 'en-cours';
+        } else {
+          guarantee.status = 'resilié';
+        }
+      }
+    });
   }
   
   renewContract() {
@@ -89,6 +157,65 @@ export class MotorsLeagueComponent implements OnChanges {
   getProductName(productId: string | undefined): string {
     if (!productId) return 'Produit inconnu';
     return this.productMappingService.getProductLabel(productId) || `Produit ${productId}`;
+  }
+
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'en-cours':
+        return 'status-active';
+      case 'resilié':
+        return 'status-inactive';
+      case 'non-souscrit':
+        return 'status-pending';
+      default:
+        return '';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'en-cours':
+        return 'En cours';
+      case 'resilié':
+        return 'Résilié';
+      case 'non-souscrit':
+        return 'Non souscrit';
+      default:
+        return '';
+    }
+  }
+
+  getGuaranteeIcon(guaranteeId: string): string {
+    switch (guaranteeId) {
+      case 'rc':
+        return 'security';
+      case 'ia':
+        return 'medical_services';
+      case 'pj':
+        return 'gavel';
+      default:
+        return 'info';
+    }
+  }
+
+  getContractDetailsText(contractsCount: number): string {
+    return contractsCount === 1 
+      ? 'Voir les détails du contrat' 
+      : 'Voir les détails des contrats';
+  }
+
+  viewContractDetails(guarantee: AnnualGuarantee) {
+    const sortedContracts = [...guarantee.contracts].sort((a, b) => {
+      return new Date(b.dateAdhesionContrat).getTime() - new Date(a.dateAdhesionContrat).getTime();
+    });
+    
+    this.annualContractDataService.setContractData({
+      contracts: sortedContracts,
+      guaranteeId: guarantee.id,
+      guaranteeLabel: guarantee.label
+    });
+    
+    this.router.navigate(['/contract-details-annual', guarantee.id]);
   }
 
   ngOnChanges(changes: SimpleChanges) {

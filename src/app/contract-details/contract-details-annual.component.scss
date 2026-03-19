@@ -1,0 +1,390 @@
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  color: white;
+  text-align: center;
+
+  mat-spinner {
+    margin: 0 auto;
+
+    ::ng-deep circle {
+      stroke: rgba(255, 255, 255, 0.9) !important;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.contract-container {
+  min-height: auto;
+  padding: 24px;
+  background-color: #02556e;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  border-radius: 8px;
+  max-width: 1400px;
+  margin: 20px auto;
+  position: relative;
+  z-index: 1;
+  color: white;
+
+  @media (max-width: 768px) {
+    margin: 10px;
+    padding: 15px;
+  }
+}
+
+.contract-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+.contract-card {
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #333;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  mat-card-header {
+    background: linear-gradient(135deg, #0ba2cf 0%, #0b8fcf 100%);
+    color: white;
+    padding: 20px 24px;
+    margin: -16px -16px 20px -16px;
+    border-radius: 4px 4px 0 0;
+
+    mat-card-title {
+      padding-top: 8px;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    mat-card-subtitle {
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
+  mat-card-content {
+    padding: 24px;
+  }
+}
+
+.contracts-accordion {
+  .mat-expansion-panel {
+    margin-bottom: 12px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    
+    .mat-expansion-panel-header {
+      padding: 0 16px !important;
+      min-height: 56px !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      
+      .mat-expansion-panel-header-title {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.contract-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex: 1 !important;
+  width: 100% !important;
+
+  .contract-name {
+    font-weight: 500 !important;
+    color: #333 !important;
+    flex: 1 !important;
+  }
+
+  .status-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.75rem !important;
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+
+    mat-icon {
+      font-size: 16px !important;
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    &.status-active {
+      background-color: #e8f5e9 !important;
+      color: #2e7d32 !important;
+    }
+
+    &.status-expired {
+      background-color: #ffebee !important;
+      color: #d32f2f !important;
+    }
+
+    &.status-inactive {
+      background-color: #fff3e0 !important;
+      color: #e65100 !important;
+    }
+  }
+}
+
+.contract-date {
+  color: #666;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.contract-details-content {
+  padding: 16px 0;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.detail-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #0ba2cf;
+    font-size: 1.1rem;
+
+    mat-icon {
+      color: #0ba2cf;
+    }
+  }
+
+  .detail-row {
+    display: flex;
+    margin-bottom: 12px;
+    line-height: 1.5;
+
+    .detail-label {
+      font-weight: 500;
+      color: #555;
+      min-width: 160px;
+      max-width: 160px;
+      padding-right: 16px;
+      word-break: break-word;
+    }
+
+    .detail-value {
+      flex: 1;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .icon-valid {
+        color: #2e7d32;
+        font-size: 20px;
+      }
+
+      .icon-invalid {
+        color: #d32f2f;
+        font-size: 20px;
+      }
+
+      .status-badge {
+        display: inline-flex !important;
+        width: fit-content !important;
+        align-items: center !important;
+        gap: 6px !important;
+        font-size: 0.75rem !important;
+        padding: 4px 12px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+
+        mat-icon {
+          font-size: 16px !important;
+          width: 16px !important;
+          height: 16px !important;
+        }
+
+        &.status-active {
+          background-color: #e8f5e9 !important;
+          color: #2e7d32 !important;
+        }
+
+        &.status-expired {
+          background-color: #ffebee !important;
+          color: #d32f2f !important;
+        }
+
+        &.status-inactive {
+          background-color: #fff3e0 !important;
+          color: #e65100 !important;
+        }
+
+        &.status-valid {
+          background-color: #e8f5e9 !important;
+          color: #2e7d32 !important;
+        }
+
+        &.status-not-valid {
+          background-color: #ffebee !important;
+          color: #d32f2f !important;
+        }
+
+        .badge-text {
+          display: inline-block !important;
+        }
+      }
+    }
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 6px;
+  margin: 16px 0 24px;
+  border-left: 4px solid #f44336;
+  box-shadow: 0 2px 8px rgba(198, 40, 40, 0.1);
+  animation: fadeIn 0.3s ease-out;
+
+  mat-icon {
+    color: #f44336;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  span {
+    flex: 1;
+    font-weight: 500;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .contract-details-container {
+    padding: 16px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-section {
+    .detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .detail-label {
+        max-width: 100%;
+        margin-bottom: 4px;
+      }
+    }
+  }
+  
+  .contract-title {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    
+    .contract-name {
+      width: 100% !important;
+      margin-bottom: 8px !important;
+    }
+  }
+}
+
+::ng-deep {
+  .status-badge {
+    &.status-active {
+      background-color: #e8f5e9 !important;
+      color: #2e7d32 !important;
+    }
+
+    &.status-expired {
+      background-color: #ffebee !important;
+      color: #d32f2f !important;
+    }
+
+    &.status-inactive {
+      background-color: #fff3e0 !important;
+      color: #e65100 !important;
+    }
+
+    &.status-valid {
+      background-color: #e8f5e9 !important;
+      color: #2e7d32 !important;
+    }
+
+    &.status-not-valid {
+      background-color: #ffebee !important;
+      color: #d32f2f !important;
+    }
+  }
+}

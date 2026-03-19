@@ -9,191 +9,72 @@
   </mat-card-header>
   
   <mat-card-content>
-    <!-- Cas 1: Pas client -->
-    <div *ngIf="!hasContract">
-      <mat-accordion>
-        <mat-expansion-panel [expanded]="true" class="no-contract-panel">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-icon style="color: #02556e;">info</mat-icon>
-              <span>Votre statut Motors League</span>
+    
+    <h3 class="guarantees-title">Vos garanties annuelles</h3>
+    
+    <mat-accordion class="guarantees-accordion">
+      <mat-expansion-panel *ngFor="let guarantee of annualGuarantees" [class.expired]="guarantee.status === 'resili\u00e9'">
+          <mat-expansion-panel-header class="guarantee-header">
+            <mat-panel-title class="guarantee-title-content">
+              <mat-icon class="guarantee-icon">{{ getGuaranteeIcon(guarantee.id) }}</mat-icon>
+              <span class="guarantee-name">{{ guarantee.label }}</span>
+              <span [class]="'status-badge status-' + guarantee.status">{{ getStatusLabel(guarantee.status) }}</span>
             </mat-panel-title>
+            <mat-panel-description class="guarantee-action">
+              <button *ngIf="guarantee.status === 'non-souscrit'" 
+                      mat-stroked-button
+                      routerLink="/motors-league"
+                      (click)="$event.stopPropagation()"
+                      class="action-btn subscribe-btn">
+                <mat-icon>add</mat-icon>
+                Souscrire
+              </button>
+              <button *ngIf="guarantee.status === 'resilié'" 
+                      mat-stroked-button
+                      routerLink="/motors-league"
+                      (click)="$event.stopPropagation()"
+                      class="action-btn renew-btn">
+                <mat-icon>refresh</mat-icon>
+                Renouveler
+              </button>
+            </mat-panel-description>
           </mat-expansion-panel-header>
           
-          <div class="no-contract-content">
-            <p>Vous n'avez pas encore de contrat Motors League.</p>
-            <mat-expansion-panel style="margin-bottom: 16px;">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon style="color: #02556e;">star</mat-icon>
-                  <span>Les avantages Motors League</span>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              
-              <div class="benefits-section">
-                <div class="benefit-item">
-                  <img src="images/gilet-airbag.svg" alt="Gilet airbag" class="benefit-icon">
-                  <div class="benefit-content">
-                    <h4>Airbag</h4>
-                    <p>Protection optimale en cas d'accident</p>
-                  </div>
-                </div>
-
-                <div class="benefit-item">
-                  <mat-icon>thunderstorm</mat-icon>
-                  <div class="benefit-content">
-                    <h4>Une garantie intempéries</h4>
-                    <p>À utiliser pour un roulage d'un montant maximum de 150 euros</p>
-                  </div>
-                </div>
+          <!-- Contenu du panel -->
+          <div class="guarantee-content">
+            <!-- Mes avantages -->
+            <mat-accordion>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon style="color: #02556e;">star</mat-icon>
+                    <span>Mes avantages</span>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
                 
-                <div class="benefit-item">
-                  <img src="images/quick-racing.png" alt="Quick Racing" class="benefit-icon">
-                  <div class="benefit-content">
-                    <h4>Quick Racing</h4>
-                    <p>Un abonnement Quick Racing premium</p>
+                <div class="benefits-section">
+                  <div class="benefit-item" *ngFor="let benefit of guarantee.benefits">
+                    <mat-icon>{{ benefit.icon }}</mat-icon>
+                    <div class="benefit-content">
+                      <h4>{{ benefit.title }}</h4>
+                      <p>{{ benefit.description }}</p>
+                    </div>
                   </div>
                 </div>
-
-              </div>
-            </mat-expansion-panel>
-            <button routerLink="/motors-league" class="btn btn-primary d-flex align-items-center justify-content-center mx-auto">
-              <mat-icon class="me-2">card_membership</mat-icon>
-              OBTENIR MON TOKKEN
-            </button>
+              </mat-expansion-panel>
+            </mat-accordion>
+            
+            <div class="contract-action" *ngIf="guarantee.contracts && guarantee.contracts.length > 0">
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="viewContractDetails(guarantee)"
+                      class="action-btn subscribe-btn">
+                <mat-icon>article</mat-icon>
+                {{ getContractDetailsText(guarantee.contracts.length) }}
+              </button>
+            </div>
           </div>
         </mat-expansion-panel>
       </mat-accordion>
-    </div>
-    
-    <!-- Cas 2 & 3: Client -->
-    <div *ngIf="hasContract" [class.expired]="!isActive">
-      <div class="token-info">
-        <p>Tokken numéro: <strong>{{ activeContract?.tokken || 'Chargement...' }}</strong></p>
-        
-        <button *ngIf="!isActive" 
-                mat-raised-button 
-                color="primary" 
-                (click)="renewContract()"
-                
-                class="btn btn-primary d-flex align-items-center justify-content-center mx-auto">
-                <mat-icon class="me-2">autorenew</mat-icon>
-          RENOUVELER MON CONTRAT
-        </button>
-      </div>
-      
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-icon style="color: #02556e;">description</mat-icon>
-              <span>Mes éléments contractuels</span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          
-          <mat-accordion>
-            <!-- Section Avantages -->
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon style="color: #02556e;">star</mat-icon>
-                  <span>Mes avantages</span>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              
-              <div class="benefits-section">
-                <div class="benefit-item">
-                  <img src="images/gilet-airbag.svg" alt="Gilet airbag" class="benefit-icon">
-                  <div class="benefit-content">
-                    <h4>Garantie Airbag</h4>
-                    <p>Prise en charge du reconditionnement en cas de chute</p>
-                  </div>
-                </div>
-
-                <div class="benefit-item">
-                  <mat-icon>thunderstorm</mat-icon>
-                  <div class="benefit-content">
-                    <h4>Une garantie intempéries</h4>
-                    <p>À utiliser pour un roulage d'un montant maximum de 150 euros</p>
-                  </div>
-                </div>
-
-                <div class="benefit-item">
-                  <img src="images/quick-racing.png" alt="Quick Racing" class="benefit-icon">
-                  <div class="benefit-content">
-                    <h4>Quick Racing</h4>
-                    <p>Un abonnement Quick Racing premium</p>
-                  </div>
-                </div>
-
-              </div>
-            </mat-expansion-panel>
-            
-            <!-- Section Détails du contrat -->
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon style="color: #02556e;">info</mat-icon>
-                  <span>Détails du contrat</span>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              
-              <div class="contract-details">
-                <div class="detail-row">
-                  <span class="detail-label">Date de début :</span>
-                  <span class="detail-value">{{ activeContract?.dateAdhesionContrat | date:'dd/MM/yyyy' }}</span>
-                </div>
-                
-                <div class="detail-row">
-                  <span class="detail-label">Date de fin :</span>
-                  <span class="detail-value" [class.expired]="!isActive">
-                    {{ activeContract?.dateFin | date:'dd/MM/yyyy' }}
-                    <span *ngIf="!isActive" class="expired-badge">Expiré</span>
-                  </span>
-                </div>
-                
-                <div class="detail-row">
-                  <span class="detail-label">Statut :</span>
-                  <span class="detail-value">
-                    <span [class.status-active]="isActive" [class.status-inactive]="!isActive">
-                      {{ isActive ? 'Actif' : 'Inactif' }}
-                    </span>
-                  </span>
-                </div>
-                
-                <div class="detail-row" *ngIf="activeContract && activeContract['produitID']">
-                  <span class="detail-label">Produit :</span>
-                  <span class="detail-value">
-                    <span class="product-badge">{{ getProductName(activeContract['produitID']) }}</span>
-                  </span>
-                </div>
-              </div>
-            </mat-expansion-panel>
-            
-            <!-- Section Documents -->
-            <!-- <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon style="color: #02556e;">description</mat-icon>
-                  <span>Documents</span>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              
-              <div class="documents-section">
-                <button mat-button color="primary">
-                  <mat-icon>picture_as_pdf</mat-icon>
-                  Télécharger le contrat
-                </button>
-                
-                <button mat-button color="primary">
-                  <mat-icon>receipt</mat-icon>
-                  Conditions générales
-                </button>
-              </div>
-            </mat-expansion-panel> -->
-          </mat-accordion>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
   </mat-card-content>
 </mat-card>
