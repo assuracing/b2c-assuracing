@@ -106,7 +106,7 @@ export class ProductMappingService {
       code: 'INTERRUPTION',
       diminutif: 'Interruption',
       label: 'Interruption',
-      icon: 'personal_injury'
+      icon: 'car_crash'
     },
     // Intempéries
     '43': {
@@ -183,7 +183,7 @@ export class ProductMappingService {
     if (name.includes('rc')) return 'security';
     if (name.includes('protection juridique') || name.includes('défense recours') || name.includes('defense recours') || name.includes('pj')) return 'gavel';
     if (name.includes('annulation')) return 'event_busy';
-    if (name.includes('interruption')) return 'personal_injury';
+    if (name.includes('interruption')) return 'car_crash';
     if (name.includes('intempéries') || name.includes('intemperies')) return 'thunderstorm';
     if (name.includes('individuelle accident') || name.includes('ia')) return 'medical_services';
     return 'help_outline';
