@@ -415,3 +415,155 @@
     }
   }
 }
+
+.guarantees-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  margin: 24px 0 16px 0;
+  padding: 0 16px;
+}
+
+.guarantees-accordion {
+  margin-bottom: 16px;
+  
+  .mat-expansion-panel {
+    &.expired {
+      opacity: 0.7;
+    }
+  }
+}
+
+.guarantee-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 0 16px !important;
+  
+  .mat-expansion-panel-header-title {
+    order: 1;
+  }
+  
+  .mat-expansion-panel-header-description {
+    order: 2;
+    justify-content: flex-end !important;
+    margin-left: auto !important;
+  }
+}
+
+.guarantee-title-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  
+  .guarantee-name {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+  }
+  
+  .status-badge {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    height: fit-content;
+    
+    &.status-en-cours {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    &.status-non-souscrit {
+      background-color: #ffebee;
+      color: #d32f2f;
+    }
+    
+    &.status-resilié,
+    &.status-résilié {
+      background-color: #ffebee;
+      color: #d32f2f;
+    }
+  }
+}
+
+.guarantee-action {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  
+  .action-btn {
+    padding: 6px 16px !important;
+    font-size: 0.875rem !important;
+    min-width: auto !important;
+    
+    mat-icon {
+      margin-right: 4px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.guarantee-content {
+  padding: 16px 0;
+  
+  .guarantee-benefits {
+    margin-bottom: 16px;
+  }
+  
+  .contract-action {
+    padding: 16px 0;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .view-contract-btn {
+      padding: 8px 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(11, 162, 207, 0.3);
+      }
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+.action-btn {
+  &.subscribe-btn,
+  &.renew-btn {
+    color: #0ba2cf;
+    border-color: #0ba2cf;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(11, 162, 207, 0.1);
+      color: #0988b1;
+      border-color: #0988b1;
+    }
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 6px;
+    }
+  }
+}

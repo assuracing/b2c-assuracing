@@ -11,6 +11,7 @@ import { UserProfilInfoComponent } from './user-profil-info/user-profil-info.com
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UserContractsComponent } from './user-contracts/user-contracts.component';
 import { ContractDetailsComponent } from './contract-details/contract-details.component';
+import { ContractDetailsAnnualComponent } from './contract-details/contract-details-annual.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -23,6 +24,7 @@ export const routes: Routes = [
     { path: 'payment-confirm', component: PaymentConfirmComponent },
     { path: 'user-contracts', component: UserContractsComponent },
     { path: 'contracts/:id', component: ContractDetailsComponent },
+    { path: 'contract-details-annual/:id', component: ContractDetailsAnnualComponent },
     { path: 'user-profil-info', component: UserProfilInfoComponent },
     { path: 'reset-password', component: ResetPasswordComponent }
 ];
