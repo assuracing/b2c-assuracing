@@ -36,7 +36,7 @@ interface Contract {
   selectedCircuit: string;
   nbrjour: number;
   datedebutroulage: string;
-  codeProduit: string[];
+  codeProduit: number[];
   c: {  
     adresse: string;
     complementadresse: string;
@@ -480,19 +480,19 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       return `${year}-${month}-${day}`;
     };
 
-    const levelToProductCode: { [key: number]: string } = {
-      1: '354',
-      2: '355',
-      3: '356',
-      4: '357',
-      5: '358'
+    const levelToProductCode: { [key: number]: number } = {
+      1: 354,
+      2: 355,
+      3: 356,
+      4: 357,
+      5: 358
     };
 
     const selectedLevel = this.coverageForm?.get('protectionPilote')?.value;
     const rcAnnuelle = this.coverageForm?.get('responsabiliteCivile')?.value;
     const defenseRecours = this.coverageForm?.get('defenseRecours')?.value;
 
-    const productCodes: string[] = [];
+    const productCodes: number[] = [];
 
     if (selectedLevel) {
       if (levelToProductCode[selectedLevel]) {
@@ -501,11 +501,16 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
 
     if (rcAnnuelle) {
-      productCodes.push('83');
+      productCodes.push(83);
     }
 
     if (defenseRecours) {
-      productCodes.push('398');
+      productCodes.push(398);
+    }
+
+    if (productCodes.length === 0) {
+      this.toastService.error('Aucune garantie valide sélectionnée. Veuillez sélectionner au moins une garantie.');
+      return;
     }
 
     const contract: Contract = {
@@ -549,9 +554,15 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
     this.contractService.createContratB2C(contract).subscribe({
       next: (response) => {
-        const orderId = response?.orderId;
+        const orderId = response?.transactionUID;
         const email = this.personalForm.get('email')?.value;
-        const paymentUrl = `${this.apiUrl}/paymentconfirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
+
+        if (!orderId) {
+          this.toastService.error('Identifiant de transaction manquant. Veuillez réessayer.');
+          return;
+        }
+
+        const paymentUrl = `${this.envService.appUrl}/payment-confirm?orderid=${orderId}&email=${encodeURIComponent(email)}&language=fr`;
 
         window.location.href = paymentUrl;
       },
