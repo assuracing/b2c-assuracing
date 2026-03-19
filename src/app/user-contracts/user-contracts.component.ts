@@ -292,6 +292,22 @@ export class UserContractsComponent implements AfterViewInit {
     return label;
   }
 
+  getProductColorClass(productId: string | number, nomContrat?: string): string {
+    const label = this.getProductLabel(productId, nomContrat).toLowerCase();
+    
+    if (label.includes('interruption') || label.includes('annulation') || label.includes('intempéries') || label.includes('intemperies')) {
+      return 'interruption-annulation-icon';
+    } else if (label.includes('individuelle accident') || label.includes('ia')) {
+      return 'ia-icon';
+    } else if (label.includes('protection juridique') || label.includes('défense recours') || label.includes('defense recours') || label.includes('pj')) {
+      return 'pj-icon';
+    } else if (label.includes('rc') || label.includes('responsabilité civile')) {
+      return 'rc-icon';
+    }
+    
+    return 'default-icon';
+  }
+
   trackByContractId(index: number, contract: any): string {
     return contract.contratID;
   }

@@ -93,15 +93,13 @@
                                                                 <div class="product-icon-container">
                                                                         <mat-icon 
                                                                         class="product-icon"
-                                                                        [class.valid-icon]="product.valide"
-                                                                        [class.invalid-icon]="!product.valide"
+                                                                        [ngClass]="getProductColorClass(product.produitID, product.nomcontrat)"
                                                                         [attr.aria-hidden]="true">
                                                                         {{ getProductIcon(product.produitID, product.nomcontrat) }}
                                                                     </mat-icon>
                                                                 </div>
                                                                 <span class="product-name"
-                                                                [class.valid-name]="product.valide"
-                                                                [class.invalid-name]="!product.valide">
+                                                                [ngClass]="getProductColorClass(product.produitID, product.nomcontrat)">
                                                                         {{getProductDiminutif(product.produitID, product.nomcontrat)}}
                                                                 </span>
                                                         </a>
@@ -114,8 +112,7 @@
                                [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)">
                                 <mat-icon 
                                     class="product-icon"
-                                    [class.valid-icon]="product.valide"
-                                    [class.invalid-icon]="!product.valide"
+                                    [ngClass]="getProductColorClass(product.produitID, product.nomcontrat)"
                                     [attr.aria-hidden]="true">
                                     {{getProductIcon(product.produitID, product.nomcontrat)}}
                                 </mat-icon>
