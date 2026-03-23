@@ -280,6 +280,7 @@ export class EventCoverageOptionsComponent {
   @Input() trackdayForm!: FormGroup;
   @Input() organizerId: string | null = null;
   @Input() vehicleType?: string;
+  private selectedOrganizerData: any = null;
   
   public initializeProtectionPrices(): void {
     if (!this.trackdayForm) {
@@ -345,6 +346,7 @@ export class EventCoverageOptionsComponent {
     
     if (!organizerName) {
       this.resetProductAvailability();
+      this.selectedOrganizerData = null;
       return;
     }
 
@@ -360,14 +362,17 @@ export class EventCoverageOptionsComponent {
       'PROTECTION_2_COMP',
       'PROTECTION_3_COMP',
       'PROTECTION_4_COMP',
-      'PROTECTION_5_COMP'
+      'PROTECTION_5_COMP',
     ];
 
-    this.organizerService.checkProductsAvailability(organizerName, productKeys)
-      .pipe(takeUntil(this.destroy$))
+    forkJoin([
+      this.organizerService.checkProductsAvailability(organizerName, productKeys),
+      this.organizerService.getOrganizerByName(organizerName)
+    ]).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (availability) => {
+        next: ([availability, organizerData]) => {
           this.productAvailability = availability;
+          this.selectedOrganizerData = organizerData;
           this.updateFormControlsAvailability();
           this.isCheckingAvailability = false;
         },
@@ -389,7 +394,7 @@ export class EventCoverageOptionsComponent {
   private updateFormControlsAvailability(): void {
     const controls = this.form.controls;
     
-    if (this.organizerName && this.organizerName.toLowerCase() === 'lh racing'.toLowerCase()) {
+    if (this.selectedOrganizerData?.organisateurPartenaireRC === true) {
       controls['responsabiliteCivile'].disable();
       controls['responsabiliteCivile'].setValue(true);
     } else {
@@ -584,8 +589,7 @@ export class EventCoverageOptionsComponent {
   }
 
   isPartnerOrganizer(): boolean {
-  const partners = ['lh racing'];
-  return !!this.organizerName && partners.includes(this.organizerName.toLowerCase());
+    return this.selectedOrganizerData?.organisateurPartenaireRC === true;
   }
 
 }
