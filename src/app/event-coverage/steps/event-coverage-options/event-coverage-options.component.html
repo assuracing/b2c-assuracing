@@ -298,7 +298,7 @@
               </app-adaptive-tooltip>
             </span>
           </mat-slide-toggle>
-          <p *ngIf="organizerName && organizerName.toLowerCase() === 'lh racing'.toLowerCase()" class="inclus" style="font-weight: normal; font-size: 13px; color: #0ba2cf; margin-top: 2px; ">
+          <p *ngIf="isPartnerOrganizer()" class="inclus" style="font-weight: normal; font-size: 13px; color: #0ba2cf; margin-top: 2px; ">
             Votre organisateur, partenaire Assuracing, a déjà souscrit pour vous !
             <mat-icon style="font-size: 24px; margin-right: 4px;">sentiment_very_satisfied</mat-icon>
           </p>
