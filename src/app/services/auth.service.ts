@@ -16,7 +16,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  private tokenKey = 'auth_token';
+  private tokenKey = 'authenticationToken';
 
   private apiUrl: string;
 
@@ -26,27 +26,40 @@ export class AuthService {
     private envService: EnvironmentService
   ) {
     this.apiUrl = this.envService.apiUrl;
-    const token = localStorage.getItem(this.tokenKey);
+    const token = this.getToken();
     this.isAuthenticatedSubject.next(!!token);
   }
 
-  login(username: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/api/authenticate`, { username, password }).pipe(
+  login(username: string, password: string, rememberMe: boolean = false): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/api/authenticate`, { username, password, rememberMe }).pipe(
       tap((res) => {
-        localStorage.setItem(this.tokenKey, res.id_token);
+        this.storeToken(res.id_token, rememberMe);
         this.isAuthenticatedSubject.next(true);
       })
     );
   }
 
+  private storeToken(token: string, rememberMe: boolean): void {
+    if (rememberMe) {
+      // Stockage dans localStorage et suppression du sessionStorage
+      localStorage.setItem(this.tokenKey, token);
+      sessionStorage.removeItem(this.tokenKey);
+    } else {
+      // Stockage dans sessionStorage et suppression du localStorage
+      sessionStorage.setItem(this.tokenKey, token);
+      localStorage.removeItem(this.tokenKey);
+    }
+  }
+
   logout() {
     localStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem(this.tokenKey);
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return localStorage.getItem(this.tokenKey) || sessionStorage.getItem(this.tokenKey);
   }
 
   isLoggedIn(): boolean {

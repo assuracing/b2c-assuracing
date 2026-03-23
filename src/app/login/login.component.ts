@@ -5,17 +5,19 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../services/toast.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-login',
-  imports: [FormsModule, MatIconModule],
+  imports: [FormsModule, MatIconModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', '../app.component.scss']
 })
 export class LoginComponent {
   username = '';
   password = '';
+  rememberMe = true;
 
   constructor(
     private authService: AuthService,
@@ -25,7 +27,7 @@ export class LoginComponent {
   ) {}
 
   onLogin() {
-    this.authService.login(this.username, this.password).subscribe({
+    this.authService.login(this.username, this.password, this.rememberMe).subscribe({
       next: () => {
         if (this.dialogRef) {
           this.dialogRef.close('success');

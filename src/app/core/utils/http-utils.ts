@@ -1,7 +1,7 @@
 import { HttpHeaders } from '@angular/common/http';
 
 export function getAuthHeaders(): { headers: HttpHeaders, withCredentials: boolean } {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('authenticationToken') || sessionStorage.getItem('authenticationToken');
   const csrfToken = getCookie('XSRF-TOKEN');
   
   let headers: { [key: string]: string } = {
@@ -22,16 +22,23 @@ export function getAuthHeaders(): { headers: HttpHeaders, withCredentials: boole
   };
 }
 
-export function setAuthToken(token: string): void {
+export function setAuthToken(token: string, rememberMe: boolean = false): void {
   if (token) {
-    localStorage.setItem('auth_token', token);
+    if (rememberMe) {
+      localStorage.setItem('authenticationToken', token);
+      sessionStorage.removeItem('authenticationToken');
+    } else {
+      sessionStorage.setItem('authenticationToken', token);
+      localStorage.removeItem('authenticationToken');
+    }
   } else {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('authenticationToken');
+    sessionStorage.removeItem('authenticationToken');
   }
 }
 
 export function getAuthToken(): string | null {
-  return localStorage.getItem('auth_token');
+  return localStorage.getItem('authenticationToken') || sessionStorage.getItem('authenticationToken');
 }
 
 export function getCookie(name: string): string | null {
