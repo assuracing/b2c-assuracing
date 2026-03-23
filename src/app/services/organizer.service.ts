@@ -11,6 +11,7 @@ export class OrganizerService {
   private apiUrl: string;
 
   private readonly PRODUCT_CODES = {
+    RC: 1,
     PROTECTION_1: 30,
     PROTECTION_2: 31,
     PROTECTION_3: 32,
@@ -86,6 +87,25 @@ export class OrganizerService {
       catchError((error: any) => {
         console.error(`Erreur lors de la récupération des organisateurs pour le produit ${productKey}:`, error);
         return of([]);
+      })
+    );
+  }
+
+  getOrganizerByName(organizerName: string): Observable<any> {
+    if (!organizerName) {
+      return of(null);
+    }
+
+    return this.http.get<any[]>(`${this.apiUrl}/api/allorganisateursclientent/1`).pipe(
+      map(organizers => {
+        return organizers.find(org => 
+          org.nom && organizerName && 
+          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
+        ) || null;
+      }),
+      catchError((error: any) => {
+        console.error('Erreur lors de la récupération des données organisateur RC:', error);
+        return of(null);
       })
     );
   }
