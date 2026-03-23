@@ -33,12 +33,20 @@
               <span>Souscrire</span>
             </button>
             <button *ngIf="guarantee.status === 'resilié'" 
-                    mat-stroked-button
+                    mat-raised-button
+                    color="primary"
                     routerLink="/motors-league"
                     (click)="$event.stopPropagation()"
                     class="action-btn renew-btn">
               <mat-icon>refresh</mat-icon>
               <span>Renouveler</span>
+            </button>
+            <button *ngIf="guarantee.status === 'resilié'" 
+                    mat-stroked-button
+                    (click)="viewContractDetails(guarantee)"
+                    class="action-btn details-btn">
+              <mat-icon>article</mat-icon>
+              <span>Détails</span>
             </button>
             <button *ngIf="guarantee.status === 'en-cours'" 
                     mat-raised-button 
