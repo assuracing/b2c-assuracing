@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showWelcome: boolean = false;
   langue: string = 'fr';
   isLangueDropdownOpen = false;
+  isProfileMenuOpen = false;
   isMobile = false;
 
   @ViewChild('navbarRef') navbarRef!: ElementRef;
@@ -88,10 +89,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isLangueDropdownOpen = false;
   }
 
+  toggleProfileMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  navigateAndClose(route: string) {
+    this.router.navigate([route]);
+    this.isProfileMenuOpen = false;
+  }
+
   handleClickOutside(event: MouseEvent) {
     const target = event.target as Node;
     if (this.navbarRef && !this.navbarRef.nativeElement.contains(target)) {
       this.isLangueDropdownOpen = false;
+      this.isProfileMenuOpen = false;
     }
   }
 
