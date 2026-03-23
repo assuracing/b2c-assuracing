@@ -12,69 +12,66 @@
     
     <h3 class="guarantees-title">Vos garanties annuelles</h3>
     
-    <mat-accordion class="guarantees-accordion">
-      <mat-expansion-panel *ngFor="let guarantee of annualGuarantees" [class.expired]="guarantee.status === 'resili\u00e9'">
-          <mat-expansion-panel-header class="guarantee-header">
-            <mat-panel-title class="guarantee-title-content">
-              <mat-icon class="guarantee-icon">{{ getGuaranteeIcon(guarantee.id) }}</mat-icon>
-              <span class="guarantee-name">{{ guarantee.label }}</span>
-              <span [class]="'status-badge status-' + guarantee.status">{{ getStatusLabel(guarantee.status) }}</span>
-            </mat-panel-title>
-            <mat-panel-description class="guarantee-action">
-              <button *ngIf="guarantee.status === 'non-souscrit'" 
-                      mat-stroked-button
-                      routerLink="/motors-league"
-                      (click)="$event.stopPropagation()"
-                      class="action-btn subscribe-btn">
-                <mat-icon>add</mat-icon>
-                Souscrire
-              </button>
-              <button *ngIf="guarantee.status === 'resilié'" 
-                      mat-stroked-button
-                      routerLink="/motors-league"
-                      (click)="$event.stopPropagation()"
-                      class="action-btn renew-btn">
-                <mat-icon>refresh</mat-icon>
-                Renouveler
-              </button>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          
-          <!-- Contenu du panel -->
-          <div class="guarantee-content">
-            <!-- Mes avantages -->
-            <mat-accordion>
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <mat-icon style="color: #02556e;">star</mat-icon>
-                    <span>Mes avantages</span>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                
-                <div class="benefits-section">
-                  <div class="benefit-item" *ngFor="let benefit of guarantee.benefits">
-                    <mat-icon>{{ benefit.icon }}</mat-icon>
-                    <div class="benefit-content">
-                      <h4>{{ benefit.title }}</h4>
-                      <p>{{ benefit.description }}</p>
-                    </div>
-                  </div>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-            
-            <div class="contract-action" *ngIf="guarantee.contracts && guarantee.contracts.length > 0">
-              <button mat-raised-button 
-                      color="primary" 
-                      (click)="viewContractDetails(guarantee)"
-                      class="action-btn subscribe-btn">
-                <mat-icon>article</mat-icon>
-                {{ getContractDetailsText(guarantee.contracts.length) }}
-              </button>
-            </div>
+    <div class="guarantees-grid">
+      <mat-card class="guarantee-card" *ngFor="let guarantee of annualGuarantees" [class.expired]="guarantee.status === 'resilié'">
+        <mat-card-header class="guarantee-card-header">
+          <mat-icon class="guarantee-icon">{{ getGuaranteeIcon(guarantee.id) }}</mat-icon>
+          <div class="guarantee-info">
+            <h3 class="guarantee-name">{{ guarantee.label }}</h3>
+            <span [class]="'status-badge status-' + guarantee.status">{{ getStatusLabel(guarantee.status) }}</span>
           </div>
-        </mat-expansion-panel>
-      </mat-accordion>
+        </mat-card-header>
+
+        <mat-card-content class="guarantee-card-content">
+          <div class="card-actions">
+            <button *ngIf="guarantee.status === 'non-souscrit'" 
+                    mat-stroked-button
+                    routerLink="/motors-league"
+                    (click)="$event.stopPropagation()"
+                    class="action-btn subscribe-btn">
+              <mat-icon>add</mat-icon>
+              <span>Souscrire</span>
+            </button>
+            <button *ngIf="guarantee.status === 'resilié'" 
+                    mat-stroked-button
+                    routerLink="/motors-league"
+                    (click)="$event.stopPropagation()"
+                    class="action-btn renew-btn">
+              <mat-icon>refresh</mat-icon>
+              <span>Renouveler</span>
+            </button>
+            <button *ngIf="guarantee.status === 'en-cours'" 
+                    mat-raised-button 
+                    color="primary" 
+                    (click)="viewContractDetails(guarantee)"
+                    class="action-btn details-btn">
+              <mat-icon>article</mat-icon>
+              <span>Détails</span>
+            </button>
+          </div>
+
+          <!-- Panel d'avantages -->
+          <mat-accordion class="benefits-accordion" *ngIf="guarantee.benefits && guarantee.benefits.length > 0">
+            <mat-expansion-panel class="benefits-panel">
+              <mat-expansion-panel-header class="benefits-header">
+                <mat-panel-title>
+                  <mat-icon>star</mat-icon>
+                  Mes avantages
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <div class="benefits-list">
+                <div class="benefit-item" *ngFor="let benefit of guarantee.benefits">
+                  <mat-icon class="benefit-icon">{{ benefit.icon }}</mat-icon>
+                  <h4 class="benefit-title">{{ benefit.title }}</h4>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    
   </mat-card-content>
 </mat-card>

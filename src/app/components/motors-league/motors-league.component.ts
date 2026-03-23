@@ -24,7 +24,7 @@ interface AnnualGuarantee {
   status: 'en-cours' | 'non-souscrit' | 'resilié';
   contracts: Contract[];
   productIds: number[];
-  benefits: Array<{ icon: string; title: string; description: string }>;
+  benefits: Array<{ icon: string; title: string}>;
 }
 
 @Component({
@@ -54,6 +54,7 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
   activeContract: Contract | null = null;
   hasContract = false;
   isActive = false;
+  selectedGuarantee: AnnualGuarantee | null = null;
 
   annualGuarantees: AnnualGuarantee[] = [
     {
@@ -62,15 +63,28 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
       status: 'non-souscrit',
       contracts: [],
       productIds: [83],
-      benefits: []
-    },
-    {
-      id: 'ia',
-      label: 'Individuelle accident',
-      status: 'non-souscrit',
-      contracts: [],
-      productIds: [354, 355, 356, 357, 358],
-      benefits: []
+      benefits: [
+        {
+          icon: 'shield',
+          title: 'Couverture des dommages que vous causez aux tiers sur les trackdays'
+        },
+        {
+          icon: 'personal_injury',
+          title: 'Dommages corporels : 8M€'
+        },
+        {
+          icon: 'car_crash',
+          title: 'Dommages matériels : 500k€'
+        },
+        {
+          icon: 'sports_motorsports',
+          title: 'Dont dommages aux équipements de sécurité : 10k€'
+        },
+        {
+          icon: 'check_circle',
+          title: 'Sans franchise'
+        }
+      ]
     },
     {
       id: 'pj',
@@ -78,7 +92,66 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
       status: 'non-souscrit',
       contracts: [],
       productIds: [398],
-      benefits: []
+      benefits: [
+        {
+          icon: 'gavel',
+          title: 'La garantie qui défend vos droits dans le cadre de la pratique des sports mécaniques'
+        },
+        {
+          icon: 'contact_support',
+          title: 'Accompagnement juridique et assistance psychologique par téléphone en cas d\'accident'
+        },
+        {
+          icon: 'balance',
+          title: 'Garantie d\'aide aux victimes et recours pénal'
+        },
+        {
+          icon: 'admin_panel_settings',
+          title: 'Défense pénale'
+        },
+        {
+          icon: 'description',
+          title: 'Garantie consommation auto/moto'
+        }
+      ]
+    },
+    
+    {
+      id: 'ia',
+      label: 'Individuelle accident',
+      status: 'non-souscrit',
+      contracts: [],
+      productIds: [354, 355, 356, 357, 358],
+      benefits: [
+        {
+          icon: 'heart_broken',
+          title: 'Capital Décès (de 7600 € à 200 000 €)'
+        },
+        {
+          icon: 'accessible',
+          title: 'Capital Invalidité (de 18500 à 300 000 €)'
+        },
+        {
+          icon: 'phone_in_talk',
+          title: 'Assistance médicale 24/7'
+        },
+        {
+          icon: 'flight_takeoff',
+          title: 'Frais médicaux à l\'étranger : 100 000 €'
+        },
+        {
+          icon: 'local_hospital',
+          title: 'Rapatriement et transport sanitaire (frais réels)'
+        },
+        {
+          icon: 'receipt_long',
+          title: 'Frais médicaux restant à charge (2500 €)'
+        },
+        {
+          icon: 'two_wheeler',
+          title: 'Spécial moto : reconditionnement d\'airbag jusque 150 €'
+        }
+      ]
     }
   ];
   
@@ -205,6 +278,7 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
   }
 
   viewContractDetails(guarantee: AnnualGuarantee) {
+    this.selectedGuarantee = guarantee;
     const sortedContracts = [...guarantee.contracts].sort((a, b) => {
       return new Date(b.dateAdhesionContrat).getTime() - new Date(a.dateAdhesionContrat).getTime();
     });
