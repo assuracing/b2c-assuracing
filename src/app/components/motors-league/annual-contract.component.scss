@@ -1,0 +1,70 @@
+
+.guarantees-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px;
+  @media(min-width:501px) and (max-width:999px){grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(min-width:1000px){grid-template-columns:repeat(3,1fr);gap:16px}
+}
+.guarantee-card{display:flex;flex-direction:column;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden;transition:all .3s ease;
+  &:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+  &.expired .guarantee-card-header{opacity:.7}
+  .guarantee-card-header{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background-color:#f9f9f9;border-bottom:1px solid #f0f0f0}
+  .guarantee-icon{color:#0ba2cf;font-size:28px;width:28px;height:28px;flex-shrink:0;margin-top:2px}
+  .guarantee-info{flex:1;min-width:0}
+  .guarantee-name{display:block;font-weight:600;color:#333;margin-bottom:6px;font-size:.95rem;word-wrap:break-word;line-height:1.3}
+  .status-badge{display:inline-flex;align-items:center;font-size:.65rem;padding:3px 10px;border-radius:12px;font-weight:600;text-transform:uppercase;white-space:nowrap;
+    &.status-en-cours{background-color:#e8f5e9;color:#2e7d32}
+    &.status-non-souscrit,&.status-resilié,&.status-résilié{background-color:#ffebee;color:#d32f2f}
+  }
+}
+.guarantee-card-content{padding:12px 16px;flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.card-actions{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.benefits-accordion{margin-top:8px;border-top:1px solid #f0f0f0;padding-top:8px;
+  ::ng-deep .mat-mdc-expansion-panel{box-shadow:none!important;border:none;background:transparent;
+    .mat-mdc-expansion-panel-header{padding:0!important;height:auto!important;background:transparent!important;border-bottom:1px solid #f0f0f0;margin-bottom:8px;
+      .mat-mdc-expansion-panel-header-title{display:flex;align-items:center;gap:8px;color:#0ba2cf;font-weight:600;font-size:.9rem;
+        mat-icon{font-size:18px;width:18px;height:18px}
+      }
+      .mat-expansion-indicator::after{color:#0ba2cf}
+    }
+    .mat-mdc-expansion-panel-body{padding:0!important}
+  }
+}
+.benefits-list{display:flex;flex-direction:column;gap:12px}
+.benefit-item{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;
+  &:last-child{border-bottom:none}
+}
+.benefit-icon{color:#0ba2cf;font-size:18px;width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.benefit-details{flex:1;min-width:0}
+.benefit-title{margin:0;padding:0;font-size:.85rem;font-weight:600;color:#333;line-height:1.3;word-wrap:break-word}
+.benefit-description{margin:2px 0 0 0;padding:0;font-size:.75rem;color:#666;line-height:1.3;word-wrap:break-word}
+.action-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px!important;font-size:.85rem!important;min-width:auto!important;height:auto;
+  mat-icon{font-size:18px;width:18px;height:18px}
+  span{white-space:nowrap}
+  &.subscribe-btn,&.renew-btn{color:#0ba2cf;border-color:#0ba2cf;transition:all .3s;
+    &:hover:not(:disabled){background-color:rgba(11,162,207,.1);color:#0988b1;border-color:#0988b1}
+  }
+  &.details-btn{background-color:#0ba2cf!important;color:#fff!important;
+    &:hover:not(:disabled){background-color:#0988b1!important}
+  }
+  @media(max-width:380px){font-size:.75rem!important;padding:6px 10px!important;
+    mat-icon{font-size:16px;width:16px;height:16px}
+  }
+}
+.guarantee-content{padding:16px 0;
+  .contract-action{padding:16px 0;border-top:1px solid #eee;display:flex;justify-content:center;align-items:center;
+    .view-contract-btn{padding:8px 24px!important;display:flex!important;align-items:center!important;gap:8px!important;transition:all .3s;
+      &:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(11,162,207,.3)}
+      mat-icon{font-size:20px;width:20px;height:20px}
+    }
+  }
+}
+.action-btn{
+  &.subscribe-btn,&.renew-btn{color:#0ba2cf;border-color:#0ba2cf;transition:all .3s;
+    &:hover{background-color:rgba(11,162,207,.1);color:#0988b1;border-color:#0988b1}
+    mat-icon{font-size:18px;width:18px;height:18px;margin-right:6px}
+  }
+}
+@media(max-width:503px){
+  .detail-row{flex-direction:column!important;align-items:flex-start!important;gap:4px!important;margin-bottom:12px;
+    .detail-value{width:100%!important;text-align:left!important;word-break:break-word}
+  }
+}

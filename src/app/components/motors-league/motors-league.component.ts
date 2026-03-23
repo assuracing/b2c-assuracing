@@ -40,7 +40,7 @@ interface AnnualGuarantee {
     RouterModule
   ],
   templateUrl: './motors-league.component.html',
-  styleUrls: ['./motors-league.component.scss']
+  styleUrls: ['./motors-league.component.scss','./annual-contract.component.scss']
 })
 export class MotorsLeagueComponent implements OnInit, OnChanges {
   @Input() contracts: Contract[] = [];
