@@ -57,11 +57,38 @@
 
         <!-- Section utilisateur connecté -->
         <li class="menu-item user-item" *ngIf="userService.isLoggedIn()">
-          <div class="user-greeting" [class.welcome-animation]="showWelcome">
+          <div 
+            class="user-greeting" 
+            [class.welcome-animation]="showWelcome"
+            (click)="toggleProfileMenu($event)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="toggleProfileMenu($event)">
             <mat-icon class="welcome-icon">waving_hand</mat-icon>
             <span class="desktop-only">Bonjour, {{ userService.getUser()?.firstName }}</span>
             <span class="mobile-only">{{ userService.getUser()?.firstName }}</span>
+            <mat-icon class="dropdown-icon" [class.open]="isProfileMenuOpen">expand_more</mat-icon>
           </div>
+          
+          <!-- Menu profil -->
+          <div 
+            class="profile-dropdown"
+            *ngIf="isProfileMenuOpen"
+            (click)="$event.stopPropagation()">
+            <a class="dropdown-item" (click)="navigateAndClose('/user-contracts')">
+              <mat-icon>assignment</mat-icon>
+              <span>Mes contrats</span>
+            </a>
+            <a class="dropdown-item" (click)="navigateAndClose('/guarantee-choice')">
+              <mat-icon>add_circle_outline</mat-icon>
+              <span>Souscrire un nouveau contrat</span>
+            </a>
+            <a class="dropdown-item" (click)="navigateAndClose('/user-profil-info')">
+              <mat-icon>person</mat-icon>
+              <span>Mes informations personnelles</span>
+            </a>
+          </div>
+          
           <button
             mat-button
             (click)="authService.logout()"
