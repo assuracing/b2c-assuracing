@@ -29,6 +29,10 @@
       <mat-icon style="vertical-align: middle; margin-right: 4px;">settings</mat-icon>
       Mes informations personnelles
   </button>
+  <button (click)="goToClaimDeclaration()" class="btn btn-test">
+      <mat-icon style="vertical-align: middle; margin-right: 4px;">report_problem</mat-icon>
+      Déclarer un sinistre
+  </button>
 </div>
 
 <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_ADMIN')">

@@ -1,0 +1,193 @@
+<div class="summary-container">
+  <h2>Résumé de votre demande</h2>
+  <p class="help-text">Vérifiez les informations avant validation</p>
+
+  <div class="summary-sections">
+    <mat-card class="summary-card" *ngIf="claim.contractNom">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>assignment</mat-icon>
+          Contrat
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-row">
+          <span class="detail-label">Contrat:</span>
+          <span>{{ claim.contractNom }}</span>
+        </div>
+        <div class="detail-row" *ngIf="claim.contractCircuit">
+          <span class="detail-label">Circuit:</span>
+          <span>{{ claim.contractCircuit }}</span>
+        </div>
+        <div class="detail-row" *ngIf="claim.contractDateAdhesion">
+          <span class="detail-label">Date d'adhésion:</span>
+          <span>{{ formatDate(claim.contractDateAdhesion) }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>category</mat-icon>
+          Type de sinistre
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="claim-type-value">
+          <p class="summary-value">{{ getClaimTypeLabel() }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card" *ngIf="selectedTypeCauseSinistre">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>warning_amber</mat-icon>
+          Motif de la demande
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="summary-value">{{ selectedTypeCauseSinistre.nom }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>description</mat-icon>
+          Détails du sinistre
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-row">
+          <span class="detail-label">Date du sinistre:</span>
+          <span>{{ formatDate(claim.dateEvenement) }}</span>
+        </div>
+        <div class="detail-row" *ngIf="claim.description">
+          <span class="detail-label">Commentaire:</span>
+          <span>{{ claim.description }}</span>
+        </div>
+        <div class="detail-row" *ngIf="contract?.franchise">
+          <span class="detail-label">
+            <mat-icon class="inline-icon">receipt</mat-icon>
+            Franchise:
+          </span>
+          <span>{{ contract.franchise }} €</span>
+        </div>
+        <div class="detail-row" *ngIf="contract?.montantGarantie">
+          <span class="detail-label">
+            <mat-icon class="inline-icon">account_balance_wallet</mat-icon>
+            Montant garantie:
+          </span>
+          <span>{{ contract.montantGarantie }} €</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card" *ngIf="claim.fichiers && claim.fichiers.length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>attach_file</mat-icon>
+          Justificatifs fournis
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="files-grouped">
+          <div class="file-type-group" *ngIf="getFilesByType('RIB').length > 0">
+            <div class="file-type-header">
+              <mat-icon class="group-icon">credit_card</mat-icon>
+              <span class="file-type-title">RIB</span>
+              <span class="file-count">({{ getFilesByType('RIB').length }})</span>
+            </div>
+            <div class="file-items">
+              <div class="file-item" *ngFor="let file of getFilesByType('RIB')">
+                <mat-icon class="file-icon">description</mat-icon>
+                <div class="file-details">
+                  <span class="file-name" 
+                        style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                        (click)="openFile(file)"
+                        title="Cliquez pour visualiser">
+                    {{ file.nomFichier || file.nom }}
+                  </span>
+                  <span class="file-meta">{{ formatFileSize(file.taille || 0) }}</span>
+                </div>
+                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="file-type-group" *ngIf="getFilesByType('Justificatif').length > 0">
+            <div class="file-type-header">
+              <mat-icon class="group-icon">description</mat-icon>
+              <span class="file-type-title">Justificatifs</span>
+              <span class="file-count">({{ getFilesByType('Justificatif').length }})</span>
+            </div>
+            <div class="file-items">
+              <div class="file-item" *ngFor="let file of getFilesByType('Justificatif')">
+                <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                <div class="file-details">
+                  <span class="file-name" 
+                        style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                        (click)="openFile(file)"
+                        title="Cliquez pour visualiser">
+                    {{ file.nomFichier || file.nom }}
+                  </span>
+                  <span class="file-meta">{{ formatFileSize(file.taille || 0) }}</span>
+                </div>
+                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <ng-container *ngFor="let docType of getOtherDocumentTypes()">
+            <div class="file-type-group" *ngIf="getFilesByType(docType).length > 0">
+              <div class="file-type-header">
+                <mat-icon class="group-icon">{{ getIconForDocType(docType) }}</mat-icon>
+                <span class="file-type-title">{{ docType }}</span>
+                <span class="file-count">({{ getFilesByType(docType).length }})</span>
+              </div>
+              <div class="file-items">
+                <div class="file-item" *ngFor="let file of getFilesByType(docType)">
+                  <mat-icon class="file-icon">{{ getIconForDocType(docType) }}</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name" 
+                          style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                          (click)="openFile(file)"
+                          title="Cliquez pour visualiser">
+                      {{ file.nomFichier || file.nom }}
+                    </span>
+                    <span class="file-meta">{{ formatFileSize(file.taille || 0) }}</span>
+                  </div>
+                  <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  <mat-card class="confirmation-card">
+    <mat-card-content>
+      <form [formGroup]="summaryForm">
+        <mat-checkbox formControlName="acceptTerms" color="accent">
+          Je confirme que les informations saisies sont exactes et complètes.
+          <ng-container *ngIf="isModificationLimited(); else ajoutJustificatif">
+            Je reconnais qu'après validation, je ne pourrai plus les modifier.
+          </ng-container>
+          <ng-template #ajoutJustificatif>
+            Je reconnais qu'après validation je pourrai uniquement ajouter des justificatifs à mon dossier.
+          </ng-template>
+        </mat-checkbox>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+</div>

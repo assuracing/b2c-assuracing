@@ -1,0 +1,113 @@
+<mat-card class="contract-step-wrapper">
+  <mat-card-header>
+    <mat-card-title>Sélectionner un contrat</mat-card-title>
+    <mat-card-subtitle>
+      Veuillez choisir le contrat pour lequel vous souhaitez déclarer un sinistre
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="contractForm">
+      <mat-form-field appearance="outline" class="contract-field">
+        <mat-label>Contrat</mat-label>
+        <mat-select 
+          formControlName="contractId" 
+          [disabled]="isLoading"
+          panelClass="contract-select-panel"
+          (openedChange)="onPanelOpened($event)">
+          
+          <mat-select-trigger *ngIf="getSelectedContract() as contract">
+            <span class="contract-option-trigger">
+              <img 
+                *ngIf="contract.pays" 
+                [src]="countryFlagService.getCountryFlagUrl(contract.pays)" 
+                [alt]="'Pays: ' + contract.pays"
+                class="country-flag-small">
+              <span class="circuit-part">{{ contract.circuit || 'Circuit ?' }}</span>
+              
+              <span class="separator">-</span>
+              
+              <mat-icon *ngIf="contract.nomcontrat" class="product-icon-small">
+                {{ getProductIcon(contract.nomcontrat) }}
+              </mat-icon>
+              <span class="product-part">{{ contract.nomcontrat || 'Produit inconnu' }}</span>
+              
+              <span class="separator">-</span>
+              
+              <span class="option-part">
+                <mat-icon *ngIf="contract.dateAdhesion" class="date-icon-small">event</mat-icon>
+                <span class="date-part">
+                  @if (contract.dateAdhesion) {
+                    {{ formatContractDate(contract.dateAdhesion) }}
+                  }
+                </span>
+              </span>
+            </span>
+          </mat-select-trigger>
+          
+          <div class="search-container">
+            <input 
+              #contractSearchInput
+              class="search-input" 
+              placeholder="Rechercher un contrat..." 
+              [(ngModel)]="searchText"
+              [ngModelOptions]="{standalone: true}"
+              (click)="$event.stopPropagation()" 
+              (input)="filterContracts(searchText)">
+          </div>
+
+          @if (filteredContracts.length === 0) {
+            <mat-optgroup label="Aucun contrat ne correspond à votre recherche"></mat-optgroup>
+          }
+          @for (contract of filteredContracts; track trackByContractId($index, contract)) {
+            <mat-option [value]="contract.contratID" class="contract-option-mat">
+              <div class="contract-option-content">
+                <div class="option-part">
+                  <img 
+                    *ngIf="contract.pays" 
+                    [src]="countryFlagService.getCountryFlagUrl(contract.pays)" 
+                    [alt]="'Pays: ' + contract.pays"
+                    class="country-flag"
+                    [matTooltip]="contract.pays">
+                  <span class="part-text">{{ contract.circuit || 'Circuit ?' }}</span>
+                </div>
+                
+                <span class="separator">-</span>
+                
+                <div class="option-part">
+                  <mat-icon *ngIf="contract.nomcontrat" class="product-icon">
+                    {{ getProductIcon(contract.nomcontrat) }}
+                  </mat-icon>
+                  <span class="part-text">{{ contract.nomcontrat || 'Produit inconnu' }}</span>
+                </div>
+                
+                <span class="separator">-</span>
+                
+                <div class="option-part">
+                  <mat-icon *ngIf="contract.dateAdhesion" class="date-icon">event</mat-icon>
+                  <span class="part-text">
+                    @if (contract.dateAdhesion) {
+                      {{ formatContractDate(contract.dateAdhesion) }}
+                    }
+                  </span>
+                </div>
+              </div>
+            </mat-option>
+          }
+        </mat-select>
+        
+        @if (contractForm.get('contractId')?.hasError('required') && contractForm.get('contractId')?.touched) {
+          <mat-error>Veuillez sélectionner un contrat</mat-error>
+        }
+        @if (filteredContracts.length === 0) {
+          <mat-hint>Aucun contrat trouvé</mat-hint>
+        }
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<div class="step-actions">
+  <button mat-button (click)="goBack()">Précédent</button>
+  <button mat-button (click)="submit()" [disabled]="contractForm.invalid || isLoading">Suivant</button>
+</div>

@@ -123,11 +123,30 @@
           </div>
         </div>
       </div>
+
+      <app-claim-list [claims]="claims" [contractId]="contract.id"></app-claim-list>
+    
     </mat-card-content>
 
-    <mat-card-actions align="end" *ngIf="!contract.validated">
-      <button mat-raised-button color="primary" (click)="onPay()" class="action-button">
-        <mat-icon>payment</mat-icon> Finaliser le paiement
+    <mat-card-actions align="end" class="contract-actions">
+      <button 
+        mat-raised-button 
+        color="accent"
+        (click)="onDeclareClaim()" 
+        *ngIf="contract.validated && (isAnnualContract() || claims.length === 0)"
+        class="action-button"
+        title="Déclarer un sinistre pour ce contrat">
+        <mat-icon>assignment_late</mat-icon>
+        Déclarer un sinistre
+      </button>
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="onPay()" 
+        *ngIf="!contract.validated"
+        class="action-button">
+        <mat-icon>payment</mat-icon> 
+        Finaliser le paiement
       </button>
     </mat-card-actions>
   </mat-card>

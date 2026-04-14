@@ -1,0 +1,23 @@
+<div class="reason-selector">
+  <h2>Quel est le motif de votre demande?</h2>
+  <p class="subtitle">Sélectionnez le motif qui correspond à votre situation ({{ getClaimTypeLabel() }})</p>
+
+  <div *ngIf="availableCauses.length === 0" class="no-causes">
+    <p>Aucun motif disponible pour ce type de sinistre.</p>
+  </div>
+
+  <mat-radio-group *ngIf="availableCauses.length > 0" [(ngModel)]="selectedCauseId">
+    <div class="causes-list">
+      <div *ngFor="let cause of availableCauses; trackBy: trackByCauseId" class="cause-item" (click)="selectCause(cause)">
+        <mat-radio-button 
+          [value]="cause.id"
+          class="cause-radio">
+        </mat-radio-button>
+
+        <div class="cause-content">
+          <h4>{{ cause.nom }}</h4>
+        </div>
+      </div>
+    </div>
+  </mat-radio-group>
+</div>

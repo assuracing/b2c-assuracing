@@ -1,0 +1,40 @@
+.info-form {
+  padding: 30px;
+
+  h2 {
+    margin: 0 0 10px 0;
+    color: #02556e;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .help-text {
+    margin: 0 0 30px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  form .form-section {
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      mat-form-field {
+        &.full-width {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .info-form {
+    padding: 20px;
+  }
+}

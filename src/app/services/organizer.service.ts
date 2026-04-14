@@ -46,8 +46,7 @@ export class OrganizerService {
           org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
         );
       }),
-      catchError(err => {
-        console.error('Erreur lors de la vérification du produit', err);
+      catchError(_err => {
         return of(false);
       })
     );
@@ -77,7 +76,6 @@ export class OrganizerService {
   getOrganizersForProduct(productKey: keyof typeof this.PRODUCT_CODES): Observable<Array<{id: string, nom: string}>> {
     const productId = this.PRODUCT_CODES[productKey];
     if (!productId) {
-      console.error(`Code produit invalide: ${productKey}`);
       return of([]);
     }
     
@@ -85,7 +83,6 @@ export class OrganizerService {
       `${this.apiUrl}/api/allorganisateursclientent/${productId}`
     ).pipe(
       catchError((error: any) => {
-        console.error(`Erreur lors de la récupération des organisateurs pour le produit ${productKey}:`, error);
         return of([]);
       })
     );
@@ -104,7 +101,6 @@ export class OrganizerService {
         ) || null;
       }),
       catchError((error: any) => {
-        console.error('Erreur lors de la récupération des données organisateur RC:', error);
         return of(null);
       })
     );

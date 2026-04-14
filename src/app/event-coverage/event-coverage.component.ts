@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -115,17 +115,7 @@ interface ContractResponse {
     PaymentComponent,
     EventCoverageOptionsComponent,
     MatSnackBarModule,
-    MatCheckboxModule,
-    MatStepperModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatRadioModule,
-    MatIconModule,
-    MatTooltipModule,
   ],
   templateUrl: './event-coverage.component.html',
   styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss', '../app.component.scss']
@@ -221,7 +211,6 @@ export class EventCoverageComponent {
   subscriptions: Subscription[] = [];
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions!: EventCoverageOptionsComponent;
-  private vehicleData: any = null;
 
   circuits: Circuit[] = [];
   isLoadingCircuits = true;
@@ -252,7 +241,6 @@ export class EventCoverageComponent {
         this.isLoadingCircuits = false;
       },
       (error) => {
-        console.error('Error loading circuits:', error);
         this.isLoadingCircuits = false;
       }
     );
@@ -484,11 +472,6 @@ export class EventCoverageComponent {
     if(!birthDate) return;
     const age = this.calculateAge(new Date(birthDate));
     const driveLicenseType = this.vehicleForm.get('hasPermisB')?.value ? 'Permis B' : 'CASM';
-    console.log("DriveLicenseType"  , driveLicenseType);
-    console.log("Age", age);
-    console.log("HasPermisB", this.vehicleForm.get('hasPermisB')?.value);
-    console.log("HasCasm", this.vehicleForm.get('hasCasm')?.value);
-    console.log("VehicleType", this.vehicleForm.get('type')?.value);
     if(age > 16 && age < 18 && driveLicenseType === 'CASM' && this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('hasCasm')?.value === 'Non'){
       this.dialog.open(DriveLicenseAgeRestrictionDialogComponent, {
         width: '450px',
@@ -746,8 +729,7 @@ export class EventCoverageComponent {
 
         window.location.href = paymentUrl;
       },
-      error: (err) => {
-        console.error('Erreur lors de la création du contrat', err);
+      error: (_err) => {
       }
     });
   }
@@ -760,7 +742,6 @@ export class EventCoverageComponent {
 
   handleVehicleAdded(vehicle: any) {
     this.vehicle = vehicle;
-    this.vehicleData = vehicle;
   }
 
   saveVehicle() {
@@ -848,7 +829,6 @@ export class EventCoverageComponent {
     )?.[0];
     
     if (!garantieKey) {
-      console.error('Code produit non trouvé dans GARANTIE_CODES:', codeProduit);
       this.isCalculatingPrice = false;
       return;
     }
@@ -873,7 +853,6 @@ export class EventCoverageComponent {
       },
       error: (err) => {
         this.toastService.error('Erreur lors de l envoi du code de verification');
-        console.error('Erreur lors de l envoi du code de verification', err);
       }
     });
   }
@@ -888,7 +867,6 @@ export class EventCoverageComponent {
       },
       error: (err) => {
         this.toastService.error('Code de verification invalide');
-        console.error('Erreur lors de la validation du code de verification', err);
       }
     });
   }

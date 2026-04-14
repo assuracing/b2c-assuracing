@@ -284,7 +284,6 @@ export class EventCoverageOptionsComponent {
   
   public initializeProtectionPrices(): void {
     if (!this.trackdayForm) {
-      console.error('trackdayForm is not defined');
       return;
     }
 
@@ -325,8 +324,7 @@ export class EventCoverageOptionsComponent {
             this.PROTECTION_LEVELS[levelNum].price = montant;
           }
         },
-        error: (err: any) => {
-          console.error(`Erreur lors du calcul du prix pour le niveau ${levelNum}`, err);
+        error: (_err: any) => {
         }
       });
     });
@@ -376,8 +374,7 @@ export class EventCoverageOptionsComponent {
           this.updateFormControlsAvailability();
           this.isCheckingAvailability = false;
         },
-        error: (error) => {
-          console.error('Erreur lors de la vérification de la disponibilité des produits:', error);
+        error: (_error) => {
           this.snackBar.open(
             'Erreur lors de la vérification des options disponibles pour cet organisateur',
             'Fermer',

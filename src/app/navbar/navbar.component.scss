@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 :host {
   --primary-color: #02556e;
   --text-color: #333;
@@ -343,7 +345,7 @@
   font-size: 0.9rem;
 
   &:hover {
-    background-color: darken(#02556e, 10%);
+    background-color: color.adjust(#02556e, $lightness: -10%);
   }
 
   @media (max-width: 768px) {

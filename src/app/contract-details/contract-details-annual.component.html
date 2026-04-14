@@ -83,11 +83,24 @@
                 </div>
               </div>
 
+              <app-claim-list [claims]="getClaimsForContract(contract.contratID)" [contractId]="getContractIdAsNumber(contract.contratID)"></app-claim-list>
+
               <mat-card-actions align="end" *ngIf="contract.valide === false || contract.valide === 'false'">
                 <button mat-raised-button color="primary" (click)="onPay()" [disabled]="loadingPayment" class="action-button">
                   <mat-icon *ngIf="!loadingPayment">payment</mat-icon>
                   <mat-icon *ngIf="loadingPayment">hourglass_empty</mat-icon>
                   {{ loadingPayment ? 'Chargement...' : 'Finaliser le paiement' }}
+                </button>
+              </mat-card-actions>
+
+              <mat-card-actions align="end" *ngIf="contract.valide === true || contract.valide === 'true'" class="declare-actions">
+                <button mat-raised-button 
+                        color="accent"
+                        (click)="onDeclareClaim(contract)"
+                        class="action-button"
+                        title="Déclarer un sinistre pour ce contrat">
+                  <mat-icon>assignment_late</mat-icon>
+                  Déclarer un sinistre
                 </button>
               </mat-card-actions>
             </div>

@@ -27,8 +27,7 @@ export class PostalCodeService {
     return this.http.get<PostalCodeInfo[]>(this.API_URL, {
       params: { prefix }
     }).pipe(
-      catchError(error => {
-        console.error('Error fetching postal codes:', error);
+      catchError(_error => {
         return of([]);
       })
     );

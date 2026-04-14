@@ -41,11 +41,9 @@ export class AuthService {
 
   private storeToken(token: string, rememberMe: boolean): void {
     if (rememberMe) {
-      // Stockage dans localStorage et suppression du sessionStorage
       localStorage.setItem(this.tokenKey, token);
       sessionStorage.removeItem(this.tokenKey);
     } else {
-      // Stockage dans sessionStorage et suppression du localStorage
       sessionStorage.setItem(this.tokenKey, token);
       localStorage.removeItem(this.tokenKey);
     }

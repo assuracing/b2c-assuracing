@@ -72,8 +72,7 @@ export class CoverageOptionsComponent {
           return montant;
         })
       ).subscribe({
-        error: (err: any) => {
-          console.error(`Erreur lors du calcul du prix pour le niveau ${levelNum}`, err);
+        error: (_err: any) => {
         }
       });
     });
