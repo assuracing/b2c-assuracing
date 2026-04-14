@@ -1,7 +1,12 @@
 .container{min-height:auto;padding:24px;background-color:#02556e;box-shadow:0 0 20px rgba(0,0,0,.1);margin:20px auto;border-radius:8px;max-width:1400px;position:relative;z-index:1;color:#fff;
   @media (max-width:768px){margin:10px;padding:15px}
 }
-.filter-container{margin:1.5rem 0;background:rgba(255,255,255,.9);padding:1.5rem;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1);
+.filter-container{margin:1.5rem 0 0 0;background:rgba(255,255,255,.9);padding:1.5rem;border-radius:8px 8px 0 0;box-shadow:0 2px 10px rgba(0,0,0,.1);
+  .events-section-title{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #e0e0e0;
+
+    mat-icon{color:#1976d2;font-size:1.5rem}
+    h2{margin:0;font-size:1.1rem;font-weight:600;color:#02556e}
+  }
   .filters-row{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;
     @media (max-width:600px){flex-direction:row;gap:.5rem;align-items:stretch}
   }
@@ -18,7 +23,9 @@
 %icon-rc{background-color:#ffebee;color:#e57373}
 %icon-def{background-color:#f5f5f5;color:#999}
 
-.table-container{width:100%;overflow-x:hidden;margin:1rem 0;border-radius:8px;background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(0,0,0,.1);
+.table-wrapper{margin:0 0 1.5rem 0;border:1px solid #d0d0d0;border-radius:0 0 8px 8px;background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(0,0,0,.1);overflow:hidden}
+
+.table-container{width:100%;overflow-x:hidden;margin:0;border-radius:0;background:transparent;box-shadow:none;
   .products-container{display:flex;flex-wrap:wrap;gap:8px;min-height:30px;align-items:center;justify-content:center;
     .product-item{display:flex;align-items:center;gap:4px;padding:4px 10px;background:#e8f7ff;border:1px solid #c4e8ff;border-radius:16px;font-size:.8rem;transition:all .2s;min-height:28px;line-height:1;white-space:nowrap;
       &:hover{background:#d0eaff;box-shadow:0 2px 4px rgba(11,162,207,.1)}
