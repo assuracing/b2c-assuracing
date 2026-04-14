@@ -1,0 +1,219 @@
+<div class="documents-container">
+  <div *ngIf="requiredDocumentTypes.length === 0 && !isOptionalJustificatif">
+    <h2>Justificatifs</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>
+        Vous pouvez ajouter des justificatifs pour appuyer votre déclaration.
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="claimType === 'INTERRUPTION'">
+    <h2>Justificatifs à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>
+        RIB obligatoire et au moins une photo d'accident ou un devis de réparation doit être ajouté pour appuyer votre déclaration. Vous pouvez ajouter plusieurs photos ou devis.
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="isAnnulation">
+    <h2>Justificatifs à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>
+        RIB obligatoire et au moins un justificatif doit être ajouté pour appuyer votre déclaration. Vous pouvez ajouter plusieurs justificatifs.
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="isOptionalJustificatif">
+    <h2>Justificatifs à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>
+        RIB obligatoire. Les justificatifs supplémentaires sont facultatifs mais vous pouvez en ajouter plusieurs pour appuyer votre déclaration.
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="isRibOnly">
+    <h2>RIB à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>RIB obligatoire pour ce type de sinistre.</span>
+    </div>
+  </div>
+
+  <div *ngIf="isIntemperies">
+    <h2>RIB à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>RIB obligatoire pour ce type de sinistre.</span>
+    </div>
+  </div>
+
+  <div *ngIf="isDocumentObligatoire() && claimType !== 'INTERRUPTION' && !isIntemperies && !isAnnulation && !isOptionalJustificatif && !isRibOnly">
+    <h2>Justificatifs à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span *ngIf="!canAllowMultipleJustificatifs()">
+        RIB obligatoire et justificatifs demandés selon votre type de sinistre.
+      </span>
+      <span *ngIf="canAllowMultipleJustificatifs()">
+        RIB obligatoire et vous pouvez ajouter plusieurs justificatifs pour appuyer votre déclaration.
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!isDocumentObligatoire() && claimType !== 'INTERRUPTION' && !isIntemperies && !isAnnulation && !isOptionalJustificatif && !isRibOnly && requiredDocumentTypes.length > 0">
+    <h2>Justificatifs à téléverser</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span *ngIf="!canAllowMultipleJustificatifs()">
+        Le dépôt de justificatifs n'est pas obligatoire pour ce contrat.
+      </span>
+      <span *ngIf="canAllowMultipleJustificatifs()">
+        Vous pouvez ajouter plusieurs justificatifs pour appuyer votre déclaration.
+      </span>
+    </div>
+  </div>
+
+
+  <mat-card class="documents-card">
+    <mat-card-content>
+      <div class="documents-list">
+        <div class="document-type-group" *ngFor="let docType of requiredDocumentTypes">
+          <div class="document-type-header">
+            <mat-icon class="doc-type-icon">{{ getIconForDocType(docType) }}</mat-icon>
+            <span class="doc-type-title">{{ docType }}</span>
+          </div>
+
+          <div class="doc-upload-wrapper" *ngIf="!isDocumentUploaded(docType) || (canAllowMultipleJustificatifs() && docType !== 'RIB')">
+            <label class="doc-upload-area" [for]="'fileInput-' + docType">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Déposez ou cliquez ici</span>
+              <span class="doc-type-label">{{ docType }}</span>
+            </label>
+            <input 
+              hidden 
+              [id]="'fileInput-' + docType"
+              type="file" 
+              (change)="onFileSelected($event, docType)">
+          </div>
+
+          <div class="doc-uploaded-wrapper" *ngIf="isDocumentUploaded(docType)">
+            <ng-container *ngIf="canAllowMultipleJustificatifs() && docType !== 'RIB'; else singleFileTemplate">
+              <div *ngFor="let file of getUploadedFilesOfType(docType); let i = index" class="doc-uploaded">
+                <mat-icon class="check-icon">check_circle</mat-icon>
+                <div class="file-info">
+                  <small class="file-name" 
+                         style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                         (click)="openFile(file)">
+                    {{ file.nomFichier }}
+                  </small>
+                  <small class="file-size">{{ formatFileSize(file.taille) }}</small>
+                </div>
+                <button mat-icon-button (click)="removeFile(docType, i)" type="button" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #singleFileTemplate>
+              <div class="doc-uploaded">
+                <mat-icon class="check-icon">check_circle</mat-icon>
+                <div class="file-info">
+                  <small class="file-name" 
+                         style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                         (click)="openFile(getUploadedFile(docType))">
+                    {{ getUploadedFile(docType)?.nomFichier }}
+                  </small>
+                  <small class="file-size">{{ formatFileSize(getUploadedFile(docType)?.taille) }}</small>
+                </div>
+                <button mat-icon-button (click)="removeFile(docType)" type="button" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="document-type-group" *ngFor="let docType of optionalDocSets['OPTIONAL'] || []">
+          <div class="document-type-header">
+            <mat-icon class="doc-type-icon">{{ getIconForDocType(docType) }}</mat-icon>
+            <span class="doc-type-title">{{ docType }} <span style="font-size: 0.85em; color: #999;">(facultatif)</span></span>
+          </div>
+
+          <div class="doc-upload-wrapper" *ngIf="!isDocumentUploaded(docType) || canAllowMultipleJustificatifs()">
+            <label class="doc-upload-area" [for]="'fileInput-' + docType">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Déposez ou cliquez ici</span>
+              <span class="doc-type-label">{{ docType }}</span>
+            </label>
+            <input 
+              hidden 
+              [id]="'fileInput-' + docType"
+              type="file" 
+              (change)="onFileSelected($event, docType)">
+          </div>
+
+          <div class="doc-uploaded-wrapper" *ngIf="isDocumentUploaded(docType)">
+            <ng-container *ngIf="canAllowMultipleJustificatifs(); else singleOptionalFileTemplate">
+              <div *ngFor="let file of getUploadedFilesOfType(docType); let i = index" class="doc-uploaded">
+                <mat-icon class="check-icon">check_circle</mat-icon>
+                <div class="file-info">
+                  <small class="file-name" 
+                         style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                         (click)="openFile(file)">
+                    {{ file.nomFichier }}
+                  </small>
+                  <small class="file-size">{{ formatFileSize(file.taille) }}</small>
+                </div>
+                <button mat-icon-button (click)="removeFile(docType, i)" type="button" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #singleOptionalFileTemplate>
+              <div class="doc-uploaded">
+                <mat-icon class="check-icon">check_circle</mat-icon>
+                <div class="file-info">
+                  <small class="file-name" 
+                         style="color: #007ad9; cursor: pointer; text-decoration: underline;"
+                         (click)="openFile(getUploadedFile(docType))">
+                    {{ getUploadedFile(docType)?.nomFichier }}
+                  </small>
+                  <small class="file-size">{{ formatFileSize(getUploadedFile(docType)?.taille) }}</small>
+                </div>
+                <button mat-icon-button (click)="removeFile(docType)" type="button" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" title="Visualiser le fichier">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="status-section" *ngIf="areAllDocumentsUploaded() && isDocumentObligatoire()">
+    <mat-icon class="success-icon">check_circle</mat-icon>
+    <p class="status-text">Tous les documents obligatoires sont téléversés</p>
+  </div>
+</div>

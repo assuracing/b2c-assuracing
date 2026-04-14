@@ -43,4 +43,8 @@ constructor(public userService: UserService, private router: Router) {}
   goToUserContracts() {
     this.router.navigate(['/user-contracts']);
   }
+
+  goToClaimDeclaration() {
+    this.router.navigate(['/declare-claim']);
+  }
 }

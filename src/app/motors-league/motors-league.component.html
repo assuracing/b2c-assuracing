@@ -86,7 +86,6 @@
       <div class="mt-4">
         <button mat-button matStepperPrevious>Retour</button>
         <button mat-button matStepperNext [disabled]="!vehicleForm.valid">Continuer</button>
-        <!-- <button mat-button (click)="saveVehicle()" matStepperNext [disabled]="!vehicleForm.valid">Enregistrer et continuer</button>   -->
       </div>
     </form>
   </mat-step>
@@ -106,17 +105,13 @@
 
       <div class="summary-container">
       <h3>Véhicules</h3>
-        <!-- <div *ngFor="let vehicle of vehicles; let i = index" class="vehicle-summary">
-          <div class="vehicle-info"> -->
-            <p>
-              <strong>Véhicule</strong> : {{vehicleForm.get('type')?.value}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - 
-              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'immat'">{{vehicleForm.get('immatNumber')?.value}}</span>
-              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'chassis'">{{vehicleForm.get('chassisNumber')?.value}}</span>
-              <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'serie'">{{vehicleForm.get('serieNumber')?.value}}</span>
-            </p>
-          </div>
-        <!-- </div>
-      </div> -->
+        <p>
+          <strong>Véhicule</strong> : {{vehicleForm.get('type')?.value}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - 
+          <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'immat'">{{vehicleForm.get('immatNumber')?.value}}</span>
+          <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'chassis'">{{vehicleForm.get('chassisNumber')?.value}}</span>
+          <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'serie'">{{vehicleForm.get('serieNumber')?.value}}</span>
+        </p>
+      </div>
 
       <div class="summary-container">
       <h3 style="color: #111">Garanties annuelles sélectionnées</h3>

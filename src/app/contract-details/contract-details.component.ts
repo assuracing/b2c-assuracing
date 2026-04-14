@@ -8,6 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductMappingService } from '../services/product-mapping.service';
 import { CountryFlagService } from '../services/country-flag.service';
+import { Claim } from '../models/claim.model';
+import { ClaimService } from '../services/claim.service';
+import { ClaimListComponent } from '../components/claim-list/claim-list.component';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-contract-details',
@@ -18,7 +22,8 @@ import { CountryFlagService } from '../services/country-flag.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    DatePipe
+    DatePipe,
+    ClaimListComponent
   ],
   templateUrl: './contract-details.component.html',
   styleUrls: ['./contract-details.component.scss', '../app.component.scss', '../app-second.component.scss']
@@ -26,6 +31,7 @@ import { CountryFlagService } from '../services/country-flag.service';
 export class ContractDetailsComponent implements OnInit {
   contractId: number | null = null;
   contract: ContractDetail | null = null;
+  claims: Claim[] = [];
   loading = true;
   error: string | null = null;
   files: any[] = [];
@@ -35,8 +41,10 @@ export class ContractDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private contractService: ContractService,
+    private claimService: ClaimService,
     private productMappingService: ProductMappingService,
-    public countryFlagService: CountryFlagService
+    public countryFlagService: CountryFlagService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +53,7 @@ export class ContractDetailsComponent implements OnInit {
       if (id) {
         this.contractId = +id;
         this.loadContractDetails();
+        this.loadClaims();
       } else {
         this.error = 'Aucun identifiant de contrat fourni';
         this.loading = false;
@@ -78,13 +87,35 @@ export class ContractDetailsComponent implements OnInit {
     });
   }
 
+  private loadClaims(): void {
+    if (!this.contractId) {
+      return;
+    }
+
+    this.claimService.getClaimsForContract(this.contractId).subscribe({
+      next: (claims: Claim[]) => {
+        const productName = this.contract?.produit.nom.toLowerCase() ?? '';
+        const isReadOnly = productName.includes('annulation') || productName.includes('interruption');
+        
+        this.claims = claims.map(claim => ({
+          ...claim,
+          readonly: isReadOnly,
+          files: claim.files || []
+        }));
+      },
+      error: (_err: any) => {
+        this.toastService.error('Erreur lors du chargement des sinistres');
+      }
+    });
+  }
+
   loadVehiculeDetails(vehiculeId: number): void {
     this.contractService.getVehiculeDetails(vehiculeId).subscribe({
       next: (data) => {
         this.vehiculeDetails = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: (_err) => {
         this.loading = false;
       }
     });
@@ -98,7 +129,7 @@ export class ContractDetailsComponent implements OnInit {
         this.files = files || [];
         this.loading = false;
       },
-      error: (err) => {
+      error: (_err) => {
         this.files = [];
         this.loading = false;
       }
@@ -119,12 +150,13 @@ export class ContractDetailsComponent implements OnInit {
       
       window.location.href = paymentUrl;
     } else {
-        console.error('Impossible de procéder au paiement: informations manquantes', {
-        hasContract: !!this.contract,
-        transactionUID: this.contract?.transactionUID,
-        clientEmail: this.contract?.clientEmail,
-        montantGarantie: this.contract?.montantGarantie
-      });
+      this.toastService.error('Informations de paiement manquantes');
+    }
+  }
+
+  onDeclareClaim(): void {
+    if (this.contractId) {
+      this.router.navigate(['/declare-claim', this.contractId]);
     }
   }
 
@@ -134,5 +166,12 @@ export class ContractDetailsComponent implements OnInit {
       label = nomContrat;
     }
     return label;
+  }
+
+  isAnnualContract(): boolean {
+    if (!this.contract) return false;
+
+    const annualProductIds = [83, 398, 354, 355, 356, 357, 358];
+    return annualProductIds.includes(this.contract.produit.id);
   }
 }

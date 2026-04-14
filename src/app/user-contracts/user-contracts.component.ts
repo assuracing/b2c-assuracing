@@ -1,7 +1,7 @@
 import { Component, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { ProductMappingService } from '../services/product-mapping.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -88,7 +88,7 @@ export class UserContractsComponent implements AfterViewInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  onResize(_event: any) {
     this.updateDisplayedColumns(window.innerWidth);
   }
 
@@ -210,7 +210,6 @@ export class UserContractsComponent implements AfterViewInit {
         try {
           return new Date(group.dateSaisie).getFullYear() === selectedYear;
         } catch (e) {
-          console.error('Erreur de format de date:', group.dateSaisie, e);
           return false;
         }
       });
@@ -278,7 +277,6 @@ export class UserContractsComponent implements AfterViewInit {
   getProductLabel(productId: string | number, nomContrat?: string): string {
     let label = this.productMappingService.getProductLabel(String(productId));
     if (label.startsWith('Produit inconnu')) {
-      // Fallback: use contract name if available
       if (nomContrat) {
         label = nomContrat;
       }
@@ -289,7 +287,7 @@ export class UserContractsComponent implements AfterViewInit {
   getProductColorClass(productId: string | number, nomContrat?: string): string {
     const label = this.getProductLabel(productId, nomContrat).toLowerCase();
     
-    if (label.includes('interruption') || label.includes('annulation') || label.includes('intempéries') || label.includes('intemperies')) {
+    if (label.includes('interruption') || label.includes('annulation') || label.includes('intempéries') || label.includes('intemperies') || label.includes('cancelr')) {
       return 'interruption-annulation-icon';
     } else if (label.includes('individuelle accident') || label.includes('ia')) {
       return 'ia-icon';

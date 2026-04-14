@@ -133,7 +133,6 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
 
   public initializeProtectionPrices(): void {
     if (!this.vehicleType) {
-      console.error('vehicleType is not defined');
       return;
     }
 
@@ -173,13 +172,11 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
           const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
           this.PROTECTION_LEVELS[levelNum].price = montant;
         },
-        error: (err: any) => {
-          console.error(`Erreur lors du calcul du prix pour le niveau ${levelNum}`, err);
+        error: (_err: any) => {
         }
       });
     });
 
-    // RC (83)
     this.contractService
       .calculatePrice({ ...basePayload, codeProduit: [83] })
       .pipe(takeUntil(this.destroy$))
@@ -188,12 +185,10 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
           const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
           this.garantiePrices['RC'] = montant;
         },
-        error: (err: any) => {
-          console.error('Erreur lors du calcul du prix RC (83)', err);
+        error: (_err: any) => {
         }
       });
 
-    // PJ / Défense-Recours (398)
     this.contractService
       .calculatePrice({ ...basePayload, codeProduit: [398] })
       .pipe(takeUntil(this.destroy$))
@@ -202,8 +197,7 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
           const montant = (response?.prixProduitCompagnieTTC || 0) + (response?.fraisDeCourtage || 0);
           this.garantiePrices['DEFENSE_RECOURS'] = montant;
         },
-        error: (err: any) => {
-          console.error('Erreur lors du calcul du prix PJ/DEFENSE_RECOURS (398)', err);
+        error: (_err: any) => {
         }
       });
   }
@@ -261,7 +255,6 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
       data: { label: labelMap[section] }
     });
     
-    // Convert to promise properly depending on rxjs version
     dialogRef.afterClosed().subscribe(result => {
       if (result) this.resetSection(section);
     });

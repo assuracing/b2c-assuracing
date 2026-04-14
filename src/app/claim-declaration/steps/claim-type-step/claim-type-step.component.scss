@@ -1,0 +1,138 @@
+.type-selector {
+  padding: 30px;
+
+  h2 {
+    margin: 0 0 40px 0;
+    color: #02556e;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+
+    .type-option {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background: white;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(2, 85, 110, 0.2);
+        transform: translateY(-8px);
+      }
+
+      &.selected {
+        background: linear-gradient(135deg, #02556e 0%, #047da1 100%);
+        box-shadow: 0 8px 24px rgba(2, 85, 110, 0.3);
+
+        mat-card-content {
+          h3 {
+            color: white;
+          }
+
+          .type-icon {
+            color: white;
+          }
+
+          .type-footer {
+            color: white;
+            mat-icon {
+              color: white;
+            }
+          }
+        }
+      }
+
+      mat-card-content {
+        padding: 40px 24px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+
+        .type-icon {
+          font-size: 48px;
+          width: 48px;
+          height: 48px;
+          color: #02556e;
+          transition: color 0.3s;
+        }
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #02556e;
+          transition: color 0.3s;
+        }
+
+        .type-footer {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #02556e;
+          font-weight: 600;
+          font-size: 12px;
+          transition: color 0.3s;
+          margin-top: 8px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  .next-button {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 160px;
+      background-color: #02556e;
+      color: white;
+      font-weight: 600;
+      padding: 12px 32px;
+      border-radius: 4px;
+
+      &:hover:not(:disabled) {
+        background-color: #047da1;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        color: #999;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .type-selector {
+    padding: 20px;
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .types-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+  }
+}

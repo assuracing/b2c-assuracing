@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepper } from '@angular/material/stepper';
@@ -182,7 +182,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         width: '400px',
         disableClose: true
       });
-      // Handle observable consistently
       const result = await dialogRef.afterClosed().toPromise();
       if (result) {
         this.router.navigate(['/']);
@@ -241,28 +240,6 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.summaryForm.patchValue({
       vehicles: this.vehicles
     });
-  }
-
-  saveVehicle() {
-    if (this.vehicleForm.valid) {
-      const vehicle = {
-        type: this.vehicleForm.get('type')?.value,
-        brand: this.vehicleForm.get('brand')?.value,
-        model: this.vehicleForm.get('model')?.value,
-        identificationNumber: this.vehicleForm.get('identificationNumber')?.value,
-        immatNumber: this.vehicleForm.get('immatNumber')?.value,
-        chassisNumber: this.vehicleForm.get('chassisNumber')?.value,
-        serieNumber: this.vehicleForm.get('serieNumber')?.value,
-        titreConduite: this.vehicleForm.get('titreConduite')?.value,
-      };
-      
-      this.vehicleInfo.onSaveVehicle();
-      
-      this.vehicleForm.reset();
-      this.vehicleForm.patchValue({
-        identificationNumber: 'immat',
-      });
-    }
   }
 
   private initializeBirthdateSubscription() {
@@ -566,8 +543,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
         window.location.href = paymentUrl;
       },
-      error: (err) => {
-        console.error('Erreur lors de la création du contrat', err);
+      error: (_err) => {
       }
     });
   }
@@ -616,9 +592,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         this.stepper.next();
         this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
       },
-      error: (err) => {
+      error: (_err) => {
         this.toastService.error('Erreur lors de l envoi du code de verification');
-        console.error('Erreur lors de l envoi du code de verification', err);
       }
     });
   }
@@ -631,9 +606,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         this.toastService.success('Code de verification validé');
         this.onSubmit();
       },
-      error: (err) => {
+      error: (_err) => {
         this.toastService.error('Code de verification invalide');
-        console.error('Erreur lors de la validation du code de verification', err);
       }
     });
   }

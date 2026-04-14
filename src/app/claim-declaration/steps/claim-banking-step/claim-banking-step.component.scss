@@ -1,0 +1,107 @@
+.banking-container {
+  padding: 30px;
+
+  h2 {
+    margin: 0 0 10px 0;
+    color: #02556e;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .help-text {
+    margin: 0 0 30px 0;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .banking-card {
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+    margin-bottom: 30px;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .full-width {
+        width: 100%;
+      }
+
+      ::ng-deep .mat-mdc-form-field {
+        .mat-mdc-form-field-hint {
+          color: #999;
+          font-size: 12px;
+        }
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: #d1d5db;
+        }
+
+        &.mat-focused .mdc-notched-outline__leading,
+        &.mat-focused .mdc-notched-outline__notch,
+        &.mat-focused .mdc-notched-outline__trailing {
+          border-color: #02556e;
+        }
+      }
+    }
+
+    .info-box {
+      background-color: #f0f9ff;
+      border-left: 4px solid #0066cc;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 20px;
+
+      p {
+        margin: 8px 0;
+        font-size: 13px;
+        color: #02556e;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  .submit-area {
+    text-align: center;
+
+    button {
+      min-width: 160px;
+      background-color: #02556e;
+      color: white;
+
+      &:disabled {
+        background-color: #d1d5db;
+        color: #999;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: #047da1;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .banking-container {
+    padding: 16px;
+
+    h2 {
+      font-size: 18px;
+    }
+
+    .submit-area button {
+      width: 100%;
+    }
+  }
+}

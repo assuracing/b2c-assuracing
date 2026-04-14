@@ -1,0 +1,111 @@
+<div class="claims-container" *ngIf="claims.length > 0">
+  <h3 class="section-title">
+    <mat-icon>assignment_late</mat-icon>
+    Sinistres associés
+  </h3>
+
+  <mat-accordion multi="true">
+    <mat-expansion-panel *ngFor="let claim of claims">
+      <mat-expansion-panel-header>
+        <div class="panel-header">
+          <div class="panel-title">
+            <mat-icon [ngClass]="getStatusClass(claim.etatEnCours)">{{ getStatusIcon(claim.etatEnCours) }}</mat-icon>
+            <span>Sinistre #{{ claim.id }} - du {{ claim.dateSinistre | date:'d MMMM yyyy' }} - {{ claim.typeSinistre?.nom }}</span>
+          </div>
+          <div class="panel-description">
+            <span> depuis le {{ claim.dateDeclaSinistre | date:'d MMMM yyyy' }}</span>
+            <span class="status-badge" [ngClass]="getStatusClass(claim.etatEnCours)">
+              {{ claim.etatEnCours || 'Statut inconnu' }}
+            </span>
+          </div>
+        </div>
+      </mat-expansion-panel-header>
+
+      <div class="claim-details">
+        <div class="detail-row">
+          <span class="detail-label"><mat-icon>update</mat-icon> Date modification état:</span>
+          <span class="detail-value">{{ claim.dateEtat | date:'d MMMM yyyy' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><mat-icon>event</mat-icon> Déclaré le:</span>
+          <span class="detail-value">{{ claim.dateDeclaSinistre | date:'d MMMM yyyy' }}</span>
+        </div>
+
+        <div class="detail-row" *ngIf="isProductSpecial(claim)">
+          <span class="detail-label"><mat-icon>account_balance_wallet</mat-icon> Montant garantie:</span>
+          <span class="detail-value">{{ claim.montant }} €</span>
+        </div>
+        <div class="detail-row" *ngIf="isProductSpecial(claim)">
+          <span class="detail-label"><mat-icon>receipt</mat-icon> Franchise:</span>
+          <span class="detail-value">{{ claim.franchise }} €</span>
+        </div>
+
+        <div class="detail-row">
+          <span class="detail-label"><mat-icon>comment</mat-icon> Commentaire:</span>
+          <span class="detail-value">{{ claim.comment || 'Aucun commentaire' }}</span>
+        </div>
+
+        <div class="detail-row" *ngIf="claim.typeCauseSinistre?.nom">
+          <span class="detail-label"><mat-icon>warning_amber</mat-icon> Cause du sinistre:</span>
+          <span class="detail-value">{{ claim.typeCauseSinistre?.nom }}</span>
+        </div>
+
+        <mat-divider></mat-divider>
+        <div class="files-section">
+          <h4><mat-icon>attach_file</mat-icon> Fichiers</h4>
+          
+          <div *ngFor="let docType of getRequiredDocumentTypes(claim)" class="document-row" style="margin-bottom: 0.5rem;">
+            <span class="doc-type-label">{{ docType }}:</span>
+            
+            <div class="files-list">
+              <div *ngFor="let fichier of getFilesByType(claim, docType)" class="file-display-item">
+                <a style="color: #007ad9; text-decoration: none; cursor: pointer;"
+                   (click)="openFile(fichier.contentContentType, fichier.content || fichier.urlFichier, fichier.nomFichier || fichier.nom)"
+                   [title]="'Visualiser: ' + (fichier.nomFichier || fichier.nom)">
+                  <mat-icon>insert_drive_file</mat-icon>
+                  <span>{{ fichier.nomFichier || fichier.nom }}</span>
+                </a>
+                <button mat-icon-button (click)="openFile(fichier.contentContentType, fichier.content || fichier.urlFichier, fichier.nomFichier || fichier.nom)" title="Visualiser">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <span *ngIf="!hasFileOfType(claim, docType)" class="missing-file">Non fourni</span>
+          </div>
+          
+          <div *ngIf="canEditClaim(claim)" class="documents-add-section">
+            <h5>Ajouter une pièce justificative</h5>
+            
+            <mat-card class="documents-cards">
+              <mat-card-content>
+                <div class="documents-grid">
+                  <div *ngFor="let docType of getRequiredDocumentTypes(claim)" class="document-add-item">
+                    <label class="doc-add-box" [for]="'fileInput-add-' + claim.id + '-' + docType">
+                      <mat-icon>cloud_upload</mat-icon>
+                      <span class="doc-add-label">Ajouter {{ docType | lowercase }}</span>
+                      <span class="doc-add-size">(5 Mo max)</span>
+                    </label>
+                    <input 
+                      hidden 
+                      [id]="'fileInput-add-' + claim.id + '-' + docType"
+                      type="file" 
+                      (change)="onFileSelected($event, claim, docType)"
+                      accept="application/pdf,image/*">
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            
+            <div *ngIf="!canAddMoreFiles(claim)" class="limit-warning">
+              <mat-icon>warning</mat-icon>
+              <span>Limite de 10 fichiers atteinte</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

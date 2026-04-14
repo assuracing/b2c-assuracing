@@ -10,6 +10,9 @@ import { ProductMappingService } from '../services/product-mapping.service';
 import { AnnualContractDataService } from '../services/annual-contract-data.service';
 import { ContractService } from '../services/contract.service';
 import { UserService } from '../services/user.service';
+import { ClaimService } from '../services/claim.service';
+import { Claim } from '../models/claim.model';
+import { ClaimListComponent } from '../components/claim-list/claim-list.component';
 
 interface Contract {
   contratID: string;
@@ -31,7 +34,8 @@ interface Contract {
     MatIconModule,
     MatExpansionModule,
     MatProgressSpinnerModule,
-    DatePipe
+    DatePipe,
+    ClaimListComponent
   ],
   templateUrl: './contract-details-annual.component.html',
   styleUrls: ['./contract-details-annual.component.scss', './contract-details.component.scss', '../app.component.scss', '../app-second.component.scss']
@@ -43,6 +47,8 @@ export class ContractDetailsAnnualComponent implements OnInit {
   error: string | null = null;
   loadingPayment = false;
   loading = false;
+  claims: Map<string, Claim[]> = new Map();
+  selectedContractId: string | null = null;
 
   private guaranteeProductMap: { [key: string]: number[] } = {
     'rc': [83],
@@ -56,7 +62,8 @@ export class ContractDetailsAnnualComponent implements OnInit {
     private productMappingService: ProductMappingService,
     private annualContractDataService: AnnualContractDataService,
     private contractService: ContractService,
-    private userService: UserService
+    private userService: UserService,
+    private claimService: ClaimService
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +80,8 @@ export class ContractDetailsAnnualComponent implements OnInit {
 
       if (this.contracts.length === 0) {
         this.error = 'Aucun contrat à afficher';
+      } else {
+        this.loadClaimsForContracts();
       }
     } else {
       this.route.paramMap.subscribe(params => {
@@ -107,6 +116,7 @@ export class ContractDetailsAnnualComponent implements OnInit {
             return new Date(b.dateAdhesionContrat).getTime() - new Date(a.dateAdhesionContrat).getTime();
           });
           this.error = null;
+          this.loadClaimsForContracts();
         } else {
           this.error = 'Aucun contrat trouvé pour cette garantie.';
           this.contracts = [];
@@ -195,5 +205,36 @@ export class ContractDetailsAnnualComponent implements OnInit {
         window.location.href = paymentUrl;
       }
     }
+  }
+
+  private loadClaimsForContracts(): void {
+    this.contracts.forEach(contract => {
+      const contractId = parseInt(contract.contratID, 10);
+      if (!isNaN(contractId)) {
+        this.claimService.getClaimsForContract(contractId).subscribe({
+          next: (claims: Claim[]) => {
+            this.claims.set(contract.contratID, claims);
+          },
+          error: (err: any) => {
+            console.error(`Erreur lors du chargement des sinistres pour le contrat ${contract.contratID}:`, err);
+            this.claims.set(contract.contratID, []);
+          }
+        });
+      }
+    });
+  }
+
+  getClaimsForContract(contractId: string): Claim[] {
+    return this.claims.get(contractId) || [];
+  }
+
+  onDeclareClaim(contract: Contract): void {
+    if (contract && contract.contratID) {
+      this.router.navigate(['/declare-claim', contract.contratID]);
+    }
+  }
+
+  getContractIdAsNumber(contratID: string): number {
+    return parseInt(contratID, 10);
   }
 }

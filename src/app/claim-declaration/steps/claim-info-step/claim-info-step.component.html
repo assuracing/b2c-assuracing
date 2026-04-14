@@ -1,0 +1,23 @@
+<div class="info-form">
+  <h2>{{ selectedCause?.nom || 'Détails de votre demande' }}</h2>
+
+  <form [formGroup]="form">
+    <mat-card class="form-section">
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Date du sinistre</mat-label>
+          <input matInput [matDatepicker]="dp" formControlName="dateEvenement" [min]="minDate" [max]="maxDate" required>
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+          <mat-error>{{ getErrorMessage('dateEvenement') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Commentaire</mat-label>
+          <textarea matInput formControlName="description" rows="6" placeholder="Décrivez votre situation en détail (optionnel)"></textarea>
+          <mat-error>{{ getErrorMessage('description') }}</mat-error>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  </form>
+</div>

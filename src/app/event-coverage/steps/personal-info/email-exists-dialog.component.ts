@@ -6,10 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../../../login/login.component';
-import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../../services/user.service';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';  
 
 @Component({
   selector: 'app-email-exists-dialog',
@@ -29,14 +29,12 @@ import { switchMap } from 'rxjs/operators';
 })
 export class EmailExistsDialogComponent {
   @Output() wrongEmailEvent = new EventEmitter<void>();
-  @Output() loginSuccessEvent = new EventEmitter<string>();
 
   private apiUrl: string;
 
   constructor(
     private dialogRef: MatDialogRef<EmailExistsDialogComponent>,
     private dialog: MatDialog,
-    private http: HttpClient,
     private userService: UserService,
     private envService: EnvironmentService
   ) {
@@ -69,7 +67,6 @@ export class EmailExistsDialogComponent {
               });
             },
             error: (error) => {
-              console.error('Erreur lors du chargement des informations du compte:', error);
               this.dialogRef.close({ success: false });
             }
           });

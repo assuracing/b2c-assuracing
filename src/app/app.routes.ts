@@ -12,6 +12,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { UserContractsComponent } from './user-contracts/user-contracts.component';
 import { ContractDetailsComponent } from './contract-details/contract-details.component';
 import { ContractDetailsAnnualComponent } from './contract-details/contract-details-annual.component';
+import { ClaimDeclarationComponent } from './claim-declaration/claim-declaration.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -26,5 +27,7 @@ export const routes: Routes = [
     { path: 'contracts/:id', component: ContractDetailsComponent },
     { path: 'contract-details-annual/:id', component: ContractDetailsAnnualComponent },
     { path: 'user-profil-info', component: UserProfilInfoComponent },
-    { path: 'reset-password', component: ResetPasswordComponent }
+    { path: 'reset-password', component: ResetPasswordComponent },
+    { path: 'declare-claim', component: ClaimDeclarationComponent },
+    { path: 'declare-claim/:contractId', component: ClaimDeclarationComponent }
 ];

@@ -16,7 +16,6 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { Observable, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { CountryFlagService } from '../../../services/country-flag.service';
 
 const MY_DATE_FORMATS = {
@@ -154,7 +153,6 @@ export class TrackdayComponent implements OnInit {
         this.isLoadingOrganizers = false;
       },
       (error) => {
-        console.error('Error loading organizers:', error);
         this.isLoadingOrganizers = false;
       }
     );

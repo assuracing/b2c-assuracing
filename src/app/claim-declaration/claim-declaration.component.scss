@@ -1,0 +1,343 @@
+.claim-declaration-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+
+  .header-section {
+    margin-bottom: 30px;
+
+    .header-card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+
+      mat-card-header {
+        margin-bottom: 15px;
+      }
+
+      mat-card-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #02556e;
+        margin: 0;
+      }
+
+      mat-card-subtitle {
+        color: #047da1;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+          .mat-step-label {
+            color: #02556e !important;
+            font-weight: 500;
+            font-size: 1rem;
+            white-space: normal !important;
+            text-align: center;
+            line-height: 1.2;
+            padding: 0 4px;
+          }
+
+          &.mat-active .mat-step-label {
+            color: #047da1 !important;
+            font-weight: 600;
+          }
+
+          @media (max-width: 600px) {
+            .mat-step-label {
+              font-size: 13px !important;
+              padding: 0 2px !important;
+              line-height: 1.15 !important;
+              min-width: 0 !important;
+              max-width: 80px !important;
+              white-space: normal !important;
+              word-break: break-word !important;
+            }
+            .mat-step-header {
+              min-width: 0 !important;
+              padding: 0 2px !important;
+              height: 56px !important;
+            }
+          }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .progress-indicator {
+    margin: 30px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .steps-breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #666;
+        white-space: nowrap;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: #047da1;
+        }
+
+        .separator {
+          font-size: 18px;
+          margin: 0 5px;
+          color: #ddd;
+        }
+      }
+    }
+  }
+
+  mat-progress-bar {
+    margin-bottom: 20px;
+  }
+
+  .claim-stepper {
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+
+    ::ng-deep {
+      .mat-step-label {
+        color: #02556e !important;
+        font-weight: 500;
+        white-space: normal !important;
+        text-overflow: clip !important;
+        overflow: visible !important;
+      }
+
+      &.mat-active .mat-step-label {
+        color: #047da1 !important;
+        font-weight: 600;
+      }
+
+      .mat-step-header {
+        padding: 0 8px !important;
+        height: auto;
+        min-height: 72px;
+      }
+
+      @media (max-width: 768px) {
+        .mat-step-header {
+          min-height: 85px !important;
+          padding: 8px 4px !important;
+        }
+
+        .mat-step-label {
+          font-size: 12px !important;
+          line-height: 1.2 !important;
+          max-width: 70px !important;
+          word-break: break-word !important;
+        }
+
+        .mat-step-icon {
+          width: 28px !important;
+          height: 28px !important;
+          font-size: 16px !important;
+          margin-bottom: 4px !important;
+        }
+      }
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 20px;
+
+      button {
+        min-width: 140px;
+        border-radius: 4px;
+        font-weight: 600;
+
+        &[color="accent"] {
+          background-color: #02556e;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: #047da1;
+          }
+        }
+
+        &:not([color="accent"]) {
+          color: #02556e;
+          border: 1px solid #ddd;
+
+          &:hover {
+            background-color: #f8f9fa;
+            border-color: #02556e;
+          }
+        }
+      }
+    }
+  }
+
+  .cancel-section {
+    text-align: center;
+    padding: 20px 0;
+
+    button {
+      min-width: 150px;
+      color: #666;
+      border-color: #ddd;
+      border-radius: 4px;
+      font-weight: 500;
+
+      &:hover {
+        border-color: #02556e;
+        color: #02556e;
+      }
+    }
+  }
+
+  .type-selection-card {
+    margin-bottom: 20px;
+
+    mat-card-header {
+      margin-bottom: 20px;
+    }
+
+    mat-card-content {
+      padding: 20px;
+    }
+
+    .type-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+
+      .type-button {
+        height: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 4px;
+        text-align: left;
+        transition: all 0.2s ease;
+
+        .type-info {
+          strong {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+          }
+
+          p {
+            font-size: 12px;
+            margin: 0;
+            line-height: 1.4;
+            opacity: 0.8;
+          }
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &.type-button-selected {
+          background-color: #02556e !important;
+          color: white !important;
+          box-shadow: 0 6px 16px rgba(2, 85, 110, 0.4) !important;
+          border: 2px solid #013d53 !important;
+          font-weight: 700 !important;
+          transform: scale(1.02);
+          position: relative;
+
+          .type-info strong {
+            color: white !important;
+          }
+
+          .type-info p {
+            color: rgba(255, 255, 255, 0.9) !important;
+          }
+
+          &:hover {
+            background-color: #013d53 !important;
+            box-shadow: 0 8px 20px rgba(2, 85, 110, 0.5) !important;
+            transform: translateY(-3px) scale(1.02);
+          }
+        }
+      }
+    }
+  }
+
+
+.step-actions {
+  button[color="accent"][disabled] {
+    background-color: #d1d5db !important;
+    color: #999 !important;
+    opacity: 0.6;
+  }
+
+  button.button-unconfirmed {
+    background-color: #d1d5db !important;
+    color: #666 !important;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #b8bcc4 !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .claim-declaration-wrapper {
+    padding: 10px;
+
+    .header-section .header-card {
+      mat-card-title {
+        font-size: 20px;
+      }
+    }
+
+    .progress-indicator .steps-breadcrumb {
+      justify-content: flex-start;
+
+      .breadcrumb-item {
+        font-size: 11px;
+
+        .separator {
+          display: none;
+        }
+      }
+    }
+
+    .claim-stepper ::ng-deep .mat-step-content {
+      padding: 20px 0;
+    }
+
+    .claim-stepper .step-actions {
+      flex-direction: row !important;
+      gap: 8px;
+
+      button {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+    }
+  }
+}

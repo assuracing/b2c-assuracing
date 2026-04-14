@@ -1,0 +1,119 @@
+<div class="claim-declaration-wrapper">
+  <div class="header-section">
+    <mat-card class="header-card">
+      <mat-card-header>
+        <mat-card-title>Déclarez votre sinistre</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <p>Complétez votre déclaration pour votre sinistre</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+  <mat-stepper #stepper linear class="claim-stepper" [labelPosition]="labelPosition">
+    <mat-step *ngIf="showContractStep" [editable]="true" [completed]="contractSelected">
+      <ng-template matStepLabel>Contrat</ng-template>
+      <app-claim-contract-step
+        #claimContractStep
+        (contractSelected)="onContractSelected($event)">
+      </app-claim-contract-step>
+    </mat-step>
+
+    <mat-step *ngIf="showTypeStep" [completed]="claim.type !== ''">
+      <ng-template matStepLabel>Type de sinistre</ng-template>
+      <mat-card class="type-selection-card">
+        <mat-card-header>
+          <mat-card-title>Sélectionnez le type de sinistre</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="type-options">
+            <button 
+              *ngFor="let type of availableSinistresTypes; trackBy: trackByTypeId"
+              mat-raised-button 
+              [color]="selectedTypeId === type.id ? 'accent' : ''"
+              [class.type-button-selected]="selectedTypeId === type.id"
+              (click)="onClaimTypeSelected(type.id)"
+              class="type-button">
+              <div class="type-info">
+                <strong>{{ type.nom }}</strong>
+              </div>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <div class="step-actions">
+        <button mat-button (click)="goBackToContract()">Précédent</button>
+        <button mat-button (click)="submitTypeWithValidation()">Suivant</button>
+      </div>
+    </mat-step>
+
+    <mat-step *ngIf="showReasonStep" [completed]="selectedTypeCauseSinistre !== undefined">
+      <ng-template matStepLabel>Motif de demande</ng-template>
+      <app-claim-reason-step
+        #claimReasonStep
+        [claimType]="claim.type"
+        [availableCauses]="getFilteredCausesForClaimType()"
+        (reasonSelected)="onReasonSelected($event)">
+      </app-claim-reason-step>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious>Précédent</button>
+        <button mat-button (click)="submitReason()">Suivant</button>
+      </div>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Informations</ng-template>
+      <app-claim-info-step
+        #claimInfoStep
+        [selectedCause]="selectedTypeCauseSinistre"
+        [claimType]="claim.type"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        (claimInfoSubmitted)="onClaimInfoSubmitted($event)">
+      </app-claim-info-step>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious>Précédent</button>
+        <button mat-button (click)="submitInfo(claimInfoStep)">Suivant</button>
+      </div>
+    </mat-step>
+
+    <mat-step [optional]="claim.type === 'INTEMPERIES'">
+      <ng-template matStepLabel>Justificatifs</ng-template>
+      <app-claim-documents-step
+        #claimDocumentsStep
+        [claimType]="claim.type"
+        [contractProductName]="selectedContract?.nomcontrat"
+        (documentsSubmitted)="onDocumentsSubmitted($event)">
+      </app-claim-documents-step>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious>Précédent</button>
+        <button mat-button (click)="submitDocuments(claimDocumentsStep)">Suivant</button>
+      </div>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Confirmation</ng-template>
+      <app-claim-summary-step
+        #claimSummaryStep
+        [claim]="claim"
+        [selectedTypeCauseSinistre]="selectedTypeCauseSinistre"
+        [availableSinistresTypes]="availableSinistresTypes">
+      </app-claim-summary-step>
+      <div class="step-actions">
+        <button mat-button matStepperPrevious>Précédent</button>
+        <button mat-raised-button color="accent"
+          (click)="submitClaimWithValidation()"
+          [class.button-unconfirmed]="!claimSummaryStep.isSummaryConfirmed()"
+          [disabled]="isLoading">
+          <mat-icon>send</mat-icon>
+          <span>{{ isLoading ? 'Envoi en cours...' : 'Soumettre la demande' }}</span>
+        </button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+
+
+</div>
