@@ -1,0 +1,262 @@
+
+.document-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.doc-label {
+  font-weight: 500;
+  color: #555;
+  min-width: 180px;
+  font-size: 0.95rem;
+}
+
+.doc-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.file-type-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #007ad9;
+    gap: 0.4rem;
+    flex: 1;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.file-actions {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+
+  button {
+    padding: 4px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.missing-file {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.doc-type-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 140px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+}
+
+.files-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 200px;
+}
+
+.file-display-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #007ad9;
+    gap: 0.4rem;
+    cursor: pointer;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+  }
+
+  button {
+    padding: 4px;
+    margin-left: 0.25rem;
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.documents-add-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #eee;
+
+  h5 {
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  mat-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 8px;
+
+    mat-card-content {
+      padding: 1.5rem;
+    }
+  }
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.document-add-item {
+  .doc-add-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-height: 140px;
+    height: 140px;
+
+    &:hover {
+      border-color: #047da1;
+      background-color: #e5eff5;
+
+      mat-icon {
+        color: #047da1;
+      }
+
+      .doc-add-label {
+        color: #047da1;
+      }
+    }
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #999;
+      transition: color 0.2s ease;
+      flex-shrink: 0;
+    }
+  }
+
+  .doc-add-label {
+    font-weight: 500;
+    color: #555;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
+
+  .doc-add-size {
+    font-size: 0.75rem;
+    color: #999;
+    flex-shrink: 0;
+  }
+}
+
+.limit-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+  font-size: 0.9rem;
+
+  mat-icon {
+    color: #ffc107;
+  }
+}

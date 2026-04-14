@@ -28,7 +28,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
     MatCardModule,
   ],
   templateUrl: './claim-list.component.html',
-  styleUrls: ['./claim-list.component.scss', './claim-list-responsive.component.scss'],
+  styleUrls: ['./claim-list.component.scss', './claim-list-responsive.component.scss', './claim-list-document.component.scss'],
 })
 export class ClaimListComponent implements OnInit, OnChanges {
   @Input() claims: Claim[] = [];
