@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContractService } from '../../services/contract.service';
 import { OrganizerService } from '../../services/organizer.service';
@@ -24,6 +25,11 @@ interface ProtectionLevel {
   death: number;
   disability: number;
   price: number;
+}
+
+interface Benefit {
+  icon: string;
+  title: string;
 }
 
 @Component({
@@ -44,10 +50,11 @@ interface ProtectionLevel {
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     AdaptiveTooltipComponent
   ],
   templateUrl: './motors-league-coverage-options.component.html',
-  styleUrls: ['../../event-coverage/steps/event-coverage-options/event-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options2.scss',  '../../app.component.scss']
+  styleUrls: ['./motors-league-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options2.scss',  '../../app.component.scss']
 })
 export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   @Input() isCalculatingPrice: boolean = false;
@@ -80,6 +87,32 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
     3: { death: 100000, disability: 150000, price: 0 },
     4: { death: 150000, disability: 200000, price: 0 },
     5: { death: 200000, disability: 300000, price: 0 }
+  };
+
+  benefitsMap: { [key: string]: Benefit[] } = {
+    protectionPilote: [
+      { icon: 'heart_broken', title: 'Capital Décès (de 7600 € à 200 000 €)' },
+      { icon: 'accessible', title: 'Capital Invalidité (de 18500 à 300 000 €)' },
+      { icon: 'phone_in_talk', title: 'Assistance médicale 24/7' },
+      { icon: 'flight_takeoff', title: 'Frais médicaux à l\'étranger : 100 000 €' },
+      { icon: 'local_hospital', title: 'Rapatriement et transport sanitaire (frais réels)' },
+      { icon: 'receipt_long', title: 'Frais médicaux restant à charge (2500 €)' },
+      { icon: 'two_wheeler', title: 'Spécial moto : reconditionnement d\'airbag jusque 150 €' }
+    ],
+    defenseRecours: [
+      { icon: 'gavel', title: 'La garantie qui défend vos droits' },
+      { icon: 'contact_support', title: 'Accompagnement juridique et assistance psychologique par téléphone' },
+      { icon: 'balance', title: 'Garantie d\'aide aux victimes et recours pénal' },
+      { icon: 'admin_panel_settings', title: 'Défense pénale' },
+      { icon: 'description', title: 'Garantie consommation auto/moto' }
+    ],
+    responsabiliteCivile: [
+      { icon: 'shield', title: 'Couverture des dommages que vous causez aux tiers' },
+      { icon: 'personal_injury', title: 'Dommages corporels : 8M€' },
+      { icon: 'car_crash', title: 'Dommages matériels : 500k€' },
+      { icon: 'sports_motorsports', title: 'Dont dommages aux équipements de sécurité : 10k€' },
+      { icon: 'check_circle', title: 'Sans franchise' }
+    ]
   };
 
   private destroy$ = new Subject<void>();
@@ -321,6 +354,10 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
     this.sectionInProgress.emit(true);
 
     if (section === 'responsabiliteRecours') this.form.patchValue({ responsabiliteRecours: true });
+  }
+
+  getBenefitsForGuarantee(guaranteeType: string): Benefit[] {
+    return this.benefitsMap[guaranteeType] || [];
   }
 
 }

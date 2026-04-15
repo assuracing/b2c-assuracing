@@ -74,6 +74,24 @@
         </div>
 
         <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">Valider</button>
+
+        <mat-accordion class="benefits-accordion" *ngIf="getBenefitsForGuarantee('protectionPilote') && getBenefitsForGuarantee('protectionPilote').length > 0">
+          <mat-expansion-panel class="benefits-panel">
+            <mat-expansion-panel-header class="benefits-header">
+              <mat-panel-title>
+                <mat-icon>star</mat-icon>
+                Mes avantages
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="benefits-list">
+              <div class="benefit-item" *ngFor="let benefit of getBenefitsForGuarantee('protectionPilote')">
+                <mat-icon class="benefit-icon">{{ benefit.icon }}</mat-icon>
+                <h4 class="benefit-title">{{ benefit.title }}</h4>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
       </div>
     </div>
   </div>
@@ -142,6 +160,24 @@
             </span>
           </mat-slide-toggle>
           <p>Prime : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
+
+          <mat-accordion class="benefits-accordion" *ngIf="getBenefitsForGuarantee('responsabiliteCivile') && getBenefitsForGuarantee('responsabiliteCivile').length > 0">
+            <mat-expansion-panel class="benefits-panel">
+              <mat-expansion-panel-header class="benefits-header">
+                <mat-panel-title>
+                  <mat-icon>star</mat-icon>
+                  Mes avantages
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <div class="benefits-list">
+                <div class="benefit-item" *ngFor="let benefit of getBenefitsForGuarantee('responsabiliteCivile')">
+                  <mat-icon class="benefit-icon">{{ benefit.icon }}</mat-icon>
+                  <h4 class="benefit-title">{{ benefit.title }}</h4>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
         <div class="risk-group">
           <mat-slide-toggle
@@ -156,6 +192,24 @@
           <div class="risk-details">
             <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
             <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
+
+            <mat-accordion class="benefits-accordion" *ngIf="getBenefitsForGuarantee('defenseRecours') && getBenefitsForGuarantee('defenseRecours').length > 0">
+              <mat-expansion-panel class="benefits-panel">
+                <mat-expansion-panel-header class="benefits-header">
+                  <mat-panel-title>
+                    <mat-icon>star</mat-icon>
+                    Mes avantages
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="benefits-list">
+                  <div class="benefit-item" *ngFor="let benefit of getBenefitsForGuarantee('defenseRecours')">
+                    <mat-icon class="benefit-icon">{{ benefit.icon }}</mat-icon>
+                    <h4 class="benefit-title">{{ benefit.title }}</h4>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
           </div>
         </div>
         <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">Valider</button>

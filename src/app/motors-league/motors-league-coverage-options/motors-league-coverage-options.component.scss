@@ -1,0 +1,70 @@
+@import '../../components/motors-league/motors-league.component.scss';
+
+::ng-deep {
+  .benefits-accordion {
+    width: fit-content !important;
+    max-width: 100% !important;
+
+    .mat-mdc-expansion-panel {
+      width: fit-content !important;
+      max-width: 100% !important;
+
+      &-header {
+        height: 40px !important;
+        padding: 0 16px !important;
+        width: fit-content !important;
+      }
+
+      &-body {
+        padding: 8px 16px 8px 16px !important;
+        width: fit-content !important;
+      }
+    }
+  }
+
+  .benefits-list {
+    padding: 8px 0 !important;
+    width: fit-content !important;
+
+    .benefit-item {
+      display: flex !important;
+      align-items: flex-start !important;
+      margin-bottom: 12px !important;
+      color: #555 !important;
+      width: fit-content !important;
+      max-width: 500px !important;
+
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+
+      .benefit-icon {
+        margin-right: 12px !important;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        object-fit: contain !important;
+        flex-shrink: 0 !important;
+        margin-top: 2px !important;
+        color: #0ba2cf !important;
+        font-size: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      .benefit-title {
+        margin: 0 !important;
+        color: #333 !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+      }
+    }
+  }
+
+  .mat-button.mat-button {
+    margin-bottom: 16px !important;
+  }
+}
+
