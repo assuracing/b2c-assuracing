@@ -133,7 +133,7 @@
         mat-raised-button 
         color="accent"
         (click)="onDeclareClaim()" 
-        *ngIf="contract.validated && (isAnnualContract() || claims.length === 0)"
+        *ngIf="contract.validated && claims.length === 0 && !isAnnualContract()"
         class="action-button"
         title="Déclarer un sinistre pour ce contrat">
         <mat-icon>assignment_late</mat-icon>
