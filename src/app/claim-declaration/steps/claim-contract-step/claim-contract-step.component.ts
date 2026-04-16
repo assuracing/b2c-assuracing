@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,15 +13,22 @@ import { UserService } from '../../../services/user.service';
 import { ToastService } from '../../../services/toast.service';
 import { CountryFlagService } from '../../../services/country-flag.service';
 import { ProductMappingService } from '../../../services/product-mapping.service';
+import { ClaimService } from '../../../services/claim.service';
+import { forkJoin, of, Subscription } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 export interface Contract {
   contratID: number;
+  produitID?: number;
   dateAdhesion?: string;
+  dateFin?: string;
   circuit?: string;
   pays?: string;
   nomcontrat?: string;
   valide?: boolean | string;
   adherentnomCliententreprise?: string;
+  hasExistingClaim?: boolean;
+  [key: string]: any;
 }
 
 @Component({
@@ -42,7 +49,7 @@ export interface Contract {
   templateUrl: './claim-contract-step.component.html',
   styleUrls: ['./claim-contract-step.component.scss']
 })
-export class ClaimContractStepComponent implements OnInit {
+export class ClaimContractStepComponent implements OnInit, OnDestroy {
   @Output() contractSelected = new EventEmitter<any>();
 
   contractForm: FormGroup;
@@ -50,6 +57,8 @@ export class ClaimContractStepComponent implements OnInit {
   filteredContracts: Contract[] = [];
   searchText = '';
   isLoading = false;
+  private subscriptions = new Subscription();
+  private readonly annualProductIds = [83, 398, 354, 355, 356, 357, 358];
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +66,7 @@ export class ClaimContractStepComponent implements OnInit {
     private toastService: ToastService,
     public countryFlagService: CountryFlagService,
     public productMappingService: ProductMappingService,
+    private claimService: ClaimService,
     private router: Router
   ) {
     this.contractForm = this.fb.group({
@@ -68,19 +78,78 @@ export class ClaimContractStepComponent implements OnInit {
     this.loadContracts();
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  private isAnnualContract(contract: Contract): boolean {
+    return !!contract.produitID && this.annualProductIds.includes(contract.produitID);
+  }
+
   private loadContracts(): void {
     this.isLoading = true;
     const sub = this.userService.getAllContracts().subscribe({
       next: (contracts: any[]) => {
-        this.contracts = contracts.filter(contract => contract.valide === true || contract.valide === 'true');
-        this.filteredContracts = this.contracts;
-        this.isLoading = false;
+        const validContracts = contracts.filter(contract => contract.valide === true || contract.valide === 'true');
+        this.loadClaimsForEventContracts(validContracts);
       },
       error: (error) => {
         this.toastService.error('Erreur lors du chargement de vos contrats');
         this.isLoading = false;
       }
     });
+    this.subscriptions.add(sub);
+  }
+
+  private loadClaimsForEventContracts(contracts: Contract[]): void {
+    const eventContracts = contracts.filter(c => !this.isAnnualContract(c));
+    const annualContracts = contracts.filter(c => this.isAnnualContract(c));
+
+    if (eventContracts.length === 0) {
+      this.contracts = contracts;
+      this.filteredContracts = this.contracts;
+      this.isLoading = false;
+      return;
+    }
+
+    const claimRequests = eventContracts.map(contract => {
+      const contractId = contract.contratID;
+      return this.claimService.getClaimsForContract(contractId).pipe(
+        map(claims => ({
+          contract,
+          hasExistingClaim: claims && claims.length > 0
+        })),
+        catchError(error => {
+
+          return of({
+            contract,
+            hasExistingClaim: false
+          });
+        })
+      );
+    });
+
+    const claimSub = forkJoin(claimRequests).subscribe({
+      next: (results) => {
+        const eventContractsWithClaims = results.map(result => ({
+          ...result.contract,
+          hasExistingClaim: result.hasExistingClaim
+        }));
+
+        const filteredEventContracts = eventContractsWithClaims.filter(c => !c.hasExistingClaim);
+        
+        this.contracts = [...annualContracts, ...filteredEventContracts];
+        this.filteredContracts = this.contracts;
+        this.isLoading = false;
+      },
+      error: (error) => {
+
+        this.contracts = contracts;
+        this.filteredContracts = this.contracts;
+        this.isLoading = false;
+      }
+    });
+    this.subscriptions.add(claimSub);
   }
 
   getContractLabel(contract: Contract): string {
@@ -190,3 +259,4 @@ export class ClaimContractStepComponent implements OnInit {
     this.router.navigate(['/']);
   }
 }
+
