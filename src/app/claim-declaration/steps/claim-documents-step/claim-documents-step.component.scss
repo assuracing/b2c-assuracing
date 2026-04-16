@@ -125,6 +125,13 @@
               background-color: #e8f4f8;
             }
 
+            &.drag-over {
+              border-color: #047da1;
+              border-width: 2px;
+              background-color: #cce5f0;
+              box-shadow: inset 0 0 6px rgba(4, 125, 161, 0.2);
+            }
+
             mat-icon {
               color: #047da1;
               font-size: 36px;
@@ -226,6 +233,13 @@
             &:hover {
               border-color: #02556e;
               background-color: #e8f4f8;
+            }
+
+            &.drag-over {
+              border-color: #047da1;
+              border-width: 2px;
+              background-color: #cce5f0;
+              box-shadow: inset 0 0 6px rgba(4, 125, 161, 0.2);
             }
 
             mat-icon {

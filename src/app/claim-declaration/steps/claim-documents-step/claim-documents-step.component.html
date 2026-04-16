@@ -91,8 +91,15 @@
             <span class="doc-type-title">{{ docType }}</span>
           </div>
 
-          <div class="doc-upload-wrapper" *ngIf="!isDocumentUploaded(docType) || (canAllowMultipleJustificatifs() && docType !== 'RIB')">
-            <label class="doc-upload-area" [for]="'fileInput-' + docType">
+          <div class="doc-upload-wrapper" 
+               (dragover)="onDragOver($event, docType)" 
+               (dragleave)="onDragLeave($event, docType)" 
+               (drop)="onDrop($event, docType)"
+               (dragenter)="onDragEnter($event, docType)"
+               *ngIf="!isDocumentUploaded(docType) || (canAllowMultipleJustificatifs() && docType !== 'RIB')">
+            <label class="doc-upload-area" 
+                   [for]="'fileInput-' + docType"
+                   [class.drag-over]="isDragOverDocType(docType)">
               <mat-icon>cloud_upload</mat-icon>
               <span>Déposez ou cliquez ici</span>
               <span class="doc-type-label">{{ docType }}</span>
@@ -153,8 +160,15 @@
             <span class="doc-type-title">{{ docType }} <span style="font-size: 0.85em; color: #999;">(facultatif)</span></span>
           </div>
 
-          <div class="doc-upload-wrapper" *ngIf="!isDocumentUploaded(docType) || canAllowMultipleJustificatifs()">
-            <label class="doc-upload-area" [for]="'fileInput-' + docType">
+          <div class="doc-upload-wrapper" 
+               (dragover)="onDragOver($event, docType)" 
+               (dragleave)="onDragLeave($event, docType)" 
+               (drop)="onDrop($event, docType)"
+               (dragenter)="onDragEnter($event, docType)"
+               *ngIf="!isDocumentUploaded(docType) || canAllowMultipleJustificatifs()">
+            <label class="doc-upload-area" 
+                   [for]="'fileInput-' + docType"
+                   [class.drag-over]="isDragOverDocType(docType)">
               <mat-icon>cloud_upload</mat-icon>
               <span>Déposez ou cliquez ici</span>
               <span class="doc-type-label">{{ docType }}</span>

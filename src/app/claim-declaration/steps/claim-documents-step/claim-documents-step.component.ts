@@ -141,6 +141,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   isAnnulation = false;
   isOptionalJustificatif = false;
   isRibOnly = false;
+  dragOverDocTypes: Set<string> = new Set();
 
   constructor(
     private claimService: ClaimService, 
@@ -442,5 +443,38 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
       'FACTUREJUSTIFICATIVE': 'FACTUREJUSTIFICATIVE'
     };
     return mapping[docTypeLabel] || 'AUTRE';
+  }
+
+  isDragOverDocType(docType: string): boolean {
+    return this.dragOverDocTypes.has(docType);
+  }
+
+  onDragEnter(event: DragEvent, docType: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverDocTypes.add(docType);
+  }
+
+  onDragOver(event: DragEvent, docType: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverDocTypes.add(docType);
+  }
+
+  onDragLeave(event: DragEvent, docType: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverDocTypes.delete(docType);
+  }
+
+  onDrop(event: DragEvent, docType: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverDocTypes.clear();
+
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+      const file = event.dataTransfer.files[0];
+      this.validateAndAddFile(file, docType);
+    }
   }
 }
