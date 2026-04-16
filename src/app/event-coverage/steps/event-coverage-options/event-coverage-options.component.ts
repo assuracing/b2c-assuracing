@@ -405,6 +405,14 @@ export class EventCoverageOptionsComponent {
       controls['intemperies'].disable();
       controls['intemperies'].setValue(false);
     }
+
+    const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
+    if (annulationAvailable) {
+      controls['annulation'].enable();
+    } else {
+      controls['annulation'].disable();
+      controls['annulation'].setValue(false);
+    }
   }
 
   private resetProductAvailability(): void {
