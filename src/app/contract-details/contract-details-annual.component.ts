@@ -38,7 +38,7 @@ interface Contract {
     ClaimListComponent
   ],
   templateUrl: './contract-details-annual.component.html',
-  styleUrls: ['./contract-details-annual.component.scss', './contract-details.component.scss', '../app.component.scss', '../app-second.component.scss']
+  styleUrls: ['./contract-details-annual.component.scss', './contract-details.component.scss', '../app.component.scss', '../app-second.component.scss', 'contract-details-annual-responsive.component.scss']
 })
 export class ContractDetailsAnnualComponent implements OnInit {
   contracts: Contract[] = [];
