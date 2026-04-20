@@ -111,16 +111,20 @@
     
     .mat-expansion-panel-header {
       padding: 0 16px !important;
-      min-height: 56px !important;
+      min-height: 80px !important;
       display: flex !important;
       justify-content: space-between !important;
-      align-items: center !important;
+      align-items: flex-start !important;
       
       .mat-expansion-panel-header-title {
         flex: 1;
       }
     }
   }
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0 !important;
 }
 
 .contract-title {
@@ -333,6 +337,27 @@
     padding: 16px;
   }
 
+  .contracts-accordion {
+    .mat-expansion-panel-header {
+      padding: 0.5rem 1rem 1.5rem 1rem !important;
+      height: auto !important;
+      min-height: unset !important;
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
+    }
+
+    .mat-panel-title {
+      flex-basis: 100% !important;
+      margin-bottom: 0.5rem !important;
+      padding: 0 0.5rem !important;
+    }
+
+    .mat-panel-description {
+      flex-basis: 100% !important;
+      padding: 0 0.5rem !important;
+    }
+  }
+
   .details-grid {
     grid-template-columns: 1fr;
   }
@@ -350,13 +375,145 @@
   }
   
   .contract-title {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    
-    .contract-name {
-      width: 100% !important;
-      margin-bottom: 8px !important;
+    font-size: 1rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 730px) {
+  .contracts-accordion {
+    .mat-expansion-panel-header {
+      padding: 0.5rem 0.6rem 1.2rem 0.6rem !important;
+      height: auto !important;
+      min-height: unset !important;
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
     }
+
+    .mat-panel-title {
+      flex-basis: 100% !important;
+      margin-bottom: 0.5rem !important;
+      padding: 0 0.5rem !important;
+    }
+
+    .mat-panel-description {
+      flex-basis: 100% !important;
+      padding: 0 0.5rem !important;
+    }
+  }
+
+  .contract-title {
+    font-size: 0.95rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 655px) {
+  .contracts-accordion {
+    .mat-expansion-panel-header { 
+      padding: 0.5rem 0.75rem 1.3rem 0.75rem !important;
+      height: auto !important;
+      min-height: unset !important;
+      flex-wrap: wrap !important;
+    }
+  }
+
+
+  .contract-title {
+    font-size: 0.9rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.8rem;
+  }
+
+  .status-badge {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .contracts-accordion {
+    .mat-expansion-panel-header {
+      padding: 1rem 0.5rem !important;
+      height: auto !important;
+      min-height: 160px !important;
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
+    }
+  }
+
+  .contract-title {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.9rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.8rem;
+  }
+
+  .status-badge {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.6rem !important;
+    margin: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .contracts-accordion {
+    .mat-expansion-panel-header {
+      padding: 0.4rem 0.5rem 1rem 0.5rem !important;
+      min-height: unset !important;
+      flex-wrap: wrap !important;
+    }
+  }
+
+  .contract-title {
+    font-size: 0.85rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.8rem;
+    white-space: normal;
+  }
+
+  .status-badge {
+    font-size: 0.7rem !important;
+    padding: 0.3rem 0.5rem !important;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .contracts-accordion {
+    .mat-expansion-panel-header {
+      padding: 0.4rem 0.5rem 1rem 0.5rem !important;
+    }
+  }
+
+  .contract-title {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.8rem !important;
+  }
+
+  .contract-date {
+    font-size: 0.75rem;
+  }
+
+  .status-badge {
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
   }
 }
 
