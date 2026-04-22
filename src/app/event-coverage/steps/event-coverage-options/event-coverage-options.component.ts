@@ -19,6 +19,7 @@ import { ContractService } from '../../../services/contract.service';
 import { OrganizerService } from '../../../services/organizer.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AdaptiveTooltipComponent } from '../../../adaptive-tooltip/adaptive-tooltip.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface ProtectionLevel {
   death: number;
@@ -44,7 +45,8 @@ interface ProtectionLevel {
     MatIconModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    AdaptiveTooltipComponent
+    AdaptiveTooltipComponent,
+    TranslateModule
   ],
   templateUrl: './event-coverage-options.component.html',
   styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss',  '../../../app.component.scss']
@@ -109,6 +111,8 @@ export class EventCoverageOptionsComponent {
         this.checkProductsAvailability(currentOrganizerId);
       }
     }
+
+    this.initializeProtectionPrices();
   }
 
   checkAnnulationAvailability(inscriptionDate: any) {
@@ -140,6 +144,7 @@ export class EventCoverageOptionsComponent {
   set eventType(val: string) {
     this._eventType = val;
     this.updateGaranties();
+    this.initializeProtectionPrices();
   }
   get eventType() {
     return this._eventType;
@@ -220,11 +225,11 @@ export class EventCoverageOptionsComponent {
   }
 
   PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
-    1: { death: 7600, disability: 18500, price: 15 },
-    2: { death: 25000, disability: 37500, price: 38 },
-    3: { death: 100000, disability: 150000, price: 60 },
-    4: { death: 150000, disability: 200000, price: 85 },
-    5: { death: 200000, disability: 300000, price: 120 }
+    1: { death: 7600, disability: 18500, price: 0 },
+    2: { death: 25000, disability: 37500, price: 0 },
+    3: { death: 100000, disability: 150000, price: 0 },
+    4: { death: 150000, disability: 200000, price: 0 },
+    5: { death: 200000, disability: 300000, price: 0 }
   };
 
   private destroy$ = new Subject<void>();
@@ -302,7 +307,7 @@ export class EventCoverageOptionsComponent {
       typevehicule: this.trackdayForm.get('vehicleType')?.value || "moto"
     };
 
-    const isCompetition = this.eventType === 'competition';
+    const isCompetition = this.eventType?.toUpperCase() === 'COMPETITION';
     
     const levelToProductCode: { [key: number]: number } = isCompetition 
       ? { 1: 345, 2: 346, 3: 347, 4: 348, 5: 349 }
