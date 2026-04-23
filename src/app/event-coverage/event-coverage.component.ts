@@ -34,6 +34,7 @@ import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface Circuit {
   id: number;
@@ -116,6 +117,7 @@ interface ContractResponse {
     EventCoverageOptionsComponent,
     MatSnackBarModule,
     MatRadioModule,
+    TranslateModule,
   ],
   templateUrl: './event-coverage.component.html',
   styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss', '../app.component.scss']
@@ -634,7 +636,7 @@ export class EventCoverageComponent {
     
     const protectionLevel = coverageData.protectionPilote;
     if (protectionLevel && protectionLevel > 0) {
-      const isCompetition = this.trackdayForm?.get('eventType')?.value === 'competition';
+      const isCompetition = this.trackdayForm?.get('eventType')?.value === 'COMPETITION';
       const protectionCode = isCompetition
         ? this.GARANTIE_CODES[`PROTECTION_${protectionLevel}_COMP` as keyof typeof this.GARANTIE_CODES]
         : this.GARANTIE_CODES[`PROTECTION_${protectionLevel}` as keyof typeof this.GARANTIE_CODES];
