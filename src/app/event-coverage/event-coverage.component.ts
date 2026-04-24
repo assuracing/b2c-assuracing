@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -167,11 +168,13 @@ export class EventCoverageComponent {
     private dialog: MatDialog,
     private router: Router,
     private envService: EnvironmentService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private activatedRoute: ActivatedRoute
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
     this.loadCircuits();
+    this.initializePreFill();
     this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
       this.labelPosition = result.matches ? 'bottom' : 'end';
     });
@@ -250,6 +253,30 @@ export class EventCoverageComponent {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private initializePreFill() {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const prefillData: any = {};
+      
+      if (params['typeEvenement']) {
+        prefillData.eventType = params['typeEvenement'];
+      }
+      
+      if (params['typeAssure']) {
+        prefillData.role = params['typeAssure'];
+      }
+      
+      if (params['typeVehicule']) {
+        prefillData.vehicleType = params['typeVehicule'];
+      }
+      
+      if (Object.keys(prefillData).length > 0) {
+        setTimeout(() => {
+          this.trackdayForm.patchValue(prefillData);
+        }, 100);
+      }
+    });
   }
 
   private initializeForms() {
