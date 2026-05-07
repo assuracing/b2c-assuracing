@@ -14,28 +14,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NumbersOnlyDirective } from '../../../directives/numbers-only.directive';
 import { PostalCodeService, PostalCodeInfo } from '../../../services/postal-code.service';
-import { LOCALE_ID } from '@angular/core';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
-import { DateAdapter } from '@angular/material/core';
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
-
-const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DateLocaleService, provideMomentDatepicker } from '../../../core/services/date-locale.service';
 
 @Component({
   standalone: true,
@@ -51,16 +36,13 @@ const MY_DATE_FORMATS = {
     MatDatepickerModule, 
     MatNativeDateModule, 
     MatIconModule,
-    NumbersOnlyDirective
+    NumbersOnlyDirective,
+    TranslateModule
   ],
   templateUrl: './personal-info.component.html',
   styleUrls: ['./personal-info.component.scss', '../../../app.component.scss'],
     providers: [
-      { provide: LOCALE_ID, useValue: 'fr-FR' },
-      { provide: MAT_DATE_LOCALE, useValue: 'fr' },
-      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-      { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-      { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: false } },
+      ...provideMomentDatepicker(),
       DatePipe
     ]
 })
@@ -72,33 +54,116 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private postalCodeSubs = new Subscription();
   @Input() form!: FormGroup;
   @Input() nationalities: string[] = [];
+  @Input() nationalitiesMap: Map<string, string> = new Map();
   
-  countries: string[] = [
-    'France', 'Afghanistan', 'Afrique du Sud', 'Albanie', 'Algérie', 'Allemagne', 'Andorre', 'Angola', 'Antigua-et-Barbuda',
-    'Arabie saoudite', 'Argentine', 'Arménie', 'Australie', 'Autriche', 'Azerbaïdjan', 'Bahamas', 'Bahreïn',
-    'Bangladesh', 'Barbade', 'Belgique', 'Bélize', 'Bénin', 'Bhoutan', 'Biélorussie', 'Birmanie', 'Bolivie',
-    'Bosnie-Herzégovine', 'Botswana', 'Brésil', 'Brunei', 'Bulgarie', 'Burkina Faso', 'Burundi', 'Cambodge',
-    'Cameroun', 'Canada', 'Cap-Vert', 'Chili', 'Chine', 'Chypre', 'Colombie', 'Comores', 'Congo',
-    'Corée du Nord', 'Corée du Sud', 'Costa Rica', 'Côte d\'Ivoire', 'Croatie', 'Cuba', 'Danemark', 'Djibouti',
-    'Dominique', 'Égypte', 'Émirats arabes unis', 'Équateur', 'Érythrée', 'Espagne', 'Estonie', 'Eswatini',
-    'États-Unis', 'Éthiopie', 'Fidji', 'Finlande', 'Gabon', 'Gambie', 'Géorgie', 'Ghana', 'Grèce',
-    'Grenade', 'Guatemala', 'Guinée', 'Guinée équatoriale', 'Guinée-Bissau', 'Guyana', 'Haïti', 'Honduras',
-    'Hongrie', 'Îles Marshall', 'Îles Salomon', 'Inde', 'Indonésie', 'Irak', 'Iran', 'Irlande', 'Islande',
-    'Israël', 'Italie', 'Jamaïque', 'Japon', 'Jordanie', 'Kazakhstan', 'Kenya', 'Kirghizistan', 'Kiribati',
-    'Koweït', 'Laos', 'Lesotho', 'Lettonie', 'Liban', 'Liberia', 'Libye', 'Liechtenstein', 'Lituanie',
-    'Luxembourg', 'Macédoine du Nord', 'Madagascar', 'Malaisie', 'Malawi', 'Maldives', 'Mali', 'Malte',
-    'Maroc', 'Maurice', 'Mauritanie', 'Mexique', 'Micronésie', 'Moldavie', 'Monaco', 'Mongolie', 'Monténégro',
-    'Mozambique', 'Namibie', 'Nauru', 'Népal', 'Nicaragua', 'Niger', 'Nigeria', 'Norvège', 'Nouvelle-Zélande',
-    'Oman', 'Ouganda', 'Ouzbékistan', 'Pakistan', 'Palaos', 'Panama', 'Papouasie-Nouvelle-Guinée', 'Paraguay',
-    'Pays-Bas', 'Pérou', 'Philippines', 'Pologne', 'Portugal', 'Qatar', 'République centrafricaine',
-    'République démocratique du Congo', 'République dominicaine', 'République tchèque', 'Roumanie',
-    'Royaume-Uni', 'Russie', 'Rwanda', 'Saint-Christophe-et-Niévès', 'Sainte-Lucie', 'Saint-Marin',
-    'Saint-Vincent-et-les-Grenadines', 'Salvador', 'Samoa', 'Sao Tomé-et-Principe', 'Sénégal', 'Serbie',
-    'Seychelles', 'Sierra Leone', 'Singapour', 'Slovaquie', 'Slovénie', 'Somalie', 'Soudan', 'Soudan du Sud',
-    'Sri Lanka', 'Suède', 'Suisse', 'Suriname', 'Syrie', 'Tadjikistan', 'Tanzanie', 'Tchad', 'Thaïlande',
-    'Timor oriental', 'Togo', 'Tonga', 'Trinité-et-Tobago', 'Tunisie', 'Turkménistan', 'Turquie', 'Tuvalu',
-    'Ukraine', 'Uruguay', 'Vanuatu', 'Vatican', 'Venezuela', 'Viêt Nam', 'Yémen', 'Zambie', 'Zimbabwe'
+  public nationalitiesFiltered: string[] = [];
+  
+  private nationalitiesFrenchMap: { [key: string]: string } = {
+    'Française': 'french',
+    'Allemande': 'german',
+    'Autrichienne': 'austrian',
+    'Belge': 'belgian',
+    'Britannique': 'british',
+    'Bulgare': 'bulgarian',
+    'Chypriote': 'cypriot',
+    'Croate': 'croatian',
+    'Danoise': 'danish',
+    'Espagnole': 'spanish',
+    'Estonienne': 'estonian',
+    'Finlandaise': 'finnish',
+    'Grecque': 'greek',
+    'Hongroise': 'hungarian',
+    'Irlandaise': 'irish',
+    'Italienne': 'italian',
+    'Lettone': 'latvian',
+    'Lituanienne': 'lithuanian',
+    'Luxembourgeoise': 'luxembourgish',
+    'Maltaise': 'maltese',
+    'Néerlandaise': 'dutch',
+    'Polonaise': 'polish',
+    'Portugaise': 'portuguese',
+    'Roumaine': 'romanian',
+    'Slovaque': 'slovak',
+    'Slovène': 'slovenian',
+    'Suédoise': 'swedish',
+    'Suisse': 'swiss',
+    'Tchèque': 'czech'
+  };
+
+  private countriesFrenchMap: { [key: string]: string } = {
+    'France': 'france',
+    'Afrique du Sud': 'southAfrica',
+    'Albanie': 'albania',
+    'Algérie': 'algeria',
+    'Allemagne': 'germany',
+    'Andorre': 'andorra',
+    'Angola': 'angola',
+    'Antigua-et-Barbuda': 'antiguaBarbuda',
+    'Arabie Saoudite': 'saudiArabia',
+    'Argentine': 'argentina',
+    'Arménie': 'armenia',
+    'Australie': 'australia',
+    'Autriche': 'austria',
+    'Azerbaïdjan': 'azerbaijan',
+    'Bahamas': 'bahamas',
+    'Bahreïn': 'bahrain',
+    'Bangladesh': 'bangladesh',
+    'Barbade': 'barbados',
+    'Belgique': 'belgium',
+    'Belize': 'belize',
+    'Bénin': 'benin',
+    'Bhoutan': 'bhutan',
+    'Biélorussie': 'belarus',
+    'Myanmar': 'burma',
+    'Bolivie': 'bolivia',
+    'Bosnie-Herzégovine': 'bosniaHerzegovina',
+    'Botswana': 'botswana',
+    'Brésil': 'brazil',
+    'Brunei': 'brunei',
+    'Bulgarie': 'bulgaria',
+    'Burkina Faso': 'burkinaFaso',
+    'Burundi': 'burundi',
+    'Cambodge': 'cambodia',
+    'Cameroun': 'cameroon',
+    'Canada': 'canada',
+    'Cap-Vert': 'capVerde',
+    'Chili': 'chile',
+    'Chine': 'china',
+    'Chypre': 'cyprus',
+    'Colombie': 'colombia',
+    'Comores': 'comoros',
+    'Congo': 'congo',
+    'Corée du Nord': 'northKorea',
+    'Corée du Sud': 'southKorea',
+    'Costa Rica': 'costaRica',
+    'Côte d\'Ivoire': 'ivoryCoast',
+    'Croatie': 'croatia',
+    'Cuba': 'cuba',
+    'Danemark': 'denmark',
+    'Djibouti': 'djibouti',
+    'Dominique': 'dominica',
+    'Égypte': 'egypt',
+    'Émirats Arabes Unis': 'uae',
+    'Équateur': 'ecuador',
+    'Érythrée': 'eritrea',
+    'Espagne': 'spain',
+    'Estonie': 'estonia',
+    'Eswatini': 'eswatini',
+    'États-Unis': 'usa',
+    'Éthiopie': 'ethiopia'
+  };
+  
+  private countriesKeys = [
+    'france', 'southAfrica', 'albania', 'algeria', 'germany', 'andorra', 'angola', 'antiguaBarbuda', 
+    'saudiArabia', 'argentina', 'armenia', 'australia', 'austria', 'azerbaijan', 'bahamas', 'bahrain',
+    'bangladesh', 'barbados', 'belgium', 'belize', 'benin', 'bhutan', 'belarus', 'burma', 'bolivia',
+    'bosniaHerzegovina', 'botswana', 'brazil', 'brunei', 'bulgaria', 'burkinaFaso', 'burundi', 'cambodia',
+    'cameroon', 'canada', 'capVerde', 'chile', 'china', 'cyprus', 'colombia', 'comoros', 'congo',
+    'northKorea', 'southKorea', 'costaRica', 'ivoryCoast', 'croatia', 'cuba', 'denmark', 'djibouti',
+    'dominica', 'egypt', 'uae', 'ecuador', 'eritrea', 'spain', 'estonia', 'eswatini', 'usa', 'ethiopia'
   ];
+  public countries: string[] = [];
+  public countriesMap: Map<string, string> = new Map();
 
   filteredCountries: string[] = [];
   private _allCountries: string[] = [];
@@ -111,12 +176,21 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     private userService: UserService, 
     private dialog: MatDialog, 
     private snackBar: MatSnackBar,
-    private postalCodeService: PostalCodeService
+    private postalCodeService: PostalCodeService,
+    private translate: TranslateService,
+    private dateLocaleService: DateLocaleService,
+    private dateAdapter: DateAdapter<any>
   ) {}
 
   ngOnInit() {
-    this._allCountries = [...this.countries];
-    this.filteredCountries = [...this.countries];    
+    this.subscription.add(this.dateLocaleService.bindAdapterLocale(this.dateAdapter));
+    
+    this.updateCountries();
+    this.subscription.add(
+      this.translate.onLangChange.subscribe(() => {
+        this.updateCountries();
+      })
+    );
       
     if (this.userService.isLoggedIn()) {
 
@@ -138,10 +212,16 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
               if(adherent.adresse) this.form.get('address')?.setValue(adherent.adresse);
               if(adherent.codepostal) this.form.get('postalCode')?.setValue(adherent.codepostal);
               if(adherent.ville) this.form.get('city')?.setValue(adherent.ville);
-              if(adherent.pays) this.form.get('country')?.setValue(adherent.pays);
+              if(adherent.pays) {
+                const countryKey = this.getCountryKeyByValue(adherent.pays);
+                this.form.get('country')?.setValue(countryKey);
+              }
               if(adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
               if(adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
-              if(adherent.nationalite) this.form.get('nationality')?.setValue(adherent.nationalite);
+              if(adherent.nationalite) {
+                const nationalityKey = this.getNationalityKeyByValue(adherent.nationalite);
+                this.form.get('nationality')?.setValue(nationalityKey);
+              }
             }
           })
         );
@@ -171,6 +251,45 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       this.form.get('firstname')?.disable();
       this.form.get('lastname')?.disable();
     }
+  }
+
+  private updateCountries(): void {
+    this.countriesMap.clear();
+    this.countries = this.countriesKeys.map(key => {
+      const translation = this.translate.instant(`countries.${key}`);
+      this.countriesMap.set(key, translation);
+      return key;
+    });
+    this._allCountries = [...this.countries];
+    this.filteredCountries = [...this.countries];
+  }
+
+  private getCountryKeyByValue(value: string): string {
+    if (this.countriesFrenchMap[value]) {
+      return this.countriesFrenchMap[value];
+    }
+    
+    for (const [key, translation] of this.countriesMap.entries()) {
+      if (translation === value) {
+        return key;
+      }
+    }
+    
+    return this.countriesKeys[0] || '';
+  }
+
+  private getNationalityKeyByValue(value: string): string {
+    if (this.nationalitiesFrenchMap[value]) {
+      return this.nationalitiesFrenchMap[value];
+    }
+    
+    for (const [key, translation] of this.nationalitiesMap.entries()) {
+      if (translation === value) {
+        return key;
+      }
+      }
+    
+    return '';
   }
 
   ngOnDestroy() {
@@ -240,8 +359,8 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
   filterCountries(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredCountries = this._allCountries.filter(country => 
-      country.toLowerCase().includes(searchValue)
+    this.filteredCountries = this.countries.filter(countryKey => 
+      (this.countriesMap.get(countryKey) || '').toLowerCase().includes(searchValue)
     );
     event.stopPropagation();
   }
@@ -327,21 +446,21 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       return 'Ce champ est requis';
     }
     if (control?.hasError('email')) {
-      return 'Format email invalide';
+      return this.translate.instant('messages.invalidEmailFormat');
     }
     if (control?.hasError('pattern')) {
       if (controlName === 'phone') {
-        return 'Le numéro de téléphone doit contenir 10 chiffres';
+        return this.translate.instant('messages.phoneDigits');
       }
       if (controlName === 'postalCode') {
         if (this.form.get('country')?.value === 'France') {
-          return 'Le code postal doit contenir exactement 5 chiffres';
+          return this.translate.instant('messages.postalCodeExactly5');
         }
-        return 'Le code postal doit contenir entre 4 et 8 caractères alphanumériques';
+        return this.translate.instant('messages.postalCodeBetween4And8');
       }
     }
     if (control?.hasError('minlength')) {
-      return 'Ce champ doit contenir au moins 2 caractères';
+      return this.translate.instant('messages.minlength2');
     }
     return '';
   }

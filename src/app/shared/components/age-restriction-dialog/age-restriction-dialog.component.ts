@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface AgeRestrictionDialogData {
   role: 'pilote' | 'passager' | '';
@@ -11,7 +12,7 @@ export interface AgeRestrictionDialogData {
 @Component({
   selector: 'app-age-restriction-dialog',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, CommonModule, TranslateModule],
   template: `
     <h2 mat-dialog-title>Âge minimum requis</h2>
     <mat-dialog-content>

@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-representative-legal',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './representative-legal.component.html',
   styleUrls: ['./representative-legal.component.scss', '../../../app.component.scss']
 })

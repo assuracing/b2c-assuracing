@@ -15,10 +15,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { CustomDatePipe } from '../shared/pipes/custom-date.pipe';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MotorsLeagueComponent } from '../components/motors-league/motors-league.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DateLocaleService } from '../core/services/date-locale.service';
 
 @Component({
   selector: 'app-user-contracts',
@@ -38,8 +39,8 @@ import { MotorsLeagueComponent } from '../components/motors-league/motors-league
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    CustomDatePipe,
     MotorsLeagueComponent,
+    TranslateModule,
   ],  
   templateUrl: './user-contracts.component.html',
   styleUrls: ['./user-contracts.component.scss', '../app-second.component.scss']
@@ -73,18 +74,35 @@ export class UserContractsComponent implements AfterViewInit {
   searchFilter = new FormControl('');
   validationFilter = new FormControl<string | null>(null);
 
-  constructor(private userService: UserService, private productMappingService: ProductMappingService, private paginatorIntl: MatPaginatorIntl, private router: Router) {
-    this.paginatorIntl.itemsPerPageLabel = 'Contrats par page';
-    this.paginatorIntl.firstPageLabel = 'Première page';
-    this.paginatorIntl.lastPageLabel = 'Dernière page';
-    this.paginatorIntl.nextPageLabel = 'Page suivante';
-    this.paginatorIntl.previousPageLabel = 'Page précédente';
+  constructor(private userService: UserService, private productMappingService: ProductMappingService, private paginatorIntl: MatPaginatorIntl, private router: Router, private translate: TranslateService, private dateLocaleService: DateLocaleService) {
+    this.translate.onLangChange.subscribe(() => {
+      this.setPaginatorLabels();
+      this.dataSource.data = [...this.groupedContracts];
+    });
+    this.setPaginatorLabels();
+  }
+
+  formatDate(value: string | Date): string {
+    return this.dateLocaleService.formatDate(value);
+  }
+
+  private setPaginatorLabels(): void {
+    this.paginatorIntl.itemsPerPageLabel = this.translate.instant('common.contractsPerPage');
+    this.paginatorIntl.firstPageLabel = this.translate.instant('common.firstPage');
+    this.paginatorIntl.lastPageLabel = this.translate.instant('common.lastPage');
+    this.paginatorIntl.nextPageLabel = this.translate.instant('common.nextPage');
+    this.paginatorIntl.previousPageLabel = this.translate.instant('common.previousPage');
     this.paginatorIntl.getRangeLabel = (page: number, pageSize: number, length: number) => {
       if (length === 0 || pageSize === 0) {
-        return `0 contrat sur ${length}`;
+        return this.translate.instant('common.zeroContracts', { length: length });
       }
-      return `Page ${page + 1} - ${Math.min((page + 1) * pageSize, length)} contrats sur ${length}`;
+      return this.translate.instant('common.paginationText', {
+        page: page + 1,
+        min: Math.min((page + 1) * pageSize, length),
+        length: length
+      });
     };
+    this.paginatorIntl.changes.next();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -284,6 +302,11 @@ export class UserContractsComponent implements AfterViewInit {
     return label;
   }
 
+  getProductTooltip(productId: string | number, nomContrat?: string): string {
+    const label = this.getProductLabel(productId, nomContrat);
+    return this.translate.instant('eventContracts.viewDetails') + label;
+  }
+
   getProductColorClass(productId: string | number, nomContrat?: string): string {
     const label = this.getProductLabel(productId, nomContrat).toLowerCase();
     
@@ -312,16 +335,16 @@ export class UserContractsComponent implements AfterViewInit {
   }
 
   eventTypes = [
-    { value: 'ROULAGE_ENTRAINEMENT', label: 'Roulage', icon: 'two_wheeler' },
-    { value: 'COMPETITION', label: 'Compétition', icon: 'emoji_events' },
-    { value: 'COACHING', label: 'Coaching', icon: 'record_voice_over' },
-    { value: 'STAGE_PILOTAGE', label: 'Stage de pilotage', icon: 'school' }
+    { value: 'ROULAGE_ENTRAINEMENT', label: 'eventCoverage.eventTypes.roulageEntrainement', icon: 'two_wheeler' },
+    { value: 'COMPETITION', label: 'eventCoverage.eventTypes.competition', icon: 'emoji_events' },
+    { value: 'COACHING', label: 'eventCoverage.eventTypes.coaching', icon: 'record_voice_over' },
+    { value: 'STAGE_PILOTAGE', label: 'eventCoverage.eventTypes.stagePilotage', icon: 'school' }
   ];
 
   formatEventType(eventType: string | null | undefined): string | null {
     if (!eventType) return null;
     const item = this.eventTypes.find(e => e.value === eventType);
-    return item ? item.label : eventType;
+    return item ? this.translate.instant(item.label) : eventType;
   }
 
   getEventTypeIcon(eventType: string | null | undefined): string {

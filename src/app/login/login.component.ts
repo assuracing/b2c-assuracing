@@ -6,11 +6,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../services/toast.service';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'app-login',
-  imports: [FormsModule, MatIconModule, CommonModule],
+  imports: [FormsModule, MatIconModule, CommonModule, TranslateModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', '../app.component.scss']
 })
@@ -23,6 +24,7 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router,
     private toastService: ToastService,
+    private translate: TranslateService,
     @Optional() private dialogRef?: MatDialogRef<LoginComponent>
   ) {}
 
@@ -33,12 +35,12 @@ export class LoginComponent {
           this.dialogRef.close('success');
         } else {
           this.router.navigate(['/']);
-          this.toastService.success('Connexion réussie');
+          this.toastService.success(this.translate.instant('messages.loginSuccess'));
         }
       },
       error: (err) => {
         if(err.status === 401) {
-          this.toastService.error('Nom d\'utilisateur ou mot de passe incorrect');
+          this.toastService.error(this.translate.instant('messages.loginError'));
         }
       },
     });

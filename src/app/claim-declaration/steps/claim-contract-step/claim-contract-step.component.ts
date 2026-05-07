@@ -16,6 +16,7 @@ import { ProductMappingService } from '../../../services/product-mapping.service
 import { ClaimService } from '../../../services/claim.service';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface Contract {
   contratID: number;
@@ -44,7 +45,8 @@ export interface Contract {
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    TranslateModule
   ],
   templateUrl: './claim-contract-step.component.html',
   styleUrls: ['./claim-contract-step.component.scss']
@@ -67,7 +69,8 @@ export class ClaimContractStepComponent implements OnInit, OnDestroy {
     public countryFlagService: CountryFlagService,
     public productMappingService: ProductMappingService,
     private claimService: ClaimService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.contractForm = this.fb.group({
       contractId: [null, Validators.required]
@@ -94,7 +97,7 @@ export class ClaimContractStepComponent implements OnInit, OnDestroy {
         this.loadClaimsForEventContracts(validContracts);
       },
       error: (error) => {
-        this.toastService.error('Erreur lors du chargement de vos contrats');
+        this.toastService.error(this.translate.instant('messages.loadContractsError'));
         this.isLoading = false;
       }
     });
@@ -248,10 +251,10 @@ export class ClaimContractStepComponent implements OnInit, OnDestroy {
       if (selectedContract) {
         this.contractSelected.emit(selectedContract);
       } else {
-        this.toastService.error('Erreur: contrat introuvable');
+        this.toastService.error(this.translate.instant('messages.contractNotFound'));
       }
     } else {
-      this.toastService.error('Veuillez sélectionner un contrat');
+      this.toastService.error(this.translate.instant('validation.contractRequired'));
     }
   }
 

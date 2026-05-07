@@ -1,8 +1,8 @@
-<h2 style="display: flex; justify-content: center;">Vos informations</h2>
+<h2 style="display: flex; justify-content: center;">{{ 'personalInfoStep.heading' | translate }}</h2>
 <form [formGroup]="form" class="login-form">
 
     <div class="form-group">
-        <label for="email">Email (identifiant)</label>
+        <label for="email">{{ 'personalInfoStep.email' | translate }}</label>
         <input formControlName="email" type="email" id="email" class="form-control" required (blur)="onEmailBlur()">
         <div *ngIf="isInvalid('email')" class="error-message">
             {{ getErrorMessage('email') }}
@@ -10,17 +10,17 @@
     </div>
 
     <div class="form-group">
-        <label>Genre</label>
+        <label>{{ 'personalInfoStep.gender' | translate }}</label>
         <div class="radio">
             <input type="radio" id="male" formControlName="civility" value="M" required>
-            <label for="male">Homme</label>
+            <label for="male">{{ 'personalInfoStep.men' | translate }}</label>
             <input type="radio" id="female" formControlName="civility" value="Mme" required>
-            <label for="female">Femme</label>
+            <label for="female">{{ 'personalInfoStep.women' | translate }}</label>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="firstname">Prénom</label>
+        <label for="firstname">{{ 'personalInfoStep.firstName' | translate }}</label>
         <input formControlName="firstname" type="text" id="firstname" class="form-control" required>
         <div *ngIf="isInvalid('firstname')" class="error-message">
             {{ getErrorMessage('firstname') }}
@@ -28,7 +28,7 @@
     </div>
 
     <div class="form-group">
-        <label for="lastname">Nom</label>
+        <label for="lastname">{{ 'personalInfoStep.lastName' | translate }}</label>
         <input formControlName="lastname" type="text" id="lastname" class="form-control" required>
         <div *ngIf="isInvalid('lastname')" class="error-message">
             {{ getErrorMessage('lastname') }}
@@ -38,17 +38,17 @@
     
     <div class="form-group">
         <mat-form-field appearance="outline" class="w-106">
-            <mat-label>Pays de résidence</mat-label>
+            <mat-label>{{ 'personalInfoStep.residenceCountry' | translate }}</mat-label>
             <mat-select formControlName="country" id="country" required
                       panelClass="country-select-panel"
                       (openedChange)="onPanelOpened($event)">
                 <div class="search-container">
-                    <input #searchInput class="search-input" placeholder="Rechercher un pays..." 
+                    <input #searchInput class="search-input" [placeholder]="'common.search' | translate" 
                            (click)="$event.stopPropagation()" 
                            (input)="filterCountries($event)">
                 </div>
-                <mat-option *ngFor="let country of filteredCountries" [value]="country">
-                    {{ country }}
+                <mat-option *ngFor="let countryKey of filteredCountries" [value]="countryKey">
+                    {{ countriesMap.get(countryKey) }}
                 </mat-option>
             </mat-select>
             <mat-error *ngIf="isInvalid('country')">
@@ -58,7 +58,7 @@
     </div>
 
     <div class="form-group">
-        <label for="phone">Téléphone</label>
+        <label for="phone">{{ 'personalInfoStep.telephone' | translate }}</label>
         <input formControlName="phone" type="tel" id="phone" class="form-control" required>
         <div *ngIf="isInvalid('phone')" class="error-message">
             {{ getErrorMessage('phone') }}
@@ -66,7 +66,7 @@
     </div>
 
     <div class="form-group">
-        <label for="address">Adresse</label>
+        <label for="address">{{ 'personalInfoStep.address' | translate }}</label>
         <input formControlName="address" type="text" id="address" class="form-control" required>
         <div *ngIf="isInvalid('address')" class="error-message">
             {{ getErrorMessage('address') }}
@@ -74,7 +74,7 @@
     </div>
 
     <div class="form-group">
-        <label for="addressComplement">Complément d'adresse</label>
+        <label for="addressComplement">{{ 'personalInfoStep.addressComplement' | translate }}</label>
         <input formControlName="addressComplement" type="text" id="addressComplement" class="form-control">
         <div *ngIf="isInvalid('addressComplement')" class="error-message">
             {{ getErrorMessage('addressComplement') }}
@@ -82,7 +82,7 @@
     </div>
 
     <div class="form-group" style="position: relative;">
-        <label for="postalCode">Code postal</label>
+        <label for="postalCode">{{ 'personalInfoStep.postalCode' | translate }}</label>
         <input 
             autocomplete="off"
             #postalCodeInput
@@ -113,7 +113,7 @@
     </div>
 
     <div class="form-group">
-        <label for="city">Ville</label>
+        <label for="city">{{ 'personalInfoStep.city' | translate }}</label>
         <input formControlName="city" type="text" id="city" class="form-control" required>
         <div *ngIf="isInvalid('city')" class="error-message">
             {{ getErrorMessage('city') }}
@@ -122,19 +122,21 @@
     
     <div class="form-group">
         <mat-form-field appearance="outline" class="w-106">
-  <mat-label>Nationalité</mat-label>
+  <mat-label>{{ 'personalInfoStep.nationality' | translate }}</mat-label>
   <mat-select formControlName="nationality" id="nationality" required>
-    <mat-option *ngFor="let nat of nationalities" [value]="nat">{{ nat }}</mat-option>
+    <mat-option *ngFor="let natKey of nationalities" [value]="natKey">
+      {{ nationalitiesMap.get(natKey) }}
+    </mat-option>
   </mat-select>
   <mat-error *ngIf="isInvalid('nationality')">
     {{ getErrorMessage('nationality') }}
   </mat-error>
 </mat-form-field>
-    </div>
+    </div>  
 
     <div class="form-group">
         <mat-form-field appearance="outline" class="w-106">
-          <mat-label>Date de naissance</mat-label>
+          <mat-label>{{ 'personalInfoStep.birthDate' | translate }}</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="birthdate" required>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker [startAt]="form.get('birthdate')?.value ? form.get('birthdate')?.value : getStartDate()"></mat-datepicker>

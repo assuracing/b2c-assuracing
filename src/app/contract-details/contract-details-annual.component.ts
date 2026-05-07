@@ -13,6 +13,7 @@ import { UserService } from '../services/user.service';
 import { ClaimService } from '../services/claim.service';
 import { Claim } from '../models/claim.model';
 import { ClaimListComponent } from '../components/claim-list/claim-list.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Contract {
   contratID: string;
@@ -35,7 +36,8 @@ interface Contract {
     MatExpansionModule,
     MatProgressSpinnerModule,
     DatePipe,
-    ClaimListComponent
+    ClaimListComponent,
+    TranslateModule
   ],
   templateUrl: './contract-details-annual.component.html',
   styleUrls: ['./contract-details-annual.component.scss', './contract-details.component.scss', '../app.component.scss', '../app-second.component.scss', 'contract-details-annual-responsive.component.scss']
@@ -63,7 +65,8 @@ export class ContractDetailsAnnualComponent implements OnInit {
     private annualContractDataService: AnnualContractDataService,
     private contractService: ContractService,
     private userService: UserService,
-    private claimService: ClaimService
+    private claimService: ClaimService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -79,7 +82,7 @@ export class ContractDetailsAnnualComponent implements OnInit {
       });
 
       if (this.contracts.length === 0) {
-        this.error = 'Aucun contrat à afficher';
+        this.error = this.translate.instant('messages.noContractToDisplay');
       } else {
         this.loadClaimsForContracts();
       }
@@ -89,7 +92,7 @@ export class ContractDetailsAnnualComponent implements OnInit {
         if (guaranteeId) {
           this.loadContractsFromAPI(guaranteeId);
         } else {
-          this.error = 'Les données du contrat sont indisponibles. Veuillez retourner aux garanties et réessayer.';
+          this.error = this.translate.instant('messages.unavailableContractData');
         }
       });
     }
@@ -118,13 +121,13 @@ export class ContractDetailsAnnualComponent implements OnInit {
           this.error = null;
           this.loadClaimsForContracts();
         } else {
-          this.error = 'Aucun contrat trouvé pour cette garantie.';
+          this.error = this.translate.instant('messages.noContractForGuarantee');
           this.contracts = [];
         }
       },
       error: (err: any) => {
         this.loading = false;
-        this.error = 'Impossible de charger les contrats. Veuillez retourner aux garanties et réessayer.';
+        this.error = this.translate.instant('messages.cannotLoadContracts');
       }
     });
   }
@@ -147,20 +150,30 @@ export class ContractDetailsAnnualComponent implements OnInit {
     return label || nomContrat || `Produit ${productId}`;
   }
 
-  getContractStatus(contract: Contract): string {
+  getContractState(contract: Contract): 'ACTIVE' | 'EXPIRED' | 'INACTIVE' {
     const valide = contract.valide === true || contract.valide === 'true';
     const today = new Date();
     const endDate = new Date(contract.dateFin);
 
     if (endDate < today) {
-      return 'Expiré';
+      return 'EXPIRED';
     }
-    return valide ? 'Actif' : 'Inactif';
+    return valide ? 'ACTIVE' : 'INACTIVE';
+  }
+
+  getContractStatus(contract: Contract): string {
+    const state = this.getContractState(contract);
+    return this.translate.instant(`annualContractDetails.${state.toLowerCase()}`);
   }
 
   getContractStatusClass(contract: Contract): string {
-    const status = this.getContractStatus(contract);
-    return status === 'Actif' ? 'status-active' : status === 'Expiré' ? 'status-expired' : 'status-inactive';
+    const state = this.getContractState(contract);
+    const classMap = {
+      'ACTIVE': 'status-active',
+      'EXPIRED': 'status-expired',
+      'INACTIVE': 'status-inactive'
+    };
+    return classMap[state];
   }
 
   goBack(): void {
@@ -216,7 +229,6 @@ export class ContractDetailsAnnualComponent implements OnInit {
             this.claims.set(contract.contratID, claims);
           },
           error: (err: any) => {
-            console.error(`Erreur lors du chargement des sinistres pour le contrat ${contract.contratID}:`, err);
             this.claims.set(contract.contratID, []);
           }
         });

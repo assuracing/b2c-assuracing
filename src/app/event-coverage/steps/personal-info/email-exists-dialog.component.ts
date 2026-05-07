@@ -10,11 +10,12 @@ import { UserService } from '../../../services/user.service';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';  
+import { TranslateModule } from '@ngx-translate/core';  
 
 @Component({
   selector: 'app-email-exists-dialog',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
   template: `
     <h2 mat-dialog-title>Email déjà utilisé</h2>
     <mat-dialog-content>

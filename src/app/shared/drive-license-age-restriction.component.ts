@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface DriveLicenseAgeRestrictionDialog {
   driveLicenseType: 'Permis B' | 'Permis A' | 'CASM' | '';
@@ -12,7 +13,7 @@ export interface DriveLicenseAgeRestrictionDialog {
 @Component({
   selector: 'app-drive-license-age-restriction-dialog',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, CommonModule, TranslateModule],
   template: `
     <h2 mat-dialog-title>Âge minimum requis</h2>
     <mat-dialog-content>

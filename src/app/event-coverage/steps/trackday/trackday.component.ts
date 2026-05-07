@@ -7,8 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatNativeDateModule, MAT_DATE_LOCALE, MAT_DATE_FORMATS, DateAdapter } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,18 +16,8 @@ import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../../../core/services/environment.service';
 import { Observable, of } from 'rxjs';
 import { CountryFlagService } from '../../../services/country-flag.service';
-
-const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+import { TranslateService } from '@ngx-translate/core';
+import { DateLocaleService, provideMomentDatepicker } from '../../../core/services/date-locale.service';
 
 interface Circuit {
   id: number;
@@ -46,10 +35,7 @@ interface Organizer {
   email: string;
 }
 
-import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
-import fr from '@angular/common/locales/fr';
-import 'moment/locale/fr';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-trackday',
@@ -67,18 +53,12 @@ import 'moment/locale/fr';
     MatNativeDateModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    TranslateModule
   ],
   templateUrl: './trackday.component.html',
   styleUrls: ['./trackday.component.scss', '../../../app.component.scss'],
-  providers: [
-    { provide: LOCALE_ID, useValue: 'fr-FR' },
-    { provide: MAT_DATE_LOCALE, useValue: 'fr' },
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: false } },
-    DatePipe
-  ]
+  providers: [...provideMomentDatepicker()]
 })
 export class TrackdayComponent implements OnInit {
   @Input() form!: FormGroup;
@@ -109,15 +89,22 @@ export class TrackdayComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private envService: EnvironmentService,
-    public countryFlagService: CountryFlagService
+    public countryFlagService: CountryFlagService,
+    private translate: TranslateService,
+    private dateLocaleService: DateLocaleService,
+    private dateAdapter: DateAdapter<any>
   ) {
     this.apiUrl = this.envService.apiUrl;
-    registerLocaleData(fr);
+    this.initializeArrays();
   }
 
   ngOnInit(): void {
+    this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
     this.setupAutocomplete();
     this.loadOrganizers();
+    this.translate.onLangChange.subscribe(() => {
+      this.initializeArrays();
+    });
   }
 
 
@@ -266,24 +253,30 @@ export class TrackdayComponent implements OnInit {
     }
   }
 
-  eventTypes = [
-    { value: 'ROULAGE_ENTRAINEMENT', label: 'Roulage entraînement', icon: 'two_wheeler' },
-    { value: 'COMPETITION', label: 'Compétition', icon: 'emoji_events' },
-    { value: 'COACHING', label: 'Coaching', icon: 'record_voice_over' },
-    { value: 'STAGE_PILOTAGE', label: 'Stage de pilotage', icon: 'school' }
-  ];
+  eventTypes: { value: string; label: string; icon: string }[] = [];
+  roles: { value: string; label: string; icon: string }[] = [];
+  vehicleTypes: { value: string; label: string; icon: string }[] = [];
 
-  roles = [
-    { value: 'PILOTE', label: 'Pilote', icon: 'sports_motorsports' },
-    { value: 'PASSAGER', label: 'Passager', icon: 'airline_seat_recline_normal' },
-    { value: 'MECANICIEN', label: 'Mécanicien', icon: 'build' },
-    { value: 'PHOTOGRAPHE_VIDEASTE', label: 'Photographe-Vidéaste', icon: 'photo_camera' }
-  ];
+  private initializeArrays(): void {
+    this.eventTypes = [
+      { value: 'ROULAGE_ENTRAINEMENT', label: this.translate.instant('eventCoverage.eventTypes.roulageEntrainement'), icon: 'two_wheeler' },
+      { value: 'COMPETITION', label: this.translate.instant('eventCoverage.eventTypes.competition'), icon: 'emoji_events' },
+      { value: 'COACHING', label: this.translate.instant('eventCoverage.eventTypes.coaching'), icon: 'record_voice_over' },
+      { value: 'STAGE_PILOTAGE', label: this.translate.instant('eventCoverage.eventTypes.stagePilotage'), icon: 'school' }
+    ];
 
-  vehicleTypes = [
-    { value: 'moto', label: 'Moto', icon: 'two_wheeler' },
-    { value: 'auto', label: 'Auto', icon: 'directions_car' }
-  ];
+    this.roles = [
+      { value: 'PILOTE', label: this.translate.instant('eventCoverage.eventRoles.pilote'), icon: 'sports_motorsports' },
+      { value: 'PASSAGER', label: this.translate.instant('eventCoverage.eventRoles.passager'), icon: 'airline_seat_recline_normal' },
+      { value: 'MECANICIEN', label: this.translate.instant('eventCoverage.eventRoles.mecanicien'), icon: 'build' },
+      { value: 'PHOTOGRAPHE_VIDEASTE', label: this.translate.instant('eventCoverage.eventRoles.photographeVideaste'), icon: 'photo_camera' }
+    ];
+
+    this.vehicleTypes = [
+      { value: 'moto', label: this.translate.instant('eventCoverage.vehicleTypes.moto'), icon: 'two_wheeler' },
+      { value: 'auto', label: this.translate.instant('eventCoverage.vehicleTypes.auto'), icon: 'directions_car' }
+    ];
+  }
 
   getEventTypeLabel(value: string): string {
     const item = this.eventTypes.find(e => e.value === value);

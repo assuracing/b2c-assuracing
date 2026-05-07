@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule} from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-yearly-guarantee',
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslateModule],
   templateUrl: './yearly-guarantee.component.html',
   styleUrls: ['./yearly-guarantee.component.scss', '../app.component.scss', '../guarantee-choice/guarantee-choice.component.scss']
 })

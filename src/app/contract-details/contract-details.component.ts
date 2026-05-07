@@ -12,6 +12,7 @@ import { Claim } from '../models/claim.model';
 import { ClaimService } from '../services/claim.service';
 import { ClaimListComponent } from '../components/claim-list/claim-list.component';
 import { ToastService } from '../services/toast.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contract-details',
@@ -23,7 +24,8 @@ import { ToastService } from '../services/toast.service';
     MatIconModule,
     MatProgressSpinnerModule,
     DatePipe,
-    ClaimListComponent
+    ClaimListComponent,
+    TranslateModule
   ],
   templateUrl: './contract-details.component.html',
   styleUrls: ['./contract-details.component.scss', '../app.component.scss', '../app-second.component.scss']
@@ -44,7 +46,8 @@ export class ContractDetailsComponent implements OnInit {
     private claimService: ClaimService,
     private productMappingService: ProductMappingService,
     public countryFlagService: CountryFlagService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +58,7 @@ export class ContractDetailsComponent implements OnInit {
         this.loadContractDetails();
         this.loadClaims();
       } else {
-        this.error = 'Aucun identifiant de contrat fourni';
+        this.error = this.translate.instant('messages.noContractId');
         this.loading = false;
       }
     });
@@ -63,7 +66,7 @@ export class ContractDetailsComponent implements OnInit {
 
   private loadContractDetails(): void {
     if (!this.contractId) {
-      this.error = 'Identifiant de contrat invalide';
+      this.error = this.translate.instant('eventContractDetails.invalidContractId');
       this.loading = false;
       return;
     }
@@ -81,7 +84,7 @@ export class ContractDetailsComponent implements OnInit {
         }
       },
       error: (err: any) => {
-        this.error = 'Impossible de charger les détails du contrat';
+        this.error = this.translate.instant('messages.cannotLoadContractDetails');
         this.loading = false;
       }
     });
@@ -104,7 +107,7 @@ export class ContractDetailsComponent implements OnInit {
         }));
       },
       error: (_err: any) => {
-        this.toastService.error('Erreur lors du chargement des sinistres');
+        this.toastService.error(this.translate.instant('messages.loadClaimsError'));
       }
     });
   }
@@ -150,7 +153,7 @@ export class ContractDetailsComponent implements OnInit {
       
       window.location.href = paymentUrl;
     } else {
-      this.toastService.error('Informations de paiement manquantes');
+      this.toastService.error(this.translate.instant('messages.missingPaymentInfo'));
     }
   }
 

@@ -1,82 +1,82 @@
 <div class="documents-container">
   <div *ngIf="requiredDocumentTypes.length === 0 && !isOptionalJustificatif">
-    <h2>Justificatifs</h2>
+    <h2>{{ 'claimDeclaration.documentsLabel' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span>
-        Vous pouvez ajouter des justificatifs pour appuyer votre déclaration.
+        {{ 'claimDeclaration.optionalDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
 
   <div *ngIf="claimType === 'INTERRUPTION'">
-    <h2>Justificatifs à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span>
-        RIB obligatoire et au moins une photo d'accident ou un devis de réparation doit être ajouté pour appuyer votre déclaration. Vous pouvez ajouter plusieurs photos ou devis.
+        {{ 'claimDeclaration.interruptionDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
 
   <div *ngIf="isAnnulation">
-    <h2>Justificatifs à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span>
-        RIB obligatoire et au moins un justificatif doit être ajouté pour appuyer votre déclaration. Vous pouvez ajouter plusieurs justificatifs.
+        {{ 'claimDeclaration.cancellationDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
 
   <div *ngIf="isOptionalJustificatif">
-    <h2>Justificatifs à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span>
-        RIB obligatoire. Les justificatifs supplémentaires sont facultatifs mais vous pouvez en ajouter plusieurs pour appuyer votre déclaration.
+        {{ 'claimDeclaration.optionalJustificationHelp' | translate }}
       </span>
     </div>
   </div>
 
   <div *ngIf="isRibOnly">
-    <h2>RIB à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadRib' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
-      <span>RIB obligatoire pour ce type de sinistre.</span>
+      <span>{{ 'claimDeclaration.ribMandatory' | translate }}</span>
     </div>
   </div>
 
   <div *ngIf="isIntemperies">
-    <h2>RIB à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadRib' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
-      <span>RIB obligatoire pour ce type de sinistre.</span>
+      <span>{{ 'claimDeclaration.ribMandatory' | translate }}</span>
     </div>
   </div>
 
   <div *ngIf="isDocumentObligatoire() && claimType !== 'INTERRUPTION' && !isIntemperies && !isAnnulation && !isOptionalJustificatif && !isRibOnly">
-    <h2>Justificatifs à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span *ngIf="!canAllowMultipleJustificatifs()">
-        RIB obligatoire et justificatifs demandés selon votre type de sinistre.
+        {{ 'claimDeclaration.ribAndDocuments' | translate }}
       </span>
       <span *ngIf="canAllowMultipleJustificatifs()">
-        RIB obligatoire et vous pouvez ajouter plusieurs justificatifs pour appuyer votre déclaration.
+        {{ 'claimDeclaration.mandatoryAndOptionalDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
 
   <div *ngIf="!isDocumentObligatoire() && claimType !== 'INTERRUPTION' && !isIntemperies && !isAnnulation && !isOptionalJustificatif && !isRibOnly && requiredDocumentTypes.length > 0">
-    <h2>Justificatifs à téléverser</h2>
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }} </h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
       <span *ngIf="!canAllowMultipleJustificatifs()">
-        Le dépôt de justificatifs n'est pas obligatoire pour ce contrat.
+        {{ 'claimDeclaration.documentsNotRequired' | translate }}
       </span>
       <span *ngIf="canAllowMultipleJustificatifs()">
-        Vous pouvez ajouter plusieurs justificatifs pour appuyer votre déclaration.
+        {{ 'claimDeclaration.optionalDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
@@ -101,10 +101,10 @@
                    [for]="'fileInput-' + docType"
                    [class.drag-over]="isDragOverDocType(docType)">
               <mat-icon>cloud_upload</mat-icon>
-              <span>Déposez ou cliquez ici</span>
+              <span>{{ 'claimDeclaration.dragDropLabel' | translate }}</span>
               <span class="doc-type-label">{{ docType }}</span>
             </label>
-            <input 
+            <input
               hidden 
               [id]="'fileInput-' + docType"
               type="file" 
@@ -126,7 +126,7 @@
                 <button mat-icon-button (click)="removeFile(docType, i)" type="button" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
-                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                <button mat-icon-button (click)="openFile(file)" type="button" [title]="'claimDeclaration.viewFile' | translate">
                   <mat-icon>visibility</mat-icon>
                 </button>
               </div>
@@ -146,7 +146,7 @@
                 <button mat-icon-button (click)="removeFile(docType)" type="button" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
-                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" title="Visualiser le fichier">
+                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" [title]="'claimDeclaration.viewFile' | translate">
                   <mat-icon>visibility</mat-icon>
                 </button>
               </div>
@@ -157,7 +157,7 @@
         <div class="document-type-group" *ngFor="let docType of optionalDocSets['OPTIONAL'] || []">
           <div class="document-type-header">
             <mat-icon class="doc-type-icon">{{ getIconForDocType(docType) }}</mat-icon>
-            <span class="doc-type-title">{{ docType }} <span style="font-size: 0.85em; color: #999;">(facultatif)</span></span>
+            <span class="doc-type-title">{{ docType }} <span style="font-size: 0.85em; color: #999;">{{ 'claimDeclaration.optionalLabel' | translate }}</span></span>
           </div>
 
           <div class="doc-upload-wrapper" 
@@ -170,7 +170,7 @@
                    [for]="'fileInput-' + docType"
                    [class.drag-over]="isDragOverDocType(docType)">
               <mat-icon>cloud_upload</mat-icon>
-              <span>Déposez ou cliquez ici</span>
+              <span>{{ 'claimDeclaration.dragDropLabel' | translate }}</span>
               <span class="doc-type-label">{{ docType }}</span>
             </label>
             <input 
@@ -195,7 +195,7 @@
                 <button mat-icon-button (click)="removeFile(docType, i)" type="button" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
-                <button mat-icon-button (click)="openFile(file)" type="button" title="Visualiser le fichier">
+                <button mat-icon-button (click)="openFile(file)" type="button" [title]="'claimDeclaration.viewFile' | translate">
                   <mat-icon>visibility</mat-icon>
                 </button>
               </div>
@@ -215,7 +215,7 @@
                 <button mat-icon-button (click)="removeFile(docType)" type="button" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
-                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" title="Visualiser le fichier">
+                <button mat-icon-button (click)="openFile(getUploadedFile(docType))" type="button" [title]="'claimDeclaration.viewFile' | translate">
                   <mat-icon>visibility</mat-icon>
                 </button>
               </div>
@@ -228,6 +228,6 @@
 
   <div class="status-section" *ngIf="areAllDocumentsUploaded() && isDocumentObligatoire()">
     <mat-icon class="success-icon">check_circle</mat-icon>
-    <p class="status-text">Tous les documents obligatoires sont téléversés</p>
+    <p class="status-text">{{ 'claimDeclaration.allMandatoryDocumentsUploaded' | translate }}</p>
   </div>
 </div>

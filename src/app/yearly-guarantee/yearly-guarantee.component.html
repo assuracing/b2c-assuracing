@@ -1,39 +1,39 @@
 <div class="container-app">
 
     <button class="btn btn-test back-button" (click)="onBack()">
-      <i class="fas fa-arrow-left"></i> Retour
+      <i class="fas fa-arrow-left"></i> {{ 'common.backHome' | translate }}
     </button>
-    <h2 class="text-light">Garanties à l'année</h2>
+    <h2 class="text-light">{{ 'guaranties.annualGuaranties' | translate }}</h2>
     <button class="btn btn-test" (click)="navigateToMotorsLeague()">
-      Couvrir ma pratique sportive
+      {{ 'guaranties.coverSportsPractice' | translate }}
     </button>
   
     <h3 class="text-light" style="margin-top: 15%;">
-      Mes garanties de prévoyance adaptées aux sports mécaniques
+      {{ 'guaranties.benefits' | translate }}
     </h3>
   
     <div class="btn-wrap">
         <button class="btn btn-test">
           <mat-icon>work</mat-icon>
-          Protéger mon activité
+          {{ 'guaranties.protectActivity' | translate }}
         </button>
-        <span class="badge">Bientôt disponible</span>
+        <span class="badge">{{ 'guaranties.comingSoon' | translate }}</span>
       </div>
       
       <div class="btn-wrap">
         <button class="btn btn-test">
           <mat-icon>home</mat-icon>
-          Protéger mon prêt immo
+          {{ 'guaranties.protectMortgage' | translate }}
         </button>
-        <span class="badge">Bientôt disponible</span>
+        <span class="badge">{{ 'guaranties.comingSoon' | translate }}</span>
       </div>
       
       <div class="btn-wrap">
         <button class="btn btn-test">
           <mat-icon>local_hospital</mat-icon>
-          Garantir mes frais de santé
+          {{ 'guaranties.healthCosts' | translate }}
         </button>
-        <span class="badge">Bientôt disponible</span>
+        <span class="badge">{{ 'guaranties.comingSoon' | translate }}</span>
       </div>
       
   </div>

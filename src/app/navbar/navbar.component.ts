@@ -13,11 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UserService } from '../services/user.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { I18nService } from '../core/services/i18n.service';
 
 @Component({
   standalone: true,
   selector: 'app-navbar',
-  imports: [MatIconModule, MatButtonModule, CommonModule, FormsModule],
+  imports: [MatIconModule, MatButtonModule, CommonModule, FormsModule, TranslateModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
@@ -30,7 +32,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @ViewChild('navbarRef') navbarRef!: ElementRef;
 
-  constructor(private router: Router, public authService: AuthService, public userService: UserService) {}
+  constructor(
+    private router: Router, 
+    public authService: AuthService, 
+    public userService: UserService,
+    private i18nService: I18nService
+  ) {}
 
   @HostListener('window:resize')
   onResize() {
@@ -41,7 +48,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.checkScreenSize();
-    this.langue = localStorage.getItem('user_lang') || 'fr';
+    
+    this.langue = this.i18nService.getCurrentLanguage();
+    
+    this.i18nService.getCurrentLanguage$().subscribe(lang => {
+      this.langue = lang;
+    });
 
     this.userService.user$.subscribe(user => {
       if (user && !this.hasWelcomed) {
@@ -84,8 +96,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   changerLangue(codeLangue: string) {
-    this.langue = codeLangue;
-    localStorage.setItem('user_lang', codeLangue);
+    this.i18nService.setLanguage(codeLangue);
     this.isLangueDropdownOpen = false;
   }
 

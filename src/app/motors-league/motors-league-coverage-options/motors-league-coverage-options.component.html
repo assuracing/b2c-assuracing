@@ -11,12 +11,12 @@
         [checked]="activeSection === 'protectionPilote'" 
         [disabled]="activeSection && activeSection !== 'protectionPilote'"
         (change)="onToggleChange('protectionPilote', $event.checked)"
-        [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+        [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
         [matTooltipPosition]="'above'"
         [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
         <span class="toggle-label-wrapper">
           <mat-icon class="toggle-icon-large">health_and_safety</mat-icon>
-          <strong class="toggle-label-strong">Protection Corporelle Annuelle (Individuelle Accident)</strong>
+          <strong class="toggle-label-strong">{{'motorsLeague.corporateProtectionAnnual' | translate}}</strong>
         </span>
       </mat-slide-toggle>
       </ng-container>
@@ -24,18 +24,18 @@
       <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
         <div class="validated-toggle" 
              style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
-             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
-               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
-              Protection Corporelle Annuelle (Individuelle Accident)
+              {{ 'motorsLeague.corporateProtectionAnnual' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getProtectionPiloteAmount()) }}
@@ -47,9 +47,9 @@
 
       <div class="risk-details" *ngIf="activeSection === 'protectionPilote'">
         <p class="description">
-          La garantie corporelle la plus complète du marché
+          {{ 'eventCoverage.corporateLiability' | translate }}
           <app-adaptive-tooltip
-            text="La garantie comprend : &#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+            [text]="'motorsLeague.corporateLiabilityBenefits' | translate">
           </app-adaptive-tooltip>
         </p>
 
@@ -58,14 +58,14 @@
                class="level-option"
                [class.selected]="form.get('protectionPilote')?.value === level"
                (click)="onProtectionLevelChange(level)">
-            <div class="level-number">Niveau {{ level }}</div>
+            <div class="level-number">{{ 'eventCoverage.level' | translate }} {{ level }}</div>
             <div class="coverage-details">
               <div class="coverage-item">
-                <span class="label">Décès :</span>
+                <span class="label">{{ 'eventCoverage.death' | translate }} :</span>
                 <span class="amount">{{ PROTECTION_LEVELS[level].death | number }} €</span>
               </div>
               <div class="coverage-item">
-                <span class="label">Invalidité :</span>
+                <span class="label">{{ 'eventCoverage.disability' | translate }} :</span>
                 <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
               </div>
             </div>
@@ -73,14 +73,14 @@
           </div>
         </div>
 
-        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">{{ 'common.validate' | translate }}</button>
 
         <mat-accordion class="benefits-accordion" *ngIf="getBenefitsForGuarantee('protectionPilote') && getBenefitsForGuarantee('protectionPilote').length > 0">
           <mat-expansion-panel class="benefits-panel">
             <mat-expansion-panel-header class="benefits-header">
               <mat-panel-title>
                 <mat-icon>star</mat-icon>
-                Mes avantages
+                {{ 'common.myBenefits' | translate }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -104,12 +104,12 @@
           [checked]="activeSection === 'responsabiliteRecours'" 
           [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
           (change)="onToggleChange('responsabiliteRecours', $event.checked)"
-          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'"
           matTooltipPosition="above">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon-large">handshake</mat-icon>
-            <strong class="toggle-label-strong">Garantie Responsabilité / Recours Annuelle</strong>
+            <strong class="toggle-label-strong">{{ 'motorsLeague.responsibilityRecourseAnnual' | translate }}</strong>
           </span>
         </mat-slide-toggle>
       </ng-container>
@@ -117,18 +117,18 @@
       <ng-container *ngIf="(validatedSections['responsabiliteRecours'] || wasResponsabiliteRecoursValidated)">
         <div class="validated-toggle" 
              style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
-             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
-               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
-              Garantie Responsabilité / Recours Annuelle
+              {{ 'motorsLeague.responsibilityRecourseAnnual' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getResponsabiliteRecoursAmount()) }}
@@ -146,16 +146,16 @@
             class="inclus-toggle">
             <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">security</mat-icon>
-              <strong class="toggle-label-medium">Responsabilité Civile Annuelle</strong>
+              <strong class="toggle-label-medium">{{ 'motorsLeague.civilLiabilityAnnual' | translate }}</strong>
               <app-adaptive-tooltip
                 [blink]="true"
                 [style.display]="vehicleType === 'auto' ? 'inline-flex' : 'none'"
-                text="Il est possible d'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans">
+                [text]="'motorsLeague.autoLicenseInfo' | translate">
               </app-adaptive-tooltip>
               <app-adaptive-tooltip
                 [blink]="true"
                 [style.display]="vehicleType === 'moto' ? 'inline-flex' : 'none'"
-                text="Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans">
+                [text]="'motorsLeague.motoLicenseInfo' | translate">
               </app-adaptive-tooltip>
             </span>
           </mat-slide-toggle>
@@ -166,7 +166,7 @@
               <mat-expansion-panel-header class="benefits-header">
                 <mat-panel-title>
                   <mat-icon>star</mat-icon>
-                  Mes avantages
+                  {{ 'common.myBenefits' | translate }}
                 </mat-panel-title>
               </mat-expansion-panel-header>
 
@@ -186,11 +186,11 @@
           [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon">gavel</mat-icon>
-            <strong class="toggle-label-medium">Protection Juridique Annuelle</strong>
+              <strong class="toggle-label-medium">{{ 'motorsLeague.legalProtectionAnnual' | translate }}</strong>
           </span>
         </mat-slide-toggle>
           <div class="risk-details">
-            <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
+            <p>{{ 'motorsLeague.defenseRecourseDescription' | translate }}</p>
             <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
 
             <mat-accordion class="benefits-accordion" *ngIf="getBenefitsForGuarantee('defenseRecours') && getBenefitsForGuarantee('defenseRecours').length > 0">
@@ -198,7 +198,7 @@
                 <mat-expansion-panel-header class="benefits-header">
                   <mat-panel-title>
                     <mat-icon>star</mat-icon>
-                    Mes avantages
+                    {{ 'common.myBenefits' | translate }}
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
@@ -212,7 +212,7 @@
             </mat-accordion>
           </div>
         </div>
-        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">{{ 'common.validate' | translate }}</button>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <form [formGroup]="form" class="coverage-options-form">
   <div class="total-prime">
-    <h3>Total : {{ formatPrice(totalPrime) }}</h3>
+    <h3>{{ 'eventCoverage.guarantees.total' | translate }} : {{ formatPrice(totalPrime) }}</h3>
   </div>
 
   <div class="protection-pilote" *ngIf="allowedGaranties.includes('IAI')" 
@@ -12,12 +12,12 @@
           [checked]="activeSection === 'iai'"
           [disabled]="activeSection && activeSection !== 'iai'"
           (change)="onToggleChange('iai', $event.checked)"
-          [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltip]="activeSection && activeSection !== 'iai' ? ('common.completeEntry' | translate) : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
           matTooltipPosition="above">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon-large">warning</mat-icon>
-            <strong class="toggle-label-strong">Intempéries, Annulation & Interruption</strong>
+            <strong class="toggle-label-strong">{{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}</strong>
           </span>
         </mat-slide-toggle>
       </ng-container>
@@ -25,19 +25,19 @@
       <ng-container *ngIf="validatedSections['iai'] || wasIAIValidated">
         <div class="validated-toggle" 
              style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
-             [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltip]="activeSection && activeSection !== 'iai' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'iai'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('iai')">close</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'iai'"
-               [matTooltip]="activeSection && activeSection !== 'iai' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltip]="activeSection && activeSection !== 'iai' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
                >
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'iai' || !activeSection ? onCartClick('iai') : null">
-              Intempéries, Annulation & Interruption
+              {{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getIAIAmount()) }}
@@ -49,13 +49,13 @@
       <div *ngIf="activeSection === 'iai'" style="margin-top: 40px;">
         <div class="date-amount-group">
           <mat-form-field appearance="outline">
-            <mat-label>Date d'inscription à l'événement</mat-label>
+            <mat-label>{{ 'eventCoverage.guarantees.inscriptionDate' | translate }}</mat-label>
             <input matInput [matDatepicker]="inscriptionDate" formControlName="inscriptionDate" [max]="today">
             <mat-datepicker-toggle matSuffix [for]="inscriptionDate"></mat-datepicker-toggle>
             <mat-datepicker #inscriptionDate></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="outline" style="margin-bottom: 15px;">
-            <mat-label>Montant de la réservation (€)</mat-label>
+            <mat-label>{{ 'eventCoverage.guarantees.reservationAmount' | translate }}</mat-label>
             <input 
               matInput 
               type="number" 
@@ -64,11 +64,11 @@
               min="0"
               max="1500"
               step="1"
-              placeholder="Montant max. 1500 €">
-            <mat-hint align="end">Montant max. 1500 €</mat-hint>
+              placeholder="{{ 'eventCoverage.guarantees.reservationAmount' | translate }}">
+            <mat-hint align="end">{{ 'eventCoverage.maxReservationAmount' | translate }}</mat-hint>
           </mat-form-field>
         </div>
-  
+
           <div class="risk-group">
             <mat-slide-toggle
              labelPosition="before"
@@ -76,21 +76,21 @@
              [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">thunderstorm</mat-icon>
-              <strong class="toggle-label-medium">Risque Intempérie</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.cancellationRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-              Non disponible pour cet organisateur
+              {{ 'eventCoverage.notAvailableOrganizer' | translate }}
             </small>
             <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
-              Non disponible car l'évènement a lieu dans moins de 3 semaines. 
+              {{ 'eventCoverage.notAvailableEventDate' | translate }}
             </small>
             <div class="risk-details">
               <ul>
-                <li>80 % en cas d'annulation</li>
-                <li>50 % en cas de roulage sous la pluie</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.weather80' | translate }}</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.weather50' | translate }}</li>
               </ul>
-              <p>Prime : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
+              <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.intemperies) }}</p>
             </div>
           </div>
   
@@ -101,25 +101,25 @@
              [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">event_busy</mat-icon>
-              <strong class="toggle-label-medium">Risque Annulation</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}</strong>
             </span>
             </mat-slide-toggle>
               <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
-                Non disponible pour cet organisateur
+                {{ 'eventCoverage.notAvailableOrganizer' | translate }}
               </small>
               <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
-                Non disponible car l'évènement a lieu dans moins de 3 semaines.
+                {{ 'eventCoverage.notAvailableEventDate' | translate }}
               </small>
               <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
-                Non disponible car votre inscription a été effectuée il y a plus de 15 jours.
+                {{ 'eventCoverage.notAvailableInscriptionDate' | translate }}
               </small>
             <div class="risk-details">
               <ul>
-                <li>100 % en cas d'Accident avec hospitalisation ou maladie avec hospitalisation</li>
-                <li>100 % en cas d'Accident ou vol du véhicule engagé, décès, naissance, autres motifs prévus au contrat</li>
-                <li>70 % autres motifs de santé</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.accident100' | translate }}</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.theft100' | translate }}</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.health70' | translate }}</li>
               </ul>
-              <p>Prime : {{ formatPrice(PRIME_RATES.annulation) }}</p>
+              <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.annulation) }}</p>
             </div>
           </div>
   
@@ -130,20 +130,20 @@
              [disabled]="isProductUnavailable('INTERRUPTION')">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">block</mat-icon>
-              <strong class="toggle-label-medium">Risques Interruption</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.interruptionRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
-              Non disponible pour cet organisateur
+              {{ 'eventCoverage.notAvailableOrganizer' | translate }}
             </small>
             <div class="risk-details">
               <ul>
-                <li>50 % en cas d'accident survenant lors de l'événement ne permettant pas de reprendre l'activité</li>
+                <li>{{ 'eventCoverage.guarantees.coverageDetails.interruption50' | translate }}</li>
               </ul>
-              <p>Prime : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
+              <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
             </div>
           </div>
-        <button mat-button class="mat-button" (click)="validateSection('iai')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('iai')">{{ 'common.validate' | translate }}</button>
       </div>
     </div>
     </div>
@@ -157,12 +157,12 @@
         [checked]="activeSection === 'protectionPilote'" 
         [disabled]="activeSection && activeSection !== 'protectionPilote'"
         (change)="onToggleChange('protectionPilote', $event.checked)"
-        [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+        [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
         [matTooltipPosition]="'above'"
         [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
         <span class="toggle-label-wrapper">
           <mat-icon class="toggle-icon-large">health_and_safety</mat-icon>
-          <strong class="toggle-label-strong">Protection Corporelle (Individuelle Accident)</strong>
+          <strong class="toggle-label-strong">{{ 'eventCoverage.guarantees.corporateAccident' | translate }}</strong>
         </span>
       </mat-slide-toggle>
       </ng-container>
@@ -170,18 +170,18 @@
       <ng-container *ngIf="validatedSections['protectionPilote'] || wasProtectionPiloteValidated">
         <div class="validated-toggle" 
              style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
-             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
-               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
-              Protection Corporelle (Individuelle Accident)
+              {{ 'eventCoverage.guarantees.corporateAccident' | translate }}
               <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getProtectionPiloteAmount()) }}
@@ -193,9 +193,9 @@
 
       <div class="risk-details" *ngIf="activeSection === 'protectionPilote'">
         <p class="description">
-          La garantie corporelle la plus complète du marché
+          {{ 'eventCoverage.corporateLiability' | translate }}
           <app-adaptive-tooltip
-            text="La garantie comprend : &#10;• Décès&#10;• Invalidité&#10;• Frais Médicaux&#10;• Assistance Médicale / Rapatriement&#10;• Frais de reconditionnement d’Airbag (hors compétition, jusque 150 €)">
+            text="{{ 'eventCoverage.corporateLiabilityDetails' | translate }}">
           </app-adaptive-tooltip>
         </p>
 
@@ -204,14 +204,14 @@
                class="level-option"
                [class.selected]="form.get('protectionPilote')?.value === level"
                (click)="onProtectionLevelChange(level)">
-            <div class="level-number">Niveau {{ level }}</div>
+            <div class="level-number">{{ 'eventCoverage.level' | translate }} {{ level }}</div>
             <div class="coverage-details">
               <div class="coverage-item">
-                <span class="label">Décès :</span>
+                <span class="label">{{ 'eventCoverage.death' | translate }} :</span>
                 <span class="amount">{{ PROTECTION_LEVELS[level].death | number }} €</span>
               </div>
               <div class="coverage-item">
-                <span class="label">Invalidité :</span>
+                <span class="label">{{ 'eventCoverage.disability' | translate }} :</span>
                 <span class="amount">{{ PROTECTION_LEVELS[level].disability | number }} €</span>
               </div>
             </div>
@@ -219,7 +219,7 @@
           </div>
         </div>
 
-        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('protectionPilote')">{{ 'common.validate' | translate }}</button>
       </div>
     </div>
   </div>
@@ -233,12 +233,12 @@
           [checked]="activeSection === 'responsabiliteRecours'" 
           [disabled]="activeSection && activeSection !== 'responsabiliteRecours'"
           (change)="onToggleChange('responsabiliteRecours', $event.checked)"
-          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+          [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
           [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'"
           matTooltipPosition="above">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon-large">handshake</mat-icon>
-            <strong class="toggle-label-strong">Garantie Responsabilité / Recours (RC - obligatoire)</strong>
+            <strong class="toggle-label-strong">{{ 'eventCoverage.guarantees.responsabilityRecourse' | translate }}</strong>
           </span>
         </mat-slide-toggle>
       </ng-container>
@@ -246,26 +246,26 @@
       <ng-container *ngIf="(validatedSections['responsabiliteRecours'] || wasResponsabiliteRecoursValidated)">
         <div class="validated-toggle" 
              style="display: flex; align-items: center; gap: 8px; color: #0ba2cf; font-weight: 500;"
-             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+             [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
           <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
-               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? 'Veuillez terminer votre saisie en cours' : ''"
+               [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
             <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
                  (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
-              Garantie Responsabilité / Recours (RC - obligatoire)
+              {{ 'eventCoverage.guarantees.responsabilityRecourse' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
                 <ng-container *ngIf="isPartnerOrganizer(); else rcNonPartner">
                   <ng-container *ngIf="!form.get('defenseRecours')?.value; else montantPJ">
-                    inclus
+                    {{ 'eventCoverage.guarantees.included' | translate }}
                   </ng-container>
                   <ng-template #montantPJ>
-                    {{ formatPrice(PRIME_RATES.defenseRecours) }} <span style="font-size:12px;color:#0ba2cf;">(RC inclus)</span>
+                    {{ formatPrice(PRIME_RATES.defenseRecours) }} <span style="font-size:12px;color:#0ba2cf;">({{ 'eventCoverage.guarantees.responsabilityRecourse' | translate }} inclus)</span>
                   </ng-template>
                 </ng-container>
                 <ng-template #rcNonPartner>
@@ -285,24 +285,24 @@
             class="inclus-toggle">
             <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">security</mat-icon>
-              <strong class="toggle-label-medium">Responsabilité Civile</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.civilLiability' | translate }}</strong>
               <app-adaptive-tooltip
                 [blink]="true"
                 [style.display]="vehicleType === 'auto' ? 'inline-flex' : 'none'"
-                text="Il est possible d'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans">
+                text="{{ 'eventCoverage.guarantees.autoLicenseInfo' | translate }}">
               </app-adaptive-tooltip>
               <app-adaptive-tooltip
                 [blink]="true"
                 [style.display]="vehicleType === 'moto' ? 'inline-flex' : 'none'"
-                text="Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans">
+                text="{{ 'eventCoverage.guarantees.motoLicenseInfo' | translate }}">
               </app-adaptive-tooltip>
             </span>
           </mat-slide-toggle>
           <p *ngIf="isPartnerOrganizer()" class="inclus" style="font-weight: normal; font-size: 13px; color: #0ba2cf; margin-top: 2px; ">
-            Votre organisateur, partenaire Assuracing, a déjà souscrit pour vous !
+            <p>{{ 'eventCoverage.guarantees.partnerOrganizerMessage' | translate }}
             <mat-icon style="font-size: 24px; margin-right: 4px;">sentiment_very_satisfied</mat-icon>
           </p>
-          <p>Prime : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
+          <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
         </div>
         <div class="risk-group">
           <mat-slide-toggle
@@ -311,15 +311,15 @@
           [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon">gavel</mat-icon>
-            <strong class="toggle-label-medium">Protection Juridique</strong>
+            <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.legalProtection' | translate }}</strong>
           </span>
         </mat-slide-toggle>
           <div class="risk-details">
-            <p>Défend vos intérêts civils lors de l'évènement (dommages corporels, mise en cause hors RC…)</p>
-            <p>Prime : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
+            <p>{{ 'eventCoverage.defenseRecourseDescription' | translate }}</p>
+            <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
           </div>
         </div>
-        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">Valider</button>
+        <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">{{ 'common.validate' | translate }}</button>
       </div>
     </div>
   </div>

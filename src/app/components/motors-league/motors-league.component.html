@@ -1,7 +1,7 @@
 <mat-card class="motors-league-card">
   <mat-card-header>
     <div class="header-content">
-      <mat-card-title>Motors League</mat-card-title>
+      <mat-card-title>{{ 'motorsLeague.title' | translate }}</mat-card-title>
       <div class="header-image">
         <img [src]="'images/motors-league.png'" alt="Motors League" class="logo" [class.logo-active]="isActive">
       </div>
@@ -10,7 +10,7 @@
   
   <mat-card-content>
     
-    <h3 class="guarantees-title">Vos garanties annuelles</h3>
+    <h3 class="guarantees-title">{{ 'annualContracts.annualGuarantees' | translate }}</h3>
     
     <div class="guarantees-grid">
       <mat-card class="guarantee-card" *ngFor="let guarantee of annualGuarantees" [class.expired]="guarantee.status === 'resilié'">
@@ -30,7 +30,7 @@
                     (click)="$event.stopPropagation()"
                     class="action-btn subscribe-btn">
               <mat-icon>add</mat-icon>
-              <span>Souscrire</span>
+              <span>{{ 'annualContracts.subscribe' | translate }}</span>
             </button>
             <button *ngIf="guarantee.status === 'resilié'" 
                     mat-raised-button
@@ -39,14 +39,7 @@
                     (click)="$event.stopPropagation()"
                     class="action-btn renew-btn">
               <mat-icon>refresh</mat-icon>
-              <span>Renouveler</span>
-            </button>
-            <button *ngIf="guarantee.status === 'resilié'" 
-                    mat-stroked-button
-                    (click)="viewContractDetails(guarantee)"
-                    class="action-btn details-btn">
-              <mat-icon>article</mat-icon>
-              <span>Détails</span>
+              <span>{{ 'annualContracts.renew' | translate }}</span>
             </button>
             <button *ngIf="guarantee.status === 'en-cours'" 
                     mat-raised-button 
@@ -54,7 +47,7 @@
                     (click)="viewContractDetails(guarantee)"
                     class="action-btn details-btn">
               <mat-icon>article</mat-icon>
-              <span>Détails</span>
+              <span>{{ 'motorsLeague.details' | translate }}</span>
             </button>
           </div>
 
@@ -63,7 +56,7 @@
               <mat-expansion-panel-header class="benefits-header">
                 <mat-panel-title>
                   <mat-icon>star</mat-icon>
-                  Mes avantages
+                  {{ 'common.myBenefits' | translate }}
                 </mat-panel-title>
               </mat-expansion-panel-header>
 
@@ -77,8 +70,6 @@
           </mat-accordion>
         </mat-card-content>
       </mat-card>
-    </div>
-
-    
+    </div>    
   </mat-card-content>
 </mat-card>

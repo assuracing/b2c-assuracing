@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProductMappingService } from '../../services/product-mapping.service';
 import { AnnualContractDataService } from '../../services/annual-contract-data.service';
 
@@ -39,7 +40,8 @@ interface AnnualGuarantee {
     MatExpansionModule,
     MatIconModule,
     MatTooltipModule,
-    RouterModule
+    RouterModule,
+    TranslateModule
   ],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss','./annual-contract.component.scss']
@@ -47,118 +49,127 @@ interface AnnualGuarantee {
 export class MotorsLeagueComponent implements OnInit, OnChanges {
   @Input() contracts: Contract[] = [];
 
-  constructor(
-    private router: Router,
-    private productMappingService: ProductMappingService,
-    private annualContractDataService: AnnualContractDataService
-  ) {}
-
   activeContract: Contract | null = null;
   hasContract = false;
   isActive = false;
   selectedGuarantee: AnnualGuarantee | null = null;
+  annualGuarantees: AnnualGuarantee[] = [];
 
-  annualGuarantees: AnnualGuarantee[] = [
-    {
-      id: 'rc',
-      label: 'Responsabilité civile',
-      status: 'non-souscrit',
-      contracts: [],
-      productIds: [83],
-      benefits: [
-        {
-          icon: 'shield',
-          title: 'Couverture des dommages que vous causez aux tiers sur les trackdays'
-        },
-        {
-          icon: 'personal_injury',
-          title: 'Dommages corporels : 8M€'
-        },
-        {
-          icon: 'car_crash',
-          title: 'Dommages matériels : 500k€'
-        },
-        {
-          icon: 'sports_motorsports',
-          title: 'Dont dommages aux équipements de sécurité : 10k€'
-        },
-        {
-          icon: 'check_circle',
-          title: 'Sans franchise'
-        }
-      ]
-    },
-    {
-      id: 'pj',
-      label: 'Protection juridique',
-      status: 'non-souscrit',
-      contracts: [],
-      productIds: [398],
-      benefits: [
-        {
-          icon: 'gavel',
-          title: 'La garantie qui défend vos droits dans le cadre de la pratique des sports mécaniques'
-        },
-        {
-          icon: 'contact_support',
-          title: 'Accompagnement juridique et assistance psychologique par téléphone en cas d\'accident'
-        },
-        {
-          icon: 'balance',
-          title: 'Garantie d\'aide aux victimes et recours pénal'
-        },
-        {
-          icon: 'admin_panel_settings',
-          title: 'Défense pénale'
-        },
-        {
-          icon: 'description',
-          title: 'Garantie consommation auto/moto'
-        }
-      ]
-    },
-    
-    {
-      id: 'ia',
-      label: 'Individuelle accident',
-      status: 'non-souscrit',
-      contracts: [],
-      productIds: [354, 355, 356, 357, 358],
-      benefits: [
-        {
-          icon: 'heart_broken',
-          title: 'Capital Décès (de 7600 € à 200 000 €)'
-        },
-        {
-          icon: 'accessible',
-          title: 'Capital Invalidité (de 18500 à 300 000 €)'
-        },
-        {
-          icon: 'phone_in_talk',
-          title: 'Assistance médicale 24/7'
-        },
-        {
-          icon: 'flight_takeoff',
-          title: 'Frais médicaux à l\'étranger : 100 000 €'
-        },
-        {
-          icon: 'local_hospital',
-          title: 'Rapatriement et transport sanitaire (frais réels)'
-        },
-        {
-          icon: 'receipt_long',
-          title: 'Frais médicaux restant à charge (2500 €)'
-        },
-        {
-          icon: 'two_wheeler',
-          title: 'Spécial moto : reconditionnement d\'airbag jusque 150 €'
-        }
-      ]
-    }
-  ];
-  
+  constructor(
+    private router: Router,
+    private productMappingService: ProductMappingService,
+    private annualContractDataService: AnnualContractDataService,
+    private translate: TranslateService
+  ) {
+    this.translate.onLangChange.subscribe(() => {
+      this.initializeGuarantees();
+      this.checkMotorsLeagueStatus();
+    });
+  }
+
   ngOnInit() {
+    this.initializeGuarantees();
     this.checkMotorsLeagueStatus();
+  }
+
+  private initializeGuarantees() {
+    this.annualGuarantees = [
+      {
+        id: 'rc',
+        label: this.translate.instant('annualContracts.civilLiability'),
+        status: 'non-souscrit',
+        contracts: [],
+        productIds: [83],
+        benefits: [
+          {
+            icon: 'shield',
+            title: this.translate.instant('benefits.thirdPartyDamageCover')
+          },
+          {
+            icon: 'personal_injury',
+            title: this.translate.instant('benefits.personalInjury')
+          },
+          {
+            icon: 'car_crash',
+            title: this.translate.instant('benefits.materialDamage')
+          },
+          {
+            icon: 'sports_motorsports',
+            title: this.translate.instant('benefits.safetyEquipmentDamage')
+          },
+          {
+            icon: 'check_circle',
+            title: this.translate.instant('benefits.noDeductible')
+          }
+        ]
+      },
+      {
+        id: 'pj',
+        label: this.translate.instant('annualContracts.legalProtection'),
+        status: 'non-souscrit',
+        contracts: [],
+        productIds: [398],
+        benefits: [
+          {
+            icon: 'gavel',
+            title: this.translate.instant('benefits.rightsDefense')
+          },
+          {
+            icon: 'contact_support',
+            title: this.translate.instant('benefits.legalAndPsychologicalSupport')
+          },
+          {
+            icon: 'balance',
+            title: this.translate.instant('benefits.victimSupportAndCriminalRecourse')
+          },
+          {
+            icon: 'admin_panel_settings',
+            title: this.translate.instant('benefits.criminalDefense')
+          },
+          {
+            icon: 'description',
+            title: this.translate.instant('benefits.carMotorcycleConsumptionGuarantee')
+          }
+        ]
+      },
+      {
+        id: 'ia',
+        label: this.translate.instant('annualContracts.individualAccident'),
+        status: 'non-souscrit',
+        contracts: [],
+        productIds: [354, 355, 356, 357, 358],
+        benefits: [
+          {
+            icon: 'heart_broken',
+            title: this.translate.instant('benefits.deathBenefit')
+          },
+          {
+            icon: 'accessible',
+            title: this.translate.instant('benefits.disabilityBenefit')
+          },
+          {
+            icon: 'phone_in_talk',
+            title: this.translate.instant('benefits.medicalAssistance247')
+          },
+          {
+            icon: 'flight_takeoff',
+            title: this.translate.instant('benefits.medicalExpensesAbroad')
+          },
+          {
+            icon: 'local_hospital',
+            title: this.translate.instant('benefits.repatriationAndMedicalTransport')
+          },
+          {
+            icon: 'receipt_long',
+            title: this.translate.instant('benefits.remainingMedicalExpenses')
+          },
+          {
+            icon: 'two_wheeler',
+            title: this.translate.instant('benefits.motorcycleSpecialAirbag')
+          }
+        ]
+      }
+    ];
   }
   
   private checkMotorsLeagueStatus() {
@@ -221,40 +232,14 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
     });
   }
   
-  renewContract() {
-    this.router.navigate(['/motors-league'], { queryParams: { page: '2' } });
-  }
-
-  goToMotorsLeague() {
-    this.router.navigate(['/motors-league']);
-  }
-
-  getProductName(productId: string | undefined): string {
-    if (!productId) return 'Produit inconnu';
-    return this.productMappingService.getProductLabel(productId) || `Produit ${productId}`;
-  }
-
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'en-cours':
-        return 'status-active';
-      case 'resilié':
-        return 'status-inactive';
-      case 'non-souscrit':
-        return 'status-pending';
-      default:
-        return '';
-    }
-  }
-
   getStatusLabel(status: string): string {
     switch (status) {
       case 'en-cours':
-        return 'En cours';
+        return this.translate.instant('annualContracts.onGoing');
       case 'resilié':
-        return 'Résilié';
+        return this.translate.instant('annualContracts.resiliated');
       case 'non-souscrit':
-        return 'Non souscrit';
+        return this.translate.instant('annualContracts.notSubscribed');
       default:
         return '';
     }
@@ -271,13 +256,7 @@ export class MotorsLeagueComponent implements OnInit, OnChanges {
       default:
         return 'info';
     }
-  }
-
-  getContractDetailsText(contractsCount: number): string {
-    return contractsCount === 1 
-      ? 'Voir les détails du contrat' 
-      : 'Voir les détails des contrats';
-  }
+  }  
 
   viewContractDetails(guarantee: AnnualGuarantee) {
     this.selectedGuarantee = guarantee;
