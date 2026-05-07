@@ -60,7 +60,7 @@
             <span class="detail-label">{{ 'eventContractDetails.entryDate' | translate }} </span>
             <span class="detail-value">{{ contract.dateSaisie | date:'d MMMM yyyy' }}</span>
           </div>
-          <div class="detail-row">
+          <div class="detail-row" *ngIf="!isIAIProducts()">
             <span class="detail-label">{{ 'eventContractDetails.racingAmount' | translate }} </span>
             <span class="detail-value"> {{ contract.montantGarantie }} €</span>
           </div>

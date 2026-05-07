@@ -177,4 +177,10 @@ export class ContractDetailsComponent implements OnInit {
     const annualProductIds = [83, 398, 354, 355, 356, 357, 358];
     return annualProductIds.includes(this.contract.produit.id);
   }
+
+  isIAIProducts(): boolean {
+    if (!this.contract) return false;
+    const iaiProductIds = [41,42,43];
+    return iaiProductIds.includes(this.contract.produit.id);
+  }
 }
