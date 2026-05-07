@@ -82,6 +82,7 @@ export class TrackdayComponent implements OnInit {
   filteredCircuits: Observable<Circuit[]> = of([]);
   filteredOrganizers: Observable<Organizer[]> = of([]);
   selectedCircuit: Circuit | null = null;
+  durationOptions = [1, 2, 3, 4, 5];
   
   private apiUrl: string;
 
@@ -115,6 +116,10 @@ export class TrackdayComponent implements OnInit {
     const finalDate = new Date(eventDate);
     finalDate.setDate(finalDate.getDate() + duration - 1);
     return finalDate;
+  }
+
+  setDuration(duration: number): void {
+    this.form.get('duration')?.setValue(duration);
   }
 
   private loadOrganizers() {

@@ -63,10 +63,42 @@
       color: rgba(0, 0, 0, 0.87);
       font-size: 13px;
     }
-    
-    .mat-slider {
-      height: 24px !important;
-      margin-bottom: 0 !important;
+
+    .duration-shortcuts {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 10px;
+    }
+
+    .duration-chip {
+      min-width: 40px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(63, 81, 181, 0.28);
+      background: #fff;
+      color: #3f51b5;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .duration-chip:hover {
+      background: rgba(63, 81, 181, 0.08);
+    }
+
+    .duration-chip.active {
+      background: #3f51b5;
+      color: #fff;
+      border-color: #3f51b5;
+    }
+
+    .duration-slider {
+      width: calc(100% - 24px);
+      display: block;
+      margin: 0 12px 0 12px !important;
+      min-height: 40px;
+      touch-action: pan-x;
     }
   }
 }

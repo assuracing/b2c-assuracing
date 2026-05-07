@@ -198,7 +198,7 @@
     "startDate": "Date de début : ",
     "endDate": "Date de fin : ",
     "entryDate": "Date de saisie : ",
-    "racingAmount": "Montant inscription roulage garantie : ",
+    "racingAmount": "Montant garanti : ",
     "client": "Client : ",
     "other": "Autre : ",
     "associatedFiles": "Fichiers associés",
