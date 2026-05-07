@@ -406,8 +406,9 @@
       "validateSection": "Valider la section",
       "inscriptionDate": "Date d'inscription à l'événement",
       "reservationAmount": "Montant de réservation (€)",
-      "cancellationRisk": "Risque d'annulation",
-      "interruptionRisk": "Risques d'interruption",
+      "cancellationRisk": "Risque Annulation",
+      "interruptionRisk": "Risque Interruption",
+      "badWeatherRisk": "Risque Intempérie",
       "civilLiability": "Responsabilité Civile",
       "legalProtection": "Protection Juridique",
       "coverageDetails": {

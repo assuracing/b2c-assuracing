@@ -76,7 +76,7 @@
              [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">thunderstorm</mat-icon>
-              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.cancellationRisk' | translate }}</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.badWeatherRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
             <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
@@ -101,7 +101,7 @@
              [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">event_busy</mat-icon>
-              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}</strong>
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.cancellationRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
               <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
