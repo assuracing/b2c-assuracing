@@ -195,8 +195,8 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
     const causesSub = causesReq.subscribe({
       next: (causes) => {
-        this.typeCauseSinistres = causes;
-        this.showReasonStep = causes.length > 0;
+        this.typeCauseSinistres = this.filterCausesForClient(causes);
+        this.showReasonStep = this.typeCauseSinistres.length > 0;
       },
       error: (error) => {
         this.typeCauseSinistres = [];
@@ -205,6 +205,10 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(causesSub);
+  }
+
+  private filterCausesForClient(causes: TypeCauseSinistre[]): TypeCauseSinistre[] {
+    return causes.filter(cause => !cause.nom?.toLowerCase().includes('refus'));
   }
 
   private loadCausesAndContinue(): void {
