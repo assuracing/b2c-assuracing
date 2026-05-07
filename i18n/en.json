@@ -365,6 +365,7 @@
     "maxReservationAmount": "Max amount €1500",
     "notAvailableOrganizer": "Not available for this organizer",
     "notAvailableEventDate": "Not available because the event is within 3 weeks.",
+    "notAvailableInscriptionDate": "Not available because your registration was made more than 15 days ago.",
     "defenseRecourseDescription": "Defends your civil interests during the event (bodily injury, third party liability outside of RC...)",
     "selectedGuarantees": "You have selected the following guarantees:",
     "forYourEvent": "for your event on",
@@ -413,6 +414,7 @@
       "reservationAmount": "Reservation amount (€)",
       "cancellationRisk": "Cancellation risk",
       "interruptionRisk": "Interruption risk",
+      "badWeatherRisk": "Bad weather risk",
       "civilLiability": "Civil Liability",
       "legalProtection": "Legal Protection",
       "coverageDetails": {
