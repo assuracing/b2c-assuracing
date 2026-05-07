@@ -20,6 +20,8 @@ import { OrganizerService } from '../../../services/organizer.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AdaptiveTooltipComponent } from '../../../adaptive-tooltip/adaptive-tooltip.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { DateAdapter } from '@angular/material/core';
+import { DateLocaleService, provideMomentDatepicker } from '../../../core/services/date-locale.service';
 
 interface ProtectionLevel {
   death: number;
@@ -48,6 +50,7 @@ interface ProtectionLevel {
     AdaptiveTooltipComponent,
     TranslateModule
   ],
+  providers: [...provideMomentDatepicker()],
   templateUrl: './event-coverage-options.component.html',
   styleUrls: ['./event-coverage-options.component.scss', './event-coverage-options2.scss',  '../../../app.component.scss']
 })
@@ -91,6 +94,7 @@ export class EventCoverageOptionsComponent {
   }
 
   ngOnInit() {
+    this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
     this.form.get('inscriptionDate')?.valueChanges.subscribe(date => {
       this.checkAnnulationAvailability(date);
     });
@@ -254,6 +258,8 @@ export class EventCoverageOptionsComponent {
     private contractService: ContractService,
     private organizerService: OrganizerService,
     private snackBar: MatSnackBar,
+    private dateLocaleService: DateLocaleService,
+    private dateAdapter: DateAdapter<any>,
   ) {
     this.initializeForms();
   }

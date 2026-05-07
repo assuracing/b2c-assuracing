@@ -1,12 +1,12 @@
 <mat-horizontal-stepper linear [labelPosition]="labelPosition" #stepper (selectionChange)="onStepChange($event)" style="background-color: #02556e;">
   <mat-step>
-    <ng-template matStepLabel>Votre véhicule</ng-template>
+    <ng-template matStepLabel>{{ 'vehicleStep.heading' | translate }}</ng-template>
     
     <form class="login-form">
       <div class="form-group">
         <div class="vehicle-group" style="margin-top: 20px;">
           <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label>Votre véhicule</mat-label>
+            <mat-label>{{ 'vehicleStep.heading' | translate }}</mat-label>
             <mat-select [value]="vehicleType" (selectionChange)="onVehicleTypeChange($event.value)">
               <mat-select-trigger>
                 <mat-icon>{{ getVehicleIcon(vehicleType) }}</mat-icon>
@@ -14,35 +14,35 @@
               </mat-select-trigger>
           
               <mat-option *ngFor="let v of vehicleTypes" [value]="v.value">
-                <mat-icon>{{ v.icon }}</mat-icon> {{ v.label }}
+                <mat-icon>{{ v.icon }}</mat-icon> {{ vehicleTypesMap.get(v.value) }}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
 
         <div class="mt-4">
-          <button mat-button (click)="goToYearlyGuarantee()">Retour</button>
-          <button mat-button matStepperNext [disabled]="!vehicleType">Continuer</button>
+          <button mat-button (click)="goToYearlyGuarantee()">{{ 'common.back' | translate }}</button>
+          <button mat-button matStepperNext [disabled]="!vehicleType">{{ 'common.continue' | translate }}</button>
         </div>
       </div>
     </form>
   </mat-step>
 
   <mat-step [stepControl]="coverageForm">
-    <ng-template matStepLabel>Vos garanties</ng-template>
+    <ng-template matStepLabel>{{ 'motorsLeague.guarantiesStep' | translate }}</ng-template>
 
     <form [formGroup]="coverageForm">
       <app-motors-league-coverage-options [form]="coverageForm" [vehicleType]="vehicleType || undefined"
 (sectionInProgress)="onSectionInProgress($event)"></app-motors-league-coverage-options>
 
       <div class="mt-4">
-        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
         <div style="display: inline-block; position: relative;">
-          <div [matTooltip]="sectionInProgress ? 'Vous devez valider ou supprimer la garantie en cours de saisie pour continuer' : ''" matTooltipPosition="above">
+          <div [matTooltip]="(sectionInProgress ? 'common.completeEntry' : '') | translate" matTooltipPosition="above">
             <button mat-button
                     [disabled]="!coverageForm.valid || sectionInProgress"
                     (click)="onContinueGuaranteeStep(stepper)">
-              {{ sectionInProgress ? 'Terminer la saisie pour continuer' : 'Continuer' }}
+              {{ sectionInProgress ? ('common.completeEntry' | translate) : ('common.continue' | translate) }}
             </button>
           </div>
         </div>
@@ -51,13 +51,13 @@
   </mat-step>
 
   <mat-step [stepControl]="personalForm" (selectionChange)="onStepChange($event)">
-    <ng-template matStepLabel>Vos informations</ng-template>
+    <ng-template matStepLabel>{{ 'motorsLeague.infoStep' | translate }}</ng-template>
     <div *ngIf="step2Page === 1">
       <form [formGroup]="personalForm">
-        <app-personal-info [form]="personalForm" [nationalities]="nationalities"></app-personal-info>
+        <app-personal-info [form]="personalForm" [nationalities]="nationalities" [nationalitiesMap]="nationalitiesMap"></app-personal-info>
         <div class="mt-4">
-          <button mat-button matStepperPrevious>Retour</button>
-          <button mat-button (click)="goToNextStep()" [disabled]="!personalForm.valid">Continuer</button>
+          <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
+          <button mat-button (click)="goToNextStep()" [disabled]="!personalForm.valid">{{ 'common.continue' | translate }}</button>
         </div>
       </form>
     </div>
@@ -66,15 +66,15 @@
       <form [formGroup]="RepresentativeLegalForm">
         <app-representative-legal [form]="RepresentativeLegalForm"></app-representative-legal>
         <div class="mt-4">
-          <button mat-button (click)="step2Page = 1">Retour</button>
-          <button mat-button (click)="sendVerificationEmail()" matStepperNext [disabled]="!RepresentativeLegalForm.valid">Continuer</button>
+          <button mat-button (click)="step2Page = 1">{{ 'common.back' | translate }}</button>
+          <button mat-button (click)="sendVerificationEmail()" matStepperNext [disabled]="!RepresentativeLegalForm.valid">{{ 'common.continue' | translate }}</button>
         </div>
       </form>
     </div>
   </mat-step>
 
   <mat-step [stepControl]="vehicleForm">
-    <ng-template matStepLabel>Vos Risques</ng-template>
+    <ng-template matStepLabel>{{ 'motorsLeague.risksStep' | translate }}</ng-template>
     <form [formGroup]="vehicleForm">
       <app-vehicle-info 
         [form]="vehicleForm" 
@@ -84,29 +84,29 @@
         (vehicleRemoved)="onVehicleRemoved($event)">
       </app-vehicle-info>
       <div class="mt-4">
-        <button mat-button matStepperPrevious>Retour</button>
-        <button mat-button matStepperNext [disabled]="!vehicleForm.valid">Continuer</button>
+        <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
+        <button mat-button matStepperNext [disabled]="!vehicleForm.valid">{{ 'common.continue' | translate }}</button>
       </div>
     </form>
   </mat-step>
 
   <mat-step [stepControl]="summaryForm">
-    <ng-template matStepLabel>Resumé</ng-template>
+    <ng-template matStepLabel>{{ 'motorsLeague.summaryStep' | translate }}</ng-template>
     <div class="login-form">
       <div class="summary-container">
-        <h3>Informations personnelles</h3>
-          <p class="text-dark"><strong>Nom :</strong> {{personalForm.get('lastname')?.value}}</p>
-          <p class="text-dark"><strong>Prénom :</strong> {{personalForm.get('firstname')?.value}}</p>
-          <p class="text-dark"><strong>Adresse :</strong> {{personalForm.get('address')?.value}}</p>
-          <p class="text-dark"><strong>Nationalité :</strong> {{personalForm.get('nationality')?.value}}</p>
-          <p class="text-dark"><strong>Email :</strong> {{personalForm.get('email')?.value}}</p>
-          <p class="text-dark"><strong>Téléphone :</strong> {{personalForm.get('phone')?.value}}</p>
+        <h3>{{ 'summary.personalInfo' | translate }}</h3>
+          <p class="text-dark"><strong>{{ 'summary.lastname' | translate }} :</strong> {{personalForm.get('lastname')?.value}}</p>
+          <p class="text-dark"><strong>{{ 'summary.firstname' | translate }} :</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p class="text-dark"><strong>{{ 'summary.address' | translate }} :</strong> {{personalForm.get('address')?.value}}</p>
+          <p class="text-dark"><strong>{{ 'summary.nationality' | translate }} :</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p class="text-dark"><strong>{{ 'summary.email' | translate }} :</strong> {{personalForm.get('email')?.value}}</p>
+          <p class="text-dark"><strong>{{ 'summary.phone' | translate }} :</strong> {{personalForm.get('phone')?.value}}</p>
       </div>
 
       <div class="summary-container">
-      <h3>Véhicules</h3>
+      <h3>{{ 'summary.vehicles' | translate }}</h3>
         <p>
-          <strong>Véhicule</strong> : {{vehicleForm.get('type')?.value}} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - 
+          <strong>{{ 'summary.vehicle' | translate }}</strong> : {{ vehicleTypesMap.get(vehicleForm.get('type')?.value) }} - {{vehicleForm.get('brand')?.value}} - {{vehicleForm.get('model')?.value}} - 
           <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'immat'">{{vehicleForm.get('immatNumber')?.value}}</span>
           <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'chassis'">{{vehicleForm.get('chassisNumber')?.value}}</span>
           <span *ngIf="vehicleForm.get('identificationNumber')?.value === 'serie'">{{vehicleForm.get('serieNumber')?.value}}</span>
@@ -114,59 +114,59 @@
       </div>
 
       <div class="summary-container">
-      <h3 style="color: #111">Garanties annuelles sélectionnées</h3>
+      <h3 style="color: #111">{{ 'summary.selectedAnnualGuarantees' | translate }}</h3>
       <ul>
         <li *ngIf="coverageForm.get('protectionPilote')?.value" style="color: #111">
-          Protection du pilote niveau {{ coverageForm.get('protectionPilote')?.value }} <span>(annuelle)</span>
+          {{ 'motorsLeague.pilotProtection' | translate }}{{ coverageForm.get('protectionPilote')?.value }} <span>{{ 'motorsLeague.annual' | translate }}</span>
         </li>
         <li *ngIf="coverageForm.get('defenseRecours')?.value" style="color: #111">
-          Défense Recours <span>(annuelle)</span>
+          {{ 'motorsLeague.defenseRecourse' | translate }} <span>{{ 'motorsLeague.annual' | translate }}</span>
         </li>
         <li *ngIf="coverageForm.get('responsabiliteCivile')?.value" style="color: #111">
-          Responsabilité Civile <span>(annuelle)</span>
+          {{ 'motorsLeague.liability' | translate }} <span>{{ 'motorsLeague.annual' | translate }}</span>
         </li>
         <li *ngIf="!coverageForm.get('protectionPilote')?.value && !coverageForm.get('defenseRecours')?.value && !coverageForm.get('responsabiliteCivile')?.value" style="color: #111">
-          <span class="text-danger">Aucune garantie sélectionnée</span>
+          <span class="text-danger">{{ 'summary.noGuaranteeSelected' | translate }}</span>
         </li>
       </ul>
 
       <p class="text-dark-center" style="color: #111; font-weight: bold;">
-        Prime annuelle totale :
+        {{ 'motorsLeague.totalPremium' | translate }}
         <span>
           {{ getTotalPrime() ? formatNumber(getTotalPrime()) : '--' }} €
         </span>
       </p>
     </div>
       <div class="signature-section">
-        <p class="text-dark">Je, soussigné(e) {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
-          {{isMinor() ? 'représentant légal de l\'assuré(e) ci-dessus dénommé' : 'assuré(e)'}} confirme avoir pris connaissance <a href="https://www.assuracing.com/documents" target="_blank">des éléments contractuels</a> du/des produit(s) indiqué(s) ci-dessus et confirme valider ma souscription aux garanties listées :
+        <p class="text-dark">{{ 'summary.iHereby' | translate }} {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+          {{isMinor() ? ('summary.legalRepresentative' | translate) : ('summary.insured' | translate)}} <span [innerHTML]="'common.confirmationText' | translate"></span>
           <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
         </p>
         
-        <p class="text-red" *ngIf="isMinor()">Veuillez saisir le code de vérification qui a été envoyé à votre email {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+        <p class="text-red" *ngIf="isMinor()">{{ 'summary.verificationCode' | translate }}{{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
         <form [formGroup]="summaryForm">
           <mat-form-field *ngIf="isMinor()">
-            <mat-label>Code de vérification</mat-label>
+            <mat-label>{{ 'summary.verificationCode' | translate }}</mat-label>
             <input matInput type="text" formControlName="verificationCode">
           </mat-form-field>
         </form>
       </div>
     </div>
     <div class="mt-4">
-      <button mat-button matStepperPrevious>Retour</button>
-      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">Paiement</button>
-      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">Paiement</button>
+      <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
+      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">{{ 'common.validate' | translate }}</button>
+      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">{{ 'common.validate' | translate }}</button>
     </div>
   </mat-step>
 
   <mat-step [stepControl]="paymentForm">
-    <ng-template matStepLabel>Paiement</ng-template>
+    <ng-template matStepLabel>{{ 'motorsLeague.paymentStep' | translate }}</ng-template>
     <form [formGroup]="paymentForm">
       <app-payment [form]="paymentForm"></app-payment>
       <div class="mt-4">
-        <button mat-button matStepperPrevious>Retour</button>
-        <button mat-button (click)="onSubmit()">Valider</button>
+        <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
+        <button mat-button (click)="onSubmit()">{{ 'common.validate' | translate }}</button>
       </div>
     </form>
   </mat-step>

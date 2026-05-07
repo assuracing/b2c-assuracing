@@ -2,11 +2,11 @@
   <div class="header-section">
     <mat-card class="header-card">
       <mat-card-header>
-        <mat-card-title>Déclarez votre sinistre</mat-card-title>
+        <mat-card-title>{{ 'claimDeclaration.title' | translate }}</mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
       <mat-card-content>
-        <p>Complétez votre déclaration pour votre sinistre</p>
+        <p>{{ 'claimDeclaration.declareClaimSubtitle' | translate }}</p>
       </mat-card-content>
     </mat-card>
   </div>
@@ -15,7 +15,7 @@
 
   <mat-stepper #stepper linear class="claim-stepper" [labelPosition]="labelPosition">
     <mat-step *ngIf="showContractStep" [editable]="true" [completed]="contractSelected">
-      <ng-template matStepLabel>Contrat</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepContract' | translate }}</ng-template>
       <app-claim-contract-step
         #claimContractStep
         (contractSelected)="onContractSelected($event)">
@@ -23,10 +23,10 @@
     </mat-step>
 
     <mat-step *ngIf="showTypeStep" [completed]="claim.type !== ''">
-      <ng-template matStepLabel>Type de sinistre</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepType' | translate }}</ng-template>
       <mat-card class="type-selection-card">
         <mat-card-header>
-          <mat-card-title>Sélectionnez le type de sinistre</mat-card-title>
+          <mat-card-title>{{ 'claimDeclaration.selectTypeTitle' | translate }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="type-options">
@@ -45,13 +45,13 @@
         </mat-card-content>
       </mat-card>
       <div class="step-actions">
-        <button mat-button (click)="goBackToContract()">Précédent</button>
-        <button mat-button (click)="submitTypeWithValidation()">Suivant</button>
+      <button mat-button (click)="goBackToContract()">{{ 'common.previous' | translate }}</button>
+      <button mat-button (click)="submitTypeWithValidation()">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
     <mat-step *ngIf="showReasonStep" [completed]="selectedTypeCauseSinistre !== undefined">
-      <ng-template matStepLabel>Motif de demande</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepReason' | translate }}</ng-template>
       <app-claim-reason-step
         #claimReasonStep
         [claimType]="claim.type"
@@ -59,13 +59,13 @@
         (reasonSelected)="onReasonSelected($event)">
       </app-claim-reason-step>
       <div class="step-actions">
-        <button mat-button matStepperPrevious>Précédent</button>
-        <button mat-button (click)="submitReason()">Suivant</button>
+      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+      <button mat-button (click)="submitReason()">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
     <mat-step>
-      <ng-template matStepLabel>Informations</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepInfo' | translate }}</ng-template>
       <app-claim-info-step
         #claimInfoStep
         [selectedCause]="selectedTypeCauseSinistre"
@@ -75,13 +75,13 @@
         (claimInfoSubmitted)="onClaimInfoSubmitted($event)">
       </app-claim-info-step>
       <div class="step-actions">
-        <button mat-button matStepperPrevious>Précédent</button>
-        <button mat-button (click)="submitInfo(claimInfoStep)">Suivant</button>
+      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+      <button mat-button (click)="submitInfo(claimInfoStep)">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
     <mat-step [optional]="claim.type === 'INTEMPERIES'">
-      <ng-template matStepLabel>Justificatifs</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepDocuments' | translate }}</ng-template>
       <app-claim-documents-step
         #claimDocumentsStep
         [claimType]="claim.type"
@@ -89,13 +89,13 @@
         (documentsSubmitted)="onDocumentsSubmitted($event)">
       </app-claim-documents-step>
       <div class="step-actions">
-        <button mat-button matStepperPrevious>Précédent</button>
-        <button mat-button (click)="submitDocuments(claimDocumentsStep)">Suivant</button>
+      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+      <button mat-button (click)="submitDocuments(claimDocumentsStep)">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
     <mat-step>
-      <ng-template matStepLabel>Confirmation</ng-template>
+      <ng-template matStepLabel>{{ 'claimDeclaration.stepConfirmation' | translate }}</ng-template>
       <app-claim-summary-step
         #claimSummaryStep
         [claim]="claim"
@@ -103,13 +103,13 @@
         [availableSinistresTypes]="availableSinistresTypes">
       </app-claim-summary-step>
       <div class="step-actions">
-        <button mat-button matStepperPrevious>Précédent</button>
+        <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
         <button mat-raised-button color="accent"
           (click)="submitClaimWithValidation()"
           [class.button-unconfirmed]="!claimSummaryStep.isSummaryConfirmed()"
           [disabled]="isLoading">
           <mat-icon>send</mat-icon>
-          <span>{{ isLoading ? 'Envoi en cours...' : 'Soumettre la demande' }}</span>
+          <span>{{ isLoading ? ('claimDeclaration.submitting' | translate) : ('claimDeclaration.submit' | translate) }}</span>
         </button>
       </div>
     </mat-step>

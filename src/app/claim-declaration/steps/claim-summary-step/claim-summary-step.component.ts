@@ -11,6 +11,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Claim, ClaimPayload, TypeSinistreDTO, Fichier } from '../../../models/claim.model';
 import { DataUtilService } from '../../../core/utils/data-util.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DateLocaleService } from '../../../core/services/date-locale.service';
 
 @Component({
   selector: 'app-claim-summary-step',
@@ -24,7 +26,8 @@ import { DataUtilService } from '../../../core/utils/data-util.service';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTooltipModule
+    MatTooltipModule,
+    TranslateModule
   ],
   templateUrl: './claim-summary-step.component.html',
   styleUrls: ['./claim-summary-step.component.scss']
@@ -44,7 +47,12 @@ export class ClaimSummaryStepComponent implements OnInit {
   summaryForm: FormGroup;
   isConfirmed = false;
 
-  constructor(private fb: FormBuilder, private dataUtils: DataUtilService) {
+  constructor(
+    private fb: FormBuilder,
+    private dataUtils: DataUtilService,
+    private translate: TranslateService,
+    private dateLocaleService: DateLocaleService
+  ) {
     this.summaryForm = this.fb.group({
       acceptTerms: [false, Validators.requiredTrue]
     });
@@ -55,15 +63,21 @@ export class ClaimSummaryStepComponent implements OnInit {
       return this.claim.typeNom;
     }
     
-    const labels: { [key: string]: string } = {
-      'ANNULATION': 'Annulation',
-      'INTERRUPTION': 'Interruption',
-      'INTEMPERIES': 'Intempéries',
-      'RC': 'Responsabilité Civile',
-      'PJ': 'Protection Juridique',
-      'IA': 'Individuelle Accident'
+    const typeCode = this.getTypeCodeForLabel(this.claim.type);
+    return this.translate.instant(`productNames.${typeCode}`) || this.claim.type;
+  }
+
+  private getTypeCodeForLabel(type: string): string {
+    const typeCode = (type || '').toUpperCase();
+    const mapping: { [key: string]: string } = {
+      'ANNULATION': 'annulation',
+      'INTERRUPTION': 'interruption',
+      'INTEMPERIES': 'badWeather',
+      'RC': 'civilLiability',
+      'PJ': 'legalProtection',
+      'IA': 'personalAccident'
     };
-    return labels[this.claim.type] || this.claim.type;
+    return mapping[typeCode] || 'annulation';
   }
 
   private detectTypeCode(typeName: string): string {
@@ -88,9 +102,7 @@ export class ClaimSummaryStepComponent implements OnInit {
   }
 
   formatDate(date: Date | string): string {
-    if (!date) return '-';
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+    return this.dateLocaleService.formatDate(date) || '-';
   }
 
   formatAmount(amount: number): string {

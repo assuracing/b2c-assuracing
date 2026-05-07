@@ -20,6 +20,7 @@ import { OrganizerService } from '../../services/organizer.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AdaptiveTooltipComponent } from '../../adaptive-tooltip/adaptive-tooltip.component';
 import { ResetGuaranteeDialogComponent } from '../../event-coverage/steps/event-coverage-options/reset-guarantee-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface ProtectionLevel {
   death: number;
@@ -51,11 +52,13 @@ interface Benefit {
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    AdaptiveTooltipComponent
+    AdaptiveTooltipComponent,
+    TranslateModule
   ],
   templateUrl: './motors-league-coverage-options.component.html',
   styleUrls: ['./motors-league-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options.component.scss', '../../event-coverage/steps/event-coverage-options/event-coverage-options2.scss',  '../../app.component.scss']
 })
+
 export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   @Input() isCalculatingPrice: boolean = false;
   garantiePrices: { [key: string]: number } = {
@@ -67,6 +70,13 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   @Input() vehicleType?: string;
   @Output() defenseRecoursChange = new EventEmitter<{isChecked: boolean, garantieType: string}>();
   @Output() sectionInProgress = new EventEmitter<boolean>();
+
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private contractService: ContractService,
+    private translate: TranslateService
+  ) {}
 
   get PRIME_RATES() {
     return {
@@ -89,32 +99,35 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
     5: { death: 200000, disability: 300000, price: 0 }
   };
 
-  benefitsMap: { [key: string]: Benefit[] } = {
+  benefitsMap!: { [key: string]: Benefit[] };
+
+ private initBenefits(): void {
+  this.benefitsMap = {
     protectionPilote: [
-      { icon: 'heart_broken', title: 'Capital Décès (de 7600 € à 200 000 €)' },
-      { icon: 'accessible', title: 'Capital Invalidité (de 18500 à 300 000 €)' },
-      { icon: 'phone_in_talk', title: 'Assistance médicale 24/7' },
-      { icon: 'flight_takeoff', title: 'Frais médicaux à l\'étranger : 100 000 €' },
-      { icon: 'local_hospital', title: 'Rapatriement et transport sanitaire (frais réels)' },
-      { icon: 'receipt_long', title: 'Frais médicaux restant à charge (2500 €)' },
-      { icon: 'two_wheeler', title: 'Spécial moto : reconditionnement d\'airbag jusque 150 €' }
+      { icon: 'heart_broken', title: this.translate.instant('benefits.deathBenefit') },
+      { icon: 'accessible', title: this.translate.instant('benefits.disabilityBenefit') },
+      { icon: 'phone_in_talk', title: this.translate.instant('benefits.medicalAssistance247') },
+      { icon: 'flight_takeoff', title: this.translate.instant('benefits.medicalExpensesAbroad') },
+      { icon: 'local_hospital', title: this.translate.instant('benefits.repatriationAndMedicalTransport') },
+      { icon: 'receipt_long', title: this.translate.instant('benefits.remainingMedicalExpenses') },
+      { icon: 'two_wheeler', title: this.translate.instant('benefits.motorcycleSpecialAirbag') }
     ],
     defenseRecours: [
-      { icon: 'gavel', title: 'La garantie qui défend vos droits' },
-      { icon: 'contact_support', title: 'Accompagnement juridique et assistance psychologique par téléphone' },
-      { icon: 'balance', title: 'Garantie d\'aide aux victimes et recours pénal' },
-      { icon: 'admin_panel_settings', title: 'Défense pénale' },
-      { icon: 'description', title: 'Garantie consommation auto/moto' }
+      { icon: 'gavel', title: this.translate.instant('benefits.rightsDefense') },
+      { icon: 'contact_support', title: this.translate.instant('benefits.legalAndPsychologicalSupport') },
+      { icon: 'balance', title: this.translate.instant('benefits.victimSupportAndCriminalRecourse') },
+      { icon: 'admin_panel_settings', title: this.translate.instant('benefits.criminalDefense') },
+      { icon: 'description', title: this.translate.instant('benefits.carMotorcycleConsumptionGuarantee') }
     ],
     responsabiliteCivile: [
-      { icon: 'shield', title: 'Couverture des dommages que vous causez aux tiers' },
-      { icon: 'personal_injury', title: 'Dommages corporels : 8M€' },
-      { icon: 'car_crash', title: 'Dommages matériels : 500k€' },
-      { icon: 'sports_motorsports', title: 'Dont dommages aux équipements de sécurité : 10k€' },
-      { icon: 'check_circle', title: 'Sans franchise' }
+      { icon: 'shield', title: this.translate.instant('benefits.thirdPartyDamageCover') },
+      { icon: 'personal_injury', title: this.translate.instant('benefits.personalInjury') },
+      { icon: 'car_crash', title: this.translate.instant('benefits.materialDamage') },
+      { icon: 'sports_motorsports', title: this.translate.instant('benefits.safetyEquipmentDamage') },
+      { icon: 'check_circle', title: this.translate.instant('benefits.noDeductible') }
     ]
   };
-
+}
   private destroy$ = new Subject<void>();
 
   activeSection: 'protectionPilote' | 'responsabiliteRecours' | null = null;
@@ -126,13 +139,12 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
   wasProtectionPiloteValidated = false;
   wasResponsabiliteRecoursValidated = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    private contractService: ContractService
-  ) {}
 
   ngOnInit() {
+    this.initBenefits();
+    this.translate.onLangChange.subscribe(() => {
+    this.initBenefits();
+  });
     if (!this.form) {
       this.initializeForm();
     } else {

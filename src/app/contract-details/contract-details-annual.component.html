@@ -2,13 +2,13 @@
   <div class="contract-details-container">
     <div class="header-actions">
       <button mat-stroked-button color="primary" (click)="goBack()" class="back-button">
-        <mat-icon>arrow_back_ios</mat-icon> Retour aux garanties
+        <mat-icon>arrow_back_ios</mat-icon> {{ 'annualContractDetails.backGuarantees' | translate }}
       </button>
     </div>
 
     <div *ngIf="loading" class="loading-spinner">
       <mat-spinner></mat-spinner>
-      <p>Chargement des détails du contrat...</p>
+      <p>{{ 'annualContractDetails.loading' | translate }}</p>
     </div>
 
     <div *ngIf="error" class="error-message">
@@ -18,8 +18,8 @@
 
     <mat-card *ngIf="!error && !loading && contracts.length > 0" class="contract-card">
       <mat-card-header>
-        <mat-card-title>Détails - {{ guaranteeLabel }}</mat-card-title>
-        <mat-card-subtitle>Nombre de contrat{{ contracts.length > 1 ? 's' : '' }} : {{ contracts.length }}</mat-card-subtitle>
+        <mat-card-title>{{ 'annualContractDetails.detailsPrefix' | translate: { label: guaranteeLabel } }}</mat-card-title>
+        <mat-card-subtitle>{{ 'common.contractCount' | translate: { count: contracts.length > 1 ? 's' : '', total: contracts.length } }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -28,14 +28,15 @@
             <mat-expansion-panel-header>
               <mat-panel-title class="contract-title">
                 <span class="contract-name">{{ getProductLabel(contract.produitID, contract.nomcontrat) }}</span>
-                <span [class]="'status-badge ' + getContractStatusClass(contract)">
-                  <mat-icon *ngIf="getContractStatus(contract) === 'Actif' || getContractStatus(contract) === 'Expiré'">{{ getContractStatus(contract) === 'Actif' ? 'check_circle' : 'event_busy' }}</mat-icon>
-                  {{ getContractStatus(contract) }}
-                </span>
+              <span [class]="'status-badge ' + getContractStatusClass(contract)">
+                <mat-icon *ngIf="getContractState(contract) === 'ACTIVE' || getContractState(contract) === 'EXPIRED'">
+                  {{ getContractState(contract) === 'ACTIVE' ? 'check_circle' : 'event_busy' }}
+                </mat-icon>
+                {{ getContractStatus(contract) }}
+              </span>
               </mat-panel-title>
               <mat-panel-description class="contract-date">
-                Du {{ contract.dateAdhesionContrat | date: 'dd/MM/yyyy' }} 
-                au {{ contract.dateFin | date: 'dd/MM/yyyy' }}
+                {{ 'annualContractDetails.dateRange' | translate: { start: (contract.dateAdhesionContrat | date: 'dd/MM/yyyy'), end: (contract.dateFin | date: 'dd/MM/yyyy') } }}
               </mat-panel-description>
             </mat-expansion-panel-header>
 
@@ -44,39 +45,40 @@
                 <div class="detail-section">
                   <h3 class="section-title">
                     <mat-icon>assignment</mat-icon>
-                    Informations générales
+                    {{ 'annualContractDetails.generalInformation' | translate }}
                   </h3>
-                  
                   <div class="detail-row">
-                    <span class="detail-label">Nom du contrat :</span>
-                    <span class="detail-value">{{ contract.nomcontrat || 'N/A' }}</span>
+                    <span class="detail-label">{{ 'annualContractDetails.contractNameLabel' | translate }}</span>
+                    <span class="detail-value">{{ contract.nomcontrat || ('common.notAvailable' | translate) }}</span>
                   </div>
 
                   <div class="detail-row">
-                    <span class="detail-label">Date de souscription :</span>
+                    <span class="detail-label">{{ 'annualContractDetails.subscriptionDateLabel' | translate }}</span>
                     <span class="detail-value">{{ contract.dateAdhesionContrat | date: 'd MMMM yyyy' }}</span>
                   </div>
 
                   <div class="detail-row">
-                    <span class="detail-label">Date d'expiration :</span>
+                    <span class="detail-label">{{ 'annualContractDetails.expirationDateLabel' | translate }}</span>
                     <span class="detail-value">{{ contract.dateFin | date: 'd MMMM yyyy' }}</span>
                   </div>
 
                   <div class="detail-row">
-                    <span class="detail-label">Statut :</span>
+                    <span class="detail-label">{{ 'annualContractDetails.statusLabel' | translate }}</span>
                     <span class="detail-value">
-                      <span [class]="'status-badge ' + getContractStatusClass(contract)">
-                        <mat-icon *ngIf="getContractStatus(contract) === 'Actif' || getContractStatus(contract) === 'Expiré'">{{ getContractStatus(contract) === 'Actif' ? 'check_circle' : 'event_busy' }}</mat-icon>
-                        {{ getContractStatus(contract) }}
-                      </span>
+                    <span [class]="'status-badge ' + getContractStatusClass(contract)">
+                      <mat-icon *ngIf="getContractState(contract) === 'ACTIVE' || getContractState(contract) === 'EXPIRED'">
+                        {{ getContractState(contract) === 'ACTIVE' ? 'check_circle' : 'event_busy' }}
+                      </mat-icon>
+                      {{ getContractStatus(contract) }}
+                    </span>
                     </span>
                   </div>
 
                   <div class="detail-row" *ngIf="contract.valide !== null && contract.valide !== undefined">
-                    <span class="detail-label">Contrat validé :</span>
+                    <span class="detail-label">{{ 'annualContractDetails.contractValidatedLabel' | translate }}</span>
                     <span class="detail-value">
                       <span [class]="'status-badge ' + (contract.valide === true || contract.valide === 'true' ? 'status-valid' : 'status-not-valid')">
-                        {{ (contract.valide === true || contract.valide === 'true') ? 'Validé' : 'Non validé' }}
+                        {{ (contract.valide === true || contract.valide === 'true') ? ('annualContractDetails.validated' | translate) : ('annualContractDetails.notValidated' | translate) }}
                       </span>
                     </span>
                   </div>
@@ -89,7 +91,7 @@
                 <button mat-raised-button color="primary" (click)="onPay()" [disabled]="loadingPayment" class="action-button">
                   <mat-icon *ngIf="!loadingPayment">payment</mat-icon>
                   <mat-icon *ngIf="loadingPayment">hourglass_empty</mat-icon>
-                  {{ loadingPayment ? 'Chargement...' : 'Finaliser le paiement' }}
+                  {{ loadingPayment ? ('common.loading' | translate) : ('common.completePayment' | translate) }}
                 </button>
               </mat-card-actions>
 
@@ -98,9 +100,9 @@
                         color="accent"
                         (click)="onDeclareClaim(contract)"
                         class="action-button"
-                        title="Déclarer un sinistre pour ce contrat">
+                        [title]="'annualContractDetails.declareClaimTooltip' | translate">
                   <mat-icon>assignment_late</mat-icon>
-                  Déclarer un sinistre
+                  {{ 'common.declareClaim' | translate }}
                 </button>
               </mat-card-actions>
             </div>

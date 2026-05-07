@@ -31,7 +31,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
 
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
-
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 interface Contract {
   selectedCircuit: string;
   nbrjour: number;
@@ -74,15 +74,61 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
 export class MotorsLeagueComponent implements OnInit, OnDestroy {
-  public nationalities: string[] = [
-    'Française','Allemande','Autrichienne','Belge','Britannique','Bulgare','Chypriote','Croate','Danoise','Espagnole','Estonienne','Finlandaise','Grecque','Hongroise','Irlandaise','Italienne','Lettonne','Lituanienne','Luxembourgeoise','Maltaise','Néerlandaise','Polonaise','Portugaise','Roumaine','Slovaque','Slovène','Suédoise','Suisse','Tchèque'
+  private nationalitiesKeys = [
+    'french', 'german', 'austrian', 'belgian', 'british', 'bulgarian', 'cypriot', 'croatian',
+    'danish', 'spanish', 'estonian', 'finnish', 'greek', 'hungarian', 'irish', 'italian',
+    'latvian', 'lithuanian', 'luxembourgish', 'maltese', 'dutch', 'polish', 'portuguese',
+    'romanian', 'slovak', 'slovenian', 'swedish', 'swiss', 'czech'
   ];
-  @ViewChild(MotorsLeagueCoverageOptionsComponent) coverageOptions!: MotorsLeagueCoverageOptionsComponent;
+  private nationalitiesFrenchLabels: { [key: string]: string } = {
+    french: 'Française',
+    german: 'Allemande',
+    austrian: 'Autrichienne',
+    belgian: 'Belge',
+    british: 'Britannique',
+    bulgarian: 'Bulgare',
+    cypriot: 'Chypriote',
+    croatian: 'Croate',
+    danish: 'Danoise',
+    spanish: 'Espagnole',
+    estonian: 'Estonienne',
+    finnish: 'Finlandaise',
+    greek: 'Grecque',
+    hungarian: 'Hongroise',
+    irish: 'Irlandaise',
+    italian: 'Italienne',
+    latvian: 'Lettone',
+    lithuanian: 'Lituanienne',
+    luxembourgish: 'Luxembourgeoise',
+    maltese: 'Maltaise',
+    dutch: 'Néerlandaise',
+    polish: 'Polonaise',
+    portuguese: 'Portugaise',
+    romanian: 'Roumaine',
+    slovak: 'Slovaque',
+    slovenian: 'Slovène',
+    swedish: 'Suédoise',
+    swiss: 'Suisse',
+    czech: 'Tchèque'
+  };
+  public nationalities: string[] = [];
+  public nationalitiesMap: Map<string, string> = new Map();  
+  private licenseTypesKeys = ['licenseA', 'licenseB', 'casm', 'ffsa'];
+  public licenseTypes: string[] = [];
+  public licenseTypesMap: Map<string, string> = new Map();
+  
+  private claimStatusesKeys = [
+    'awaitingDocuments', 'inProgress', 'declined', 'settled', 'noFollowUp',
+    'clientDeclarationStatus', 'organizerDeclaration', 'completeFile', 'fileToRegularize', 'statusUnknown'
+  ];
+  public claimStatuses: string[] = [];
+  public claimStatusesMap: Map<string, string> = new Map();
+    @ViewChild(MotorsLeagueCoverageOptionsComponent) coverageOptions!: MotorsLeagueCoverageOptionsComponent;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   @ViewChild(MatStepper) stepper!: MatStepper;
 
@@ -101,6 +147,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     { value: 'auto', label: 'Auto', icon: 'directions_car' },
     { value: 'moto', label: 'Moto', icon: 'two_wheeler' }
   ];
+  public vehicleTypesMap: Map<string, string> = new Map();
   acceptTerms: boolean = false;
   private subscription?: Subscription;
   private apiUrl: string;
@@ -119,7 +166,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastService: ToastService,
     private breakpointObserver: BreakpointObserver,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -129,10 +177,23 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
+    this.updateVehicleTypes();
+    this.updateNationalities();
+    this.updateLicenseTypes();
+    this.updateClaimStatuses();
+    
+    this.subscription = new Subscription();
+    this.subscription.add(this.translate.onLangChange.subscribe(() => {
+      this.updateVehicleTypes();
+      this.updateNationalities();
+      this.updateLicenseTypes();
+      this.updateClaimStatuses();
+    }));
+
+    this.subscription.add(this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
       this.updateSummary();
-    });
+    }));
 
     this.initializeBirthdateSubscription();
     
@@ -161,6 +222,49 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
       postalCodeControl.updateValueAndValidity();
     });
+  }
+
+  private updateVehicleTypes(): void {
+    this.vehicleTypesMap.clear();
+    this.vehicleTypes.forEach(vt => {
+      const translation = this.translate.instant(`eventCoverage.vehicleTypes.${vt.value}`);
+      this.vehicleTypesMap.set(vt.value, translation);
+    });
+  }
+
+  private updateNationalities(): void {
+    this.nationalitiesMap.clear();
+    this.nationalities = this.nationalitiesKeys.map(key => {
+      const translation = this.translate.instant(`nationalities.${key}`);
+      this.nationalitiesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private updateLicenseTypes(): void {
+    this.licenseTypesMap.clear();
+    this.licenseTypes = this.licenseTypesKeys.map(key => {
+      const translation = this.translate.instant(`licenseTypes.${key}`);
+      this.licenseTypesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private updateClaimStatuses(): void {
+    this.claimStatusesMap.clear();
+    this.claimStatuses = this.claimStatusesKeys.map(key => {
+      const translation = this.translate.instant(`claimStatuses.${key}`);
+      this.claimStatusesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private getFrenchNationalityValue(nationalityValue: string): string {
+    if (!nationalityValue) {
+      return '';
+    }
+
+    return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
   ngOnDestroy() {
@@ -202,8 +306,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   }
 
   getVehicleLabel(type: string): string {
-    const vt = this.vehicleTypes.find(v => v.value === type);
-    return vt ? vt.label : 'Sélectionnez un véhicule';
+    const label = this.vehicleTypesMap.get(type);
+    return label || this.translate.instant('messages.selectVehiclePlaceholder');
   }
 
   goToYearlyGuarantee(): void {
@@ -271,7 +375,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       city: ['', Validators.required],
       birthdate: ['' , Validators.required],
       nationality: ['' , Validators.required],
-      country: 'France'
+      country: 'france'
     });
 
     this.vehicleForm = this.fb.group({
@@ -486,7 +590,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
 
     if (productCodes.length === 0) {
-      this.toastService.error('Aucune garantie valide sélectionnée. Veuillez sélectionner au moins une garantie.');
+      this.toastService.error(this.translate.instant('messages.noValidGuaranteeSelected'));
       return;
     }
 
@@ -509,11 +613,11 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
         numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || 'NC',
-        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'Oui' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
+        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : 'NC',
         numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || 'NC',
-        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'Oui' ? 'Oui' : 'NC',
-        nationalite: this.personalForm.get('nationality')?.value,
+        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : 'NC',
+        nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
       },
       marque: this.vehicleForm.get('brand')?.value || 'NC',
       modele: this.vehicleForm.get('model')?.value || 'NC',
@@ -535,7 +639,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         const email = this.personalForm.get('email')?.value;
 
         if (!orderId) {
-          this.toastService.error('Identifiant de transaction manquant. Veuillez réessayer.');
+          this.toastService.error(this.translate.instant('messages.missingTransactionId'));
           return;
         }
 
@@ -590,10 +694,10 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.userService.sendVerificationEmail(email).subscribe({
       next: () => {
         this.stepper.next();
-        this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
+        this.toastService.success(this.translate.instant('representativeLegal.verificationCodeSent'));
       },
       error: (_err) => {
-        this.toastService.error('Erreur lors de l envoi du code de verification');
+        this.toastService.error(this.translate.instant('messages.sendVerificationCodeError'));
       }
     });
   }
@@ -603,11 +707,11 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success('Code de verification validé');
+        this.toastService.success(this.translate.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
       error: (_err) => {
-        this.toastService.error('Code de verification invalide');
+        this.toastService.error(this.translate.instant('messages.verificationCodeInvalid'));
       }
     });
   }

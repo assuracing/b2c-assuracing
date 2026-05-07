@@ -4,10 +4,12 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { TypeCauseSinistre } from '../../../models/claim.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DateLocaleService, provideMomentDatepicker } from '../../../core/services/date-locale.service';
 
 @Component({
   selector: 'app-claim-info-step',
@@ -21,8 +23,10 @@ import { TypeCauseSinistre } from '../../../models/claim.model';
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    TranslateModule
   ],
+  providers: [...provideMomentDatepicker()],
   templateUrl: './claim-info-step.component.html',
   styleUrls: ['./claim-info-step.component.scss']
 })
@@ -35,9 +39,15 @@ export class ClaimInfoStepComponent implements OnInit {
 
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private translate: TranslateService,
+    private dateLocaleService: DateLocaleService,
+    private dateAdapter: DateAdapter<any>
+  ) {}
 
   ngOnInit(): void {
+    this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
     this.initializeForm();
   }
 
@@ -58,7 +68,9 @@ export class ClaimInfoStepComponent implements OnInit {
     const control = this.form.get(fieldName);
     if (!control?.errors) return '';
     
-    if (control.errors['required']) return 'Champ requis';
+    if (control.errors['required']) {
+      return this.translate.instant('validation.required');
+    }
     return '';
   }
 }

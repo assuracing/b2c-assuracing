@@ -14,6 +14,8 @@ import { Fichier, TypePieceSinistre } from '../../models/claim.model';
 import { forkJoin } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DatePipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-claim-list',
@@ -26,6 +28,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
     MatButtonModule,
     MatDividerModule,
     MatCardModule,
+    TranslateModule
   ],
   templateUrl: './claim-list.component.html',
   styleUrls: ['./claim-list.component.scss', './claim-list-responsive.component.scss', './claim-list-document.component.scss'],
@@ -34,13 +37,46 @@ export class ClaimListComponent implements OnInit, OnChanges {
   @Input() claims: Claim[] = [];
   @Input() contractId: number | null = null;
 
+  private claimStatusesKeys = [
+    'awaitingDocuments', 'inProgress', 'declined', 'settled', 'noFollowUp',
+    'clientDeclarationStatus', 'organizerDeclaration', 'completeFile', 'fileToRegularize', 'statusUnknown'
+  ];
+  public claimStatuses: string[] = [];
+  public claimStatusesMap: Map<string, string> = new Map();
+
+  private frenchStatusToKey: Record<string, string> = {
+    'en attente de pièces': 'awaitingDocuments',
+    'en cours': 'inProgress',
+    'décliné': 'declined',
+    'refusé': 'declined',
+    'réglé': 'settled',
+    'sans suite': 'noFollowUp',
+    'déclaration client': 'clientDeclarationStatus',
+    'déclaration organisateur': 'organizerDeclaration',
+    'dossier complet': 'completeFile',
+    'dossier à régulariser': 'fileToRegularize'
+  };
+
+  private licenseTypesKeys = ['licenseA', 'licenseB', 'casm', 'ffsa'];
+  public licenseTypes: string[] = [];
+  public licenseTypesMap: Map<string, string> = new Map();
+
   constructor(
     private fichierService: FichierService,
     private dataUtils: DataUtilService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.updateClaimStatuses();
+    this.updateLicenseTypes();
+    
+    this.translate.onLangChange.subscribe(() => {
+      this.updateClaimStatuses();
+      this.updateLicenseTypes();
+    });
+    
     this.loadFilesForClaims();
   }
 
@@ -96,6 +132,24 @@ export class ClaimListComponent implements OnInit, OnChanges {
     });
   }
 
+  private updateClaimStatuses(): void {
+    this.claimStatusesMap.clear();
+    this.claimStatuses = this.claimStatusesKeys.map(key => {
+      const translation = this.translate.instant(`claimStatuses.${key}`);
+      this.claimStatusesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private updateLicenseTypes(): void {
+    this.licenseTypesMap.clear();
+    this.licenseTypes = this.licenseTypesKeys.map(key => {
+      const translation = this.translate.instant(`licenseTypes.${key}`);
+      this.licenseTypesMap.set(key, translation);
+      return key;
+    });
+  }
+
   getStatusIcon(status: string | undefined): string {
     switch (status?.toLowerCase()) {
       case 'en attente de pièces':
@@ -146,6 +200,15 @@ export class ClaimListComponent implements OnInit, OnChanges {
     }
   }
 
+  getStatusTranslation(status: string | undefined): string {
+    if (!status) return this.translate.instant('claimDetails.unknownStatus');
+    const key = this.frenchStatusToKey[status.toLowerCase()];
+    if (key) {
+      return this.claimStatusesMap.get(key) || status;
+    }
+    return status;
+  }
+
   isProductSpecial(claim: Claim): boolean {
     if (!claim.typeSinistre?.nom) return false;
     const typeName = (claim.typeSinistre.nom || '').toLowerCase();
@@ -170,11 +233,11 @@ export class ClaimListComponent implements OnInit, OnChanges {
     if (!claim.typeSinistre?.nom) {
       return [
         'RIB',
-        'Certificat médical',
-        'Certificat employeur',
-        'Convocation administrative',
-        'Factures justificatives',
-        'Autres pièces'
+        this.translate.instant('documentTypes.medicalCertificate'),
+        this.translate.instant('documentTypes.employerCertificate'),
+        this.translate.instant('documentTypes.administrativeSummons'),
+        this.translate.instant('documentTypes.invoices'),
+        this.translate.instant('documentTypes.otherDocuments')
       ];
     }
     
@@ -183,13 +246,19 @@ export class ClaimListComponent implements OnInit, OnChanges {
     let docs = ['RIB'];
     
     if (typeName.includes('annulation')) {
-      docs.push('Justificatif');
+      docs.push(this.translate.instant('documentTypes.supportingDocuments'));
     } else if (typeName.includes('interruption')) {
-      docs.push('Photo accident', 'Devis réparation');
+      docs.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
     } else if (typeName.includes('intempéries')) {
       docs = ['RIB'];
     } else {
-      docs.push('Certificat médical', 'Certificat employeur', 'Convocation administrative', 'Factures justificatives', 'Autres pièces');
+      docs.push(
+        this.translate.instant('documentTypes.medicalCertificate'),
+        this.translate.instant('documentTypes.employerCertificate'),
+        this.translate.instant('documentTypes.administrativeSummons'),
+        this.translate.instant('documentTypes.invoices'),
+        this.translate.instant('documentTypes.otherDocuments')
+      );
     }
     
     return docs;
@@ -214,30 +283,47 @@ export class ClaimListComponent implements OnInit, OnChanges {
   }
 
   mapDocLabelToTypePiece(label: string): string {
+    const medicCert = this.translate.instant('documentTypes.medicalCertificate');
+    const empCert = this.translate.instant('documentTypes.employerCertificate');
+    const adminSum = this.translate.instant('documentTypes.administrativeSummons');
+    const factJust = this.translate.instant('documentTypes.invoices');
+    const otherDocs = this.translate.instant('documentTypes.otherDocuments');
+    const accPhoto = this.translate.instant('documentTypes.accidentPhoto');
+    const repQuote = this.translate.instant('documentTypes.repairQuote');
+    const justDoc = this.translate.instant('documentTypes.supportingDocuments');
+    
     const mapping: { [key: string]: string } = {
       'RIB': 'RIB',
-      'Justificatif': 'AUTRE',
-      'Photo accident': 'PHOTOACCIDENT',
-      'Devis réparation': 'DEVISREPARATION',
-      'Certificat médical': 'CERTIFICATMEDICAL',
-      'Certificat employeur': 'CERTIFICATEMPLOYEUR',
-      'Convocation administrative': 'CONVOCATIONADMINISTRATIVE',
-      'Factures justificatives': 'FACTUREJUSTIFICATIVE',
-      'Autres pièces': 'AUTRE'
+      [justDoc]: 'AUTRE',
+      [accPhoto]: 'PHOTOACCIDENT',
+      [repQuote]: 'DEVISREPARATION',
+      [medicCert]: 'CERTIFICATMEDICAL',
+      [empCert]: 'CERTIFICATEMPLOYEUR',
+      [adminSum]: 'CONVOCATIONADMINISTRATIVE',
+      [factJust]: 'FACTUREJUSTIFICATIVE',
+      [otherDocs]: 'AUTRE'
     };
     return mapping[label] || 'AUTRE';
   }
 
   mapTypePieceToLabel(typePiece: string): string {
+    const medicCert = this.translate.instant('documentTypes.medicalCertificate');
+    const empCert = this.translate.instant('documentTypes.employerCertificate');
+    const adminSum = this.translate.instant('documentTypes.administrativeSummons');
+    const factJust = this.translate.instant('documentTypes.invoices');
+    const otherDocs = this.translate.instant('documentTypes.otherDocuments');
+    const accPhoto = this.translate.instant('documentTypes.accidentPhoto');
+    const repQuote = this.translate.instant('documentTypes.repairQuote');
+    
     const mapping: { [key: string]: string } = {
       'RIB': 'RIB',
-      'PHOTOACCIDENT': 'Photo accident',
-      'DEVISREPARATION': 'Devis réparation',
-      'AUTRE': 'Autres pièces',
-      'CERTIFICATMEDICAL': 'Certificat médical',
-      'CERTIFICATEMPLOYEUR': 'Certificat employeur',
-      'CONVOCATIONADMINISTRATIVE': 'Convocation administrative',
-      'FACTUREJUSTIFICATIVE': 'Factures justificatives'
+      'PHOTOACCIDENT': accPhoto,
+      'DEVISREPARATION': repQuote,
+      'AUTRE': otherDocs,
+      'CERTIFICATMEDICAL': medicCert,
+      'CERTIFICATEMPLOYEUR': empCert,
+      'CONVOCATIONADMINISTRATIVE': adminSum,
+      'FACTUREJUSTIFICATIVE': factJust
     };
     return mapping[typePiece] || typePiece;
   }
@@ -256,13 +342,13 @@ export class ClaimListComponent implements OnInit, OnChanges {
 
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.toastService.error('Fichier trop volumineux. Maximum: 5 MB');
+      this.toastService.error(this.translate.instant('messages.fileTooLarge'));
       input.value = '';
       return;
     }
 
     if (!this.canAddMoreFiles(claim)) {
-      this.toastService.error('Limite de 10 fichiers atteinte pour ce sinistre');
+      this.toastService.error(this.translate.instant('messages.fileLimitReached'));
       input.value = '';
       return;
     }
@@ -290,14 +376,14 @@ export class ClaimListComponent implements OnInit, OnChanges {
           this.reloadFilesForClaim(claim.id!);
         },
         error: (error) => {
-          this.toastService.error(`Erreur lors de l'upload du ${docTypeLabel}`);
+          this.toastService.error(this.translate.instant('messages.documentUploadError', { docType: docTypeLabel }));
           input.value = '';
         }
       });
     };
 
     reader.onerror = () => {
-      this.toastService.error('Erreur lors de la lecture du fichier');
+      this.toastService.error(this.translate.instant('messages.fileReadError'));
       input.value = '';
     };
 
@@ -331,4 +417,11 @@ export class ClaimListComponent implements OnInit, OnChanges {
   openFile(contentType: any, field: any, filename: any): void {
     this.dataUtils.downloadFile(field, contentType, filename);
   }
+
+  getClaimTranslationKey(claim: Claim): string {
+    return (claim.typeSinistre && claim.typeSinistre.nom) 
+      ? 'claimDetails.claimPrefix' 
+      : 'claimDetails.claimPrefixNoType';
+  }
+  
 }

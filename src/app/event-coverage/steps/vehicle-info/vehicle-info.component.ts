@@ -14,6 +14,7 @@ import { VehicleService } from '../../../services/vehicle.service';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { AdaptiveTooltipComponent } from "../../../adaptive-tooltip/adaptive-tooltip.component";
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Circuit {
   id: number;
@@ -28,7 +29,7 @@ interface Circuit {
   selector: 'app-vehicle-info',
   templateUrl: './vehicle-info.component.html',
   styleUrls: ['./vehicle-info.component.scss', '../../../app.component.scss', '../../../motors-league/motors-league.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule, AdaptiveTooltipComponent]
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatOptionModule, AdaptiveTooltipComponent, TranslateModule]
 })
 export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form!: FormGroup;
@@ -49,13 +50,19 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
 
   getVehicleLabel(type: string): string {
     const vehicle = this.vehicleTypes.find(v => v.value === type);
-    return vehicle ? vehicle.label : 'Sélectionner';
+    return vehicle ? vehicle.label : this.translate.instant('messages.selectPlaceholder');
   }
   @ViewChild('stepper') stepper!: MatStepper;
   @ViewChild('brandSearchInput') brandSearchInput!: any;
   private subscription?: Subscription;
+  private subscriptions: Subscription[] = [];
   filteredBrands: string[] = [];
   private allBrands: string[] = [];
+
+  private licenseTypesKeys: Record<'auto' | 'moto', string[]> = {
+    auto: ['permis_b', 'licence_ffsa'],
+    moto: ['permis_a', 'casm']
+  };
 
   licenseTypes: Record<'auto' | 'moto', { value: string; label: string }[]> = {
     auto: [
@@ -66,6 +73,18 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
       { value: 'permis_a', label: 'Permis A' },
       { value: 'casm', label: 'CASM' }
     ]
+  };
+
+  translatedLicenseTypes: Record<'auto' | 'moto', { value: string; label: string }[]> = {
+    auto: [],
+    moto: []
+  };
+
+  private licenseTypeKeyMap: Record<string, string> = {
+    'permis_b': 'licenseB',
+    'licence_ffsa': 'ffsa',
+    'permis_a': 'licenseA',
+    'casm': 'casm'
   };
 
   brands: Record<'auto' | 'moto', string[]> = {
@@ -118,7 +137,8 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
-    private http: HttpClient
+    private http: HttpClient,
+    private translate: TranslateService
   ) {}
 
   showVehicleTypeTooltip = false;
@@ -128,6 +148,12 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
     this.subscription = this.vehicleService.getVehicles().subscribe(vehicles => {
       this.vehicles = vehicles;
     });
+    this.updateTranslatedLicenseTypes();
+    this.subscriptions.push(
+      this.translate.onLangChange.subscribe(() => {
+        this.updateTranslatedLicenseTypes();
+      })
+    );
     this.updateVehicleType();
     setTimeout(() => this.updateDriveLicenseTooltip());
   }
@@ -207,18 +233,18 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
     
     if (this.vehicleType === 'auto') {
       if (this.userAge < 17) {
-        return 'Le permis B n\'est pas à renseigner pour les personnes de moins de 17 ans';
+        return this.translate.instant('tooltip.permitBLessThan17');
       } else if (this.userAge <= 19) {
-        return 'Le permis B n\'est pas indispensable pour les personnes de 17 à 19 ans';
+        return this.translate.instant('tooltip.permitBBetween17And19');
       } else {
-        return 'Le permis B est obligatoire pour les personnes de plus de 19 ans';
+        return this.translate.instant('tooltip.permitBGreaterThan19');
       }
     } else if (this.vehicleType === 'moto') {
       if(this.userAge >= 16 && this.userAge < 18){
-        return 'Le CASM est obligatoire pour les personnes de 16 à 18 ans';
+        return this.translate.instant('tooltip.casmBetween16And18');
       }
       else if(this.userAge >= 18){
-        return 'Le permis A ou le CASM est obligatoire pour les personnes de plus de 18 ans';
+        return this.translate.instant('tooltip.permitAOrCasmGreaterThan18');
       }
     }
     return '';
@@ -257,8 +283,10 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getFilteredLicenseTypes(): { value: string; label: string }[] {
-    const type = this.form.get('type')?.value;
-    return this.licenseTypes[type as keyof typeof this.licenseTypes] || [];
+    const type = this.form.get('type')?.value as 'auto' | 'moto';
+    if (type !== 'auto' && type !== 'moto') return [];
+    
+    return this.translatedLicenseTypes[type] || [];
   }
 
   addVehicle() {
@@ -321,5 +349,17 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
+  }
+
+  private updateTranslatedLicenseTypes(): void {
+    this.translatedLicenseTypes.auto = this.licenseTypes.auto.map(license => ({
+      value: license.value,
+      label: this.translate.instant(`licenseTypes.${this.licenseTypeKeyMap[license.value]}`)
+    }));
+    this.translatedLicenseTypes.moto = this.licenseTypes.moto.map(license => ({
+      value: license.value,
+      label: this.translate.instant(`licenseTypes.${this.licenseTypeKeyMap[license.value]}`)
+    }));
   }
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { EnvironmentService } from '../core/services/environment.service';
 import { getAuthHeaders } from '../core/utils/http-utils';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Claim,
   ClaimType,
@@ -32,7 +33,8 @@ export class ClaimService {
 
   constructor(
     private http: HttpClient,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    private translate: TranslateService
   ) {
     this.apiUrl = `${this.envService.apiUrl}/api`;
   }
@@ -42,20 +44,20 @@ export class ClaimService {
       {
         id: 1,
         code: 'ANNULATION',
-        libelle: 'Annulation',
-        description: 'Garantie annulation avec remboursement jusqu\'à 100%'
+        libelle: this.translate?.instant('productNames.annulation') || 'Annulation',
+        description: this.translate?.instant('claimDescriptions.annulation') || 'Garantie annulation avec remboursement jusqu\'à 100%'
       },
       {
         id: 2,
         code: 'INTERRUPTION',
-        libelle: 'Interruption',
-        description: 'Garantie interruption sans hospitalisation requise'
+        libelle: this.translate?.instant('productNames.interruption') || 'Interruption',
+        description: this.translate?.instant('claimDescriptions.interruption') || 'Garantie interruption sans hospitalisation requise'
       },
       {
         id: 3,
         code: 'INTEMPERIES',
-        libelle: 'Intempéries',
-        description: 'Garantie intempéries/mauvaises conditions'
+        libelle: this.translate?.instant('productNames.badWeather') || 'Intempéries',
+        description: this.translate?.instant('claimDescriptions.badWeather') || 'Garantie intempéries/mauvaises conditions'
       }
     ];
     

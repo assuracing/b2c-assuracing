@@ -1,12 +1,12 @@
 <div class="loading-container" *ngIf="loading; else profileContent">
-  <p>Chargement des informations en cours...</p>
+  <p>{{ 'profile.loadingInfo' | translate }}</p>
 </div>
 
 <ng-template #profileContent>
   <div class="profile-container">
     <mat-card class="profile-card">
       <mat-card-header>
-        <mat-card-title>Mon Profil</mat-card-title>
+        <mat-card-title>{{ 'profile.title' | translate }}</mat-card-title>
         <button mat-icon-button (click)="toggleEdit()" *ngIf="!isEditing">
           <mat-icon>edit</mat-icon>
         </button>
@@ -16,88 +16,88 @@
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="userInfo" class="profile-form">
           <div class="form-row">
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>Nom</mat-label>
+              <mat-label>{{ 'profile.lastName' | translate }}</mat-label>
               <input matInput formControlName="nom" [readonly]="!isEditing" required>
               <mat-error *ngIf="profileForm.get('nom')?.hasError('required')">
-                Le nom est requis
+                {{ 'validation.lastNameRequired' | translate }}
               </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>Prénom</mat-label>
+              <mat-label>{{ 'profile.firstName' | translate }}</mat-label>
               <input matInput formControlName="prenom" [readonly]="!isEditing" required>
               <mat-error *ngIf="profileForm.get('prenom')?.hasError('required')">
-                Le prénom est requis
+                {{ 'validation.firstNameRequired' | translate }}
               </mat-error>
             </mat-form-field>
           </div>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Email</mat-label>
+            <mat-label>{{ 'profile.email' | translate }}</mat-label>
             <input matInput type="email" formControlName="email" [readonly]="!isEditing" required>
             <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
-              L'email est requis
+              {{ 'validation.emailRequired' | translate }}
             </mat-error>
             <mat-error *ngIf="profileForm.get('email')?.hasError('email')">
-              Veuillez entrer un email valide
+              {{ 'validation.validEmailRequired' | translate }}
             </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Téléphone portable</mat-label>
+            <mat-label>{{ 'profile.mobilePhone' | translate }}</mat-label>
             <input matInput formControlName="telPortable" [readonly]="!isEditing" required>
             <mat-error *ngIf="profileForm.get('telPortable')?.hasError('required')">
-              Le téléphone est requis
+              {{ 'validation.phoneRequired' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field"> 
-            <mat-label>Date de naissance</mat-label>
+            <mat-label>{{ 'profile.birthDate' | translate }}</mat-label>
             <input matInput [matDatepicker]="datepicker" formControlName="dateNaissance" [max]="today" [readonly]="!isEditing" required>
             <mat-datepicker-toggle matSuffix [for]="datepicker" [disabled]="!isEditing"></mat-datepicker-toggle>
             <mat-datepicker #datepicker></mat-datepicker>
             <mat-error *ngIf="profileForm.get('dateNaissance')?.hasError('required')">
-              La date de naissance est requise
+              {{ 'validation.birthDateRequired' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Adresse</mat-label>
+            <mat-label>{{ 'profile.address' | translate }}</mat-label>
             <input matInput formControlName="adresse" [readonly]="!isEditing" required>
             <mat-error *ngIf="profileForm.get('adresse')?.hasError('required')">
-              L'adresse est requise
+              {{ 'validation.addressRequired' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Ville</mat-label>
+            <mat-label>{{ 'profile.city' | translate }}</mat-label>
             <input matInput formControlName="ville" [readonly]="!isEditing" required>
             <mat-error *ngIf="profileForm.get('ville')?.hasError('required')">
-              La ville est requise
+              {{ 'validation.cityRequired' | translate }}
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Code postal</mat-label>
+            <mat-label>{{ 'profile.postalCode' | translate }}</mat-label>
             <input matInput formControlName="codepostal" [readonly]="!isEditing">
             <mat-error *ngIf="profileForm.get('codepostal')?.hasError('required')">
-              Le code postal est requis
+              {{ 'validation.postalCodeRequired' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
 
         <div class="button-row" *ngIf="isEditing">
           <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.valid">
-            Enregistrer les modifications
+            {{ 'common.saveChanges' | translate }}
           </button>
           <button mat-button type="button" (click)="toggleEdit()">
-            Annuler
+            {{ 'common.cancel' | translate }}
           </button>
         </div>
         </form>

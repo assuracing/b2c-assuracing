@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { TypeCauseSinistre } from '../../../models/claim.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-claim-reason-step',
@@ -12,7 +13,8 @@ import { TypeCauseSinistre } from '../../../models/claim.model';
     CommonModule,
     FormsModule,
     MatButtonModule,
-    MatRadioModule
+    MatRadioModule,
+    TranslateModule
   ],
   templateUrl: './claim-reason-step.component.html',
   styleUrls: ['./claim-reason-step.component.scss']
@@ -24,6 +26,8 @@ export class ClaimReasonStepComponent implements OnChanges {
 
   selectedCause: TypeCauseSinistre | null = null;
   selectedCauseId: number | null = null;
+
+  constructor(private translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['availableCauses']) {

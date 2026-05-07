@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
@@ -13,10 +13,14 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, A
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter } from '@angular/material/core';
 import { environment } from '../../environments/environment';
 import { ToastService } from '../services/toast.service';
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DateLocaleService, provideMomentDatepicker } from '../core/services/date-locale.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-profil-info',
@@ -33,12 +37,14 @@ import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/conf
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatDialogModule
+    MatDialogModule,
+    TranslateModule
   ],
+  providers: [...provideMomentDatepicker()],
   templateUrl: './user-profil-info.component.html',
   styleUrls: ['./user-profil-info.component.scss']
 })
-export class UserProfilInfoComponent implements OnInit {
+export class UserProfilInfoComponent implements OnInit, OnDestroy {
   @ViewChild('picker') picker: any; 
   
   profileForm: FormGroup;
@@ -53,7 +59,10 @@ export class UserProfilInfoComponent implements OnInit {
     private snackBar: MatSnackBar,
     private toastService: ToastService,
     private dialog: MatDialog,
-    @Inject(HttpClient) private http: HttpClient
+    @Inject(HttpClient) private http: HttpClient,
+    private translate: TranslateService,
+    private dateLocaleService: DateLocaleService,
+    private dateAdapter: DateAdapter<any>
   ) {
     this.profileForm = this.fb.group({
       civilite: [''],
@@ -76,8 +85,11 @@ export class UserProfilInfoComponent implements OnInit {
   }
 
   today = new Date();
+  private subscription = new Subscription();
 
   ngOnInit() {
+    this.subscription.add(this.dateLocaleService.bindAdapterLocale(this.dateAdapter));
+    
     this.loadUserProfile();
   }
 
@@ -125,7 +137,7 @@ export class UserProfilInfoComponent implements OnInit {
         throw new Error('ID utilisateur non disponible');
       }
     } catch (error) {
-      this.toastService.error('Erreur lors du chargement du profil');
+      this.toastService.error(this.translate.instant('messages.loadProfileError'));
     } finally {
       this.loading = false;
     }
@@ -136,10 +148,10 @@ export class UserProfilInfoComponent implements OnInit {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         width: '400px',
         data: {
-          title: 'Annuler les modifications',
-          message: 'Voulez-vous vraiment annuler les modifications ? Toutes les modifications non enregistrées seront perdues.',
-          confirmText: 'Oui, annuler',
-          cancelText: 'Non, continuer l\'édition'
+          title: this.translate.instant('messages.cancelModificationsTitle'),
+          message: this.translate.instant('messages.cancelModificationsMessage'),
+          confirmText: this.translate.instant('messages.confirmCancel'),
+          cancelText: this.translate.instant('messages.continueEdit')
         }
       });
 
@@ -175,14 +187,18 @@ export class UserProfilInfoComponent implements OnInit {
 
       this.userService.updateUserProfile(updatedData).subscribe(
         (response) => {
-          this.toastService.success('Profil mis à jour avec succès');
+          this.toastService.success(this.translate.instant('messages.profileUpdateSuccess'));
           this.isEditing = false;
           this.loadUserProfile(); 
         },
         (error) => {
-          this.toastService.error('Erreur lors de la mise à jour du profil');
+          this.toastService.error(this.translate.instant('messages.profileUpdateError'));
         }
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

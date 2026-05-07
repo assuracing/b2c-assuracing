@@ -9,7 +9,7 @@
         <li class="menu-item desktop-only">
           <a class="menu-link" (click)="goHome(); $event.preventDefault();">
             <mat-icon>home</mat-icon>
-            <span>Accueil</span>
+            <span>{{ 'nav.home' | translate }}</span>
           </a>
         </li>
 
@@ -18,13 +18,13 @@
             <img
               *ngIf="langue === 'fr'"
               src="flags/france.png"
-              alt="Français"
+              alt="{{ 'nav.french' | translate }}"
               class="flag-icon"
             />
             <img
               *ngIf="langue !== 'fr'"
               src="flags/royaume-uni.png"
-              alt="English"
+              alt="{{ 'nav.english' | translate }}"
               class="flag-icon"
             />
             <span class="language-code desktop-only">{{
@@ -37,16 +37,16 @@
             (click)="$event.stopPropagation()"
           >
             <a class="dropdown-item" (click)="changerLangue('fr')">
-              <img src="flags/france.png" alt="Français" class="flag-icon" />
-              Français
+              <img src="flags/france.png" alt="{{ 'nav.french' | translate }}" class="flag-icon" />
+              {{ 'nav.french' | translate }}
             </a>
             <a class="dropdown-item" (click)="changerLangue('en')">
               <img
                 src="flags/royaume-uni.png"
-                alt="English"
+                alt="{{ 'nav.english' | translate }}"
                 class="flag-icon"
               />
-              English
+              {{ 'nav.english' | translate }}
             </a>
           </div>
         </li>
@@ -60,7 +60,7 @@
             tabindex="0"
             (keydown.enter)="toggleProfileMenu($event)">
             <mat-icon class="welcome-icon">waving_hand</mat-icon>
-            <span class="desktop-only">Bonjour, {{ userService.getUser()?.firstName }}</span>
+            <span class="desktop-only">{{ 'nav.greeting' | translate }}{{ userService.getUser()?.firstName }}</span>
             <span class="mobile-only">{{ userService.getUser()?.firstName }}</span>
             <mat-icon class="dropdown-icon" [class.open]="isProfileMenuOpen">expand_more</mat-icon>
           </div>
@@ -71,19 +71,19 @@
             (click)="$event.stopPropagation()">
             <a class="dropdown-item" (click)="navigateAndClose('/user-contracts')">
               <mat-icon>assignment</mat-icon>
-              <span>Mes contrats</span>
+              <span>{{ 'nav.myContracts' | translate }}</span>
             </a>
             <a class="dropdown-item" (click)="navigateAndClose('/guarantee-choice')">
               <mat-icon>add_circle_outline</mat-icon>
-              <span>Souscrire un nouveau contrat</span>
+              <span>{{ 'nav.subscribe' | translate }}</span>
             </a>
             <a class="dropdown-item" (click)="navigateAndClose('/declare-claim')">
               <mat-icon>report_problem</mat-icon>
-              <span>Déclarer un sinistre</span>
+              <span>{{ 'nav.claimDeclaration' | translate }}</span>
             </a>
             <a class="dropdown-item" (click)="navigateAndClose('/user-profil-info')">
               <mat-icon>person</mat-icon>
-              <span>Mes informations personnelles</span>
+              <span>{{ 'nav.personalInfo' | translate }}</span>
             </a>
           </div>
           
@@ -92,14 +92,14 @@
             (click)="authService.logout()"
             class="logout-button">
             <mat-icon>logout</mat-icon>
-            <span class="desktop-only">Déconnexion</span>
+            <span class="desktop-only">{{ 'nav.logout' | translate }}</span>
           </button>
         </li>
 
         <li class="menu-item login-item" *ngIf="!userService.isLoggedIn()">
           <a href="/login" class="login-button">
             <mat-icon>person</mat-icon>
-            <span>Se connecter</span>
+            <span>{{ 'nav.login' | translate }}</span>
           </a>
         </li>
       </ul>

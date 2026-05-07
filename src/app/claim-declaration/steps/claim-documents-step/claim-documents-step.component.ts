@@ -11,6 +11,7 @@ import { Fichier, TypePieceSinistre } from '../../../models/claim.model';
 import { ClaimService } from '../../../services/claim.service';
 import { ToastService } from '../../../services/toast.service';
 import { DataUtilService } from '../../../core/utils/data-util.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-claim-documents-step',
@@ -21,7 +22,8 @@ import { DataUtilService } from '../../../core/utils/data-util.service';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TranslateModule
   ],
   templateUrl: './claim-documents-step.component.html',
   styleUrls: ['./claim-documents-step.component.scss']
@@ -143,14 +145,31 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   isRibOnly = false;
   dragOverDocTypes: Set<string> = new Set();
 
+  private get photoAccident(): string {
+    return this.translate.instant('documentTypes.accidentPhoto');
+  }
+
+  private get devisReparation(): string {
+    return this.translate.instant('documentTypes.repairQuote');
+  }
+
+  private get justificatif(): string {
+    return this.translate.instant('documentTypes.supportingDocuments');
+  }
+
   constructor(
     private claimService: ClaimService, 
     private toastService: ToastService,
-    private dataUtils: DataUtilService
+    private dataUtils: DataUtilService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.onInputsChanged();
+    
+    this.translate.onLangChange.subscribe(() => {
+      this.updateRequiredDocuments();
+    });
   }
 
   private onInputsChanged(): void {
@@ -183,7 +202,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
         productName.includes('RESPONSABILITÉ') ||
         (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'))) {
       this.requiredDocumentTypes.push('RIB');
-      this.optionalDocSets['OPTIONAL'] = ['Justificatif'];
+      this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
       this.isOptionalJustificatif = true;
       return;
     }
@@ -191,12 +210,12 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     this.requiredDocumentTypes = ['RIB'];
     
     if (productName === 'INTERRUPTION') {
-      this.requiredDocumentTypes.push('Photo accident', 'Devis réparation');
+      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
       return;
     }
     
     if (productName === 'ANNULATION') {
-      this.requiredDocumentTypes.push('Justificatif');
+      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
       return;
     }
     
@@ -208,13 +227,13 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     
     if (productName.includes('ANNULATION+')) {
       if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push('Photo accident', 'Devis réparation');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
       } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push('Justificatif');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
       } else if (claimType === 'INTEMPERIES') {
         this.isRibOnly = true;
       } else {
-        this.optionalDocSets['OPTIONAL'] = ['Justificatif'];
+        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
         this.isOptionalJustificatif = true;
       }
       return;
@@ -222,13 +241,13 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     
     if (productName.includes('INTEMPERIES+')) {
       if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push('Photo accident', 'Devis réparation');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
       } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push('Justificatif');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
       } else if (claimType === 'INTEMPERIES') {
         this.isRibOnly = true;
       } else {
-        this.optionalDocSets['OPTIONAL'] = ['Justificatif'];
+        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
         this.isOptionalJustificatif = true;
       }
       return;
@@ -236,20 +255,20 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     
     if (productName.includes('CANCELR')) {
       if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push('Photo accident', 'Devis réparation');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
       } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push('Justificatif');
+        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
       } else if (claimType === 'INTEMPERIES') {
         this.isRibOnly = true;
       } else {
-        this.optionalDocSets['OPTIONAL'] = ['Justificatif'];
+        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
         this.isOptionalJustificatif = true;
       }
       return;
     }
     
     if (this.doesNeedJustificatif()) {
-      this.requiredDocumentTypes.push('Justificatif');
+      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
     }
   }
 
@@ -278,19 +297,19 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
     
     if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
-      this.toastService.error(`Format non accepté. Fichiers acceptés: ${allowedExtensions.join(', ')}`);
+      this.toastService.error(this.translate.instant('messages.invalidFileFormat', { extensions: allowedExtensions.join(', ') }));
       return;
     }
 
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.toastService.error('Fichier trop volumineux. Maximum: 5 MB');
+      this.toastService.error(this.translate.instant('messages.fileTooLarge'));
       return;
     }
 
     const isDuplicate = this.uploadedFiles.some(f => f.nomFichier === file.name && f.taille === file.size);
     if (isDuplicate) {
-      this.toastService.error(`Le fichier "${file.name}" est déjà téléversé`);
+      this.toastService.error(this.translate.instant('messages.duplicateFile', { fileName: file.name }));
       return;
     }
 
@@ -301,7 +320,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
         this.toastService.info(`RIB précédent remplacé`);
       }
     }
-    else if (!this.canAllowMultipleJustificatifs() && docType !== 'Photo accident' && docType !== 'Devis réparation') {
+    else if (!this.canAllowMultipleJustificatifs() && docType !== this.photoAccident && docType !== this.devisReparation) {
       const existing = this.uploadedFiles.find(f => f.type === docType);
       if (existing) {
         this.uploadedFiles = this.uploadedFiles.filter(f => f.type !== docType);
@@ -324,11 +343,11 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
       };
 
       this.uploadedFiles.push(newFile);
-      this.toastService.success(`${docType} téléversé avec succès`);
+      this.toastService.success(this.translate.instant('messages.fileUploadSuccess', { docType: docType }));
     };
 
     reader.onerror = () => {
-      this.toastService.error('Erreur lors de la lecture du fichier');
+      this.toastService.error(this.translate.instant('messages.fileReadError'));
     };
 
     reader.readAsDataURL(file);
@@ -384,8 +403,8 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     }
 
     if (this.doesNeedPhotoDevis()) {
-      const hasPhotoAccident = this.isDocumentUploaded('Photo accident');
-      const hasDevisReparation = this.isDocumentUploaded('Devis réparation');
+      const hasPhotoAccident = this.isDocumentUploaded(this.photoAccident);
+      const hasDevisReparation = this.isDocumentUploaded(this.devisReparation);
       return hasPhotoAccident || hasDevisReparation;
     }
 
@@ -404,7 +423,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     if (this.areAllDocumentsUploaded()) {
       this.documentsSubmitted.emit(this.uploadedFiles);
     } else if (this.isDocumentObligatoire()) {
-      this.toastService.error('Veuillez téléverser tous les justificatifs obligatoires avant de continuer.');
+      this.toastService.error(this.translate.instant('messages.uploadAllMandatoryDocuments'));
     }
   }
 
@@ -419,9 +438,9 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   getIconForDocType(docType: string): string {
     const iconMap: { [key: string]: string } = {
       'RIB': 'credit_card',
-      'Justificatif': 'description',
-      'Photo accident': 'photo_camera',
-      'Devis réparation': 'receipt_long'
+      [this.justificatif]: 'description',
+      [this.photoAccident]: 'photo_camera',
+      [this.devisReparation]: 'receipt_long'
     };
     return iconMap[docType] || 'insert_drive_file';
   }
@@ -435,9 +454,9 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   mapDocTypeToEnum(docTypeLabel: string): string {
     const mapping: { [key: string]: string } = {
       'RIB': 'RIB',
-      'Justificatif': 'AUTRE',
-      'Photo accident': 'PHOTOACCIDENT',
-      'Devis réparation': 'DEVISREPARATION',
+      [this.justificatif]: 'AUTRE',
+      [this.photoAccident]: 'PHOTOACCIDENT',
+      [this.devisReparation]: 'DEVISREPARATION',
       'CERTIFICATMEDICAL': 'CERTIFICATMEDICAL',
       'CERTIFICATEMPLOYEUR': 'CERTIFICATEMPLOYEUR',
       'FACTUREJUSTIFICATIVE': 'FACTUREJUSTIFICATIVE'

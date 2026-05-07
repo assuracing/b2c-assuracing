@@ -1,7 +1,7 @@
 <div class="container">
     <div class="header-actions">
       <button mat-stroked-button color="primary" (click)="onBack()" class="back-button">
-        <mat-icon>arrow_back_ios</mat-icon> Retour à l'accueil
+        <mat-icon>arrow_back_ios</mat-icon> {{ 'common.backHome' | translate }}
       </button>
     </div>
     
@@ -10,19 +10,19 @@
     <div class="filter-container">
         <div class="events-section-title">
             <mat-icon>event</mat-icon>
-            <h2>Contrats événementiels</h2>
+            <h2>{{ 'eventContracts.title' | translate }}</h2>
         </div>
         <div class="filters-row">
             <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Rechercher un contrat</mat-label>
-                    <input matInput [formControl]="searchFilter" placeholder="Rechercher par entreprise, contrat..." #input>
+                <mat-label>{{ 'eventContracts.searchLabel' | translate }}</mat-label>
+                    <input matInput [formControl]="searchFilter" [placeholder]="'eventContracts.searchPlaceholder' | translate" #input>
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
                 
                     <mat-form-field appearance="outline" class="year-filter">
-                        <mat-label>Année</mat-label>
+                        <mat-label>{{ 'eventContracts.yearFilter' | translate }}</mat-label>
                         <mat-select [formControl]="yearFilter">
-                            <mat-option [value]="null">Toutes</mat-option>
+                            <mat-option [value]="null">{{ 'eventContracts.allYears' | translate }}</mat-option>
                             <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
                         </mat-select>
                         <button mat-icon-button matSuffix (click)="clearYearFilter()" *ngIf="yearFilter.value">
@@ -31,11 +31,11 @@
                     </mat-form-field>
                     
                     <mat-form-field appearance="outline" class="validation-filter">
-                        <mat-label>Validé</mat-label>
+                        <mat-label>{{ 'eventContracts.validatedFilter' | translate }}</mat-label>
                         <mat-select [formControl]="validationFilter">
-                            <mat-option [value]="null">Tous</mat-option>
-                            <mat-option [value]="'true'">Oui</mat-option>
-                            <mat-option [value]="'false'">Non</mat-option>
+                            <mat-option [value]="null">{{ 'eventContracts.allContracts' | translate }}</mat-option>
+                            <mat-option [value]="'true'">{{ 'common.yes' | translate }}</mat-option>
+                            <mat-option [value]="'false'">{{ 'common.no' | translate }}</mat-option>
                         </mat-select>
                         <button mat-icon-button matSuffix (click)="clearValidationFilter()" *ngIf="validationFilter.value !== null">
                             <mat-icon>close</mat-icon>
@@ -48,10 +48,10 @@
         <div class="table-container" [class.mobile-view]="isMobileView()">
             <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
             <ng-container matColumnDef="dateAdhesion">
-                <th mat-header-cell *matHeaderCellDef>Date de roulage</th>
-                <td mat-cell *matCellDef="let element" data-label="Date de roulage">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.racingDate' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.racingDate' | translate">
                     <div class="mat-cell-content">
-                        <div class="event-date">{{element.dateAdhesion | customDate}}</div>
+                        <div class="event-date">{{formatDate(element.dateAdhesion)}}</div>
                         <div class="event-details" *ngIf="isMobileView()">
                             <div *ngIf="element.circuit">
                                 {{element.circuit}}
@@ -68,17 +68,17 @@
             </ng-container>
 
             <ng-container matColumnDef="dateSaisie">
-                <th mat-header-cell *matHeaderCellDef>Date d'effet</th>
-                <td mat-cell *matCellDef="let element" data-label="Date d'effet">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.effectiveDate' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.effectiveDate' | translate">
                     <div class="mat-cell-content">  
-                        {{element.dateSaisie | customDate}}
+                        {{formatDate(element.dateSaisie)}}
                     </div>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="adherentnomCliententreprise">
-                <th mat-header-cell *matHeaderCellDef>Entreprise</th>
-                <td mat-cell *matCellDef="let element" data-label="Entreprise" class="truncate">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.company' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.company' | translate" class="truncate">
                     <div class="mat-cell-content">
                         {{element.adherentnomCliententreprise}}
                     </div>
@@ -86,15 +86,15 @@
             </ng-container>
 
             <ng-container matColumnDef="products">
-                <th mat-header-cell *matHeaderCellDef>Contrat</th>
-                <td mat-cell *matCellDef="let element" data-label="Produits">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.contract' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.contract' | translate">
                     <div class="products-container">
                         <ng-container *ngIf="!isMobileView()">
                                                         <a *ngFor="let product of element.products; trackBy: trackByProductId" 
                                                              [routerLink]="['/contracts', product.contratID]"
                                                              class="product-item"
-                                                             [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)"
-                                                             [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)">
+                                                             [matTooltip]="getProductTooltip(product.produitID, product.nomcontrat)"
+                                                             [attr.aria-label]="getProductTooltip(product.produitID, product.nomcontrat)">
                                                                 <div class="product-icon-container">
                                                                         <mat-icon 
                                                                         class="product-icon"
@@ -113,8 +113,8 @@
                             <a *ngFor="let product of element.products; trackBy: trackByProductId" 
                                [routerLink]="['/contracts', product.contratID]"
                                class="mobile-product-icon"
-                               [matTooltip]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)"
-                               [attr.aria-label]="'Voir les détails du contrat : ' + getProductLabel(product.produitID, product.nomcontrat)">
+                               [matTooltip]="getProductTooltip(product.produitID, product.nomcontrat)"
+                               [attr.aria-label]="getProductTooltip(product.produitID, product.nomcontrat)">
                                 <mat-icon 
                                     class="product-icon"
                                     [ngClass]="getProductColorClass(product.produitID, product.nomcontrat)"
@@ -128,17 +128,17 @@
             </ng-container>
 
             <ng-container matColumnDef="circuit">
-                <th mat-header-cell *matHeaderCellDef>Circuit</th>
-                <td mat-cell *matCellDef="let element" data-label="Circuit">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.track' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.track' | translate">
                     <div class="mat-cell-content">
-                        {{element.circuit || 'N/A'}}
+                        {{element.circuit || ('common.notAvailable' | translate)}}
                     </div>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="eventType">
-                <th mat-header-cell *matHeaderCellDef>Événement</th>
-                <td mat-cell *matCellDef="let element" data-label="Événement">
+                <th mat-header-cell *matHeaderCellDef>{{ 'eventContracts.event' | translate }}</th>
+                <td mat-cell *matCellDef="let element" [attr.data-label]="'eventContracts.event' | translate">
                     <div class="mat-cell-content">
                         <div *ngIf="element.eventTypes && element.eventTypes.length > 0" class="event-types-container">
                             <div *ngFor="let type of element.eventTypes" class="event-type-item">
@@ -158,13 +158,13 @@
                 *matRowDef="let row; columns: displayedColumns;"
                 [class.row-valid]="row.allValid"
                 [class.row-invalid]="!row.allValid"
-                [attr.aria-label]="'Contrat du ' + (row.dateAdhesion | customDate) + ' - Circuit: ' + (row.circuit || 'N/A')">
+                [attr.aria-label]="('userContracts.contractAriaLabel' | translate: { date: formatDate(row.dateAdhesion), circuit: (row.circuit || ('common.notAvailable' | translate)) })">
             </tr>
                 
             <tr class="no-data" *matNoDataRow>
                 <td [attr.colspan]="displayedColumns.length">
                     <mat-icon>search_off</mat-icon>
-                    <span>Aucun contrat ne correspond à votre recherche</span>
+                    <span>{{ 'userContracts.noResults' | translate }}</span>
                 </td>
             </tr>
         </table>

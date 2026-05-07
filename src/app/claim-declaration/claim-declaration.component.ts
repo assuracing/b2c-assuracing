@@ -22,6 +22,7 @@ import { ClaimReasonStepComponent } from './steps/claim-reason-step/claim-reason
 import { ClaimInfoStepComponent } from './steps/claim-info-step/claim-info-step.component';
 import { ClaimDocumentsStepComponent } from './steps/claim-documents-step/claim-documents-step.component';
 import { ClaimSummaryStepComponent } from './steps/claim-summary-step/claim-summary-step.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-claim-declaration',
@@ -40,7 +41,8 @@ import { ClaimSummaryStepComponent } from './steps/claim-summary-step/claim-summ
     ClaimReasonStepComponent,
     ClaimInfoStepComponent,
     ClaimDocumentsStepComponent,
-    ClaimSummaryStepComponent
+    ClaimSummaryStepComponent,
+    TranslateModule
   ],
   templateUrl: './claim-declaration.component.html',
   styleUrls: ['./claim-declaration.component.scss']
@@ -82,13 +84,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   labelPosition: 'end' | 'bottom' = 'end';
 
-  steps = [
-    { label: 'Type de garantie', icon: 'category' },
-    { label: 'Motif de demande', icon: 'help' },
-    { label: 'Informations', icon: 'info' },
-    { label: 'Justificatifs', icon: 'attach_file' },
-    { label: 'Confirmation', icon: 'check_circle' }
-  ];
+  steps: { label: string, icon: string }[] = [];
 
   constructor(
     public claimService: ClaimService,
@@ -96,6 +92,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private translate: TranslateService,
     private breakpointObserver: BreakpointObserver
   ) {
     this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
@@ -104,6 +101,14 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.steps = [
+      { label: this.translate.instant('claimDeclaration.guaranteeType'), icon: 'category' },
+      { label: this.translate.instant('claimDeclaration.requestReason'), icon: 'help' },
+      { label: this.translate.instant('claimDeclaration.information'), icon: 'info' },
+      { label: this.translate.instant('claimDeclaration.supportingDocuments'), icon: 'attach_file' },
+      { label: this.translate.instant('claimDeclaration.confirmation'), icon: 'check_circle' }
+    ];
+
     const sub = this.activatedRoute.params.subscribe(params => {
       if (params['contractId']) {
         this.contractId = parseInt(params['contractId'], 10);
@@ -143,7 +148,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
         this.loadProductTypesForContract(contractId, false);
       },
       error: (error) => {
-        this.toastService.error('Erreur lors du chargement du contrat');
+        this.toastService.error(this.translate.instant('messages.loadContractError'));
       }
     });
   }
@@ -157,7 +162,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
         this.determineClaimTypeFlow(autoAdvanceStepper);
       },
       error: (error) => {
-        this.toastService.error('Erreur lors du chargement des types de sinistre');
+        this.toastService.error(this.translate.instant('messages.loadClaimTypesError'));
         this.isLoading = false;
       }
     });
@@ -170,7 +175,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
       this.showTypeStep = true;
       this.isLoading = false;
     } else {
-      this.toastService.error('Aucun type de sinistre disponible pour ce contrat');
+      this.toastService.error(this.translate.instant('messages.noClaimTypeAvailable'));
       this.isLoading = false;
     }
 
@@ -301,7 +306,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
   submitTypeWithValidation(): void {
     if (!this.claim.type) {
-      this.toastService.error('Veuillez sélectionner un type de sinistre');
+      this.toastService.error(this.translate.instant('messages.selectClaimType'));
       return;
     }
     
@@ -320,7 +325,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
         this.stepper.next();
       }
     } else {
-      this.toastService.error('Veuillez sélectionner un type de garantie');
+      this.toastService.error(this.translate.instant('messages.selectGuaranteeType'));
     }
   }
 
@@ -334,7 +339,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
   submitReason(): void {
     if (!this.selectedTypeCauseSinistre) {
-      this.toastService.error('Veuillez sélectionner un motif de demande');
+      this.toastService.error(this.translate.instant('messages.selectRequestReason'));
       return;
     }
     
@@ -348,7 +353,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
       this.onClaimInfoSubmitted(infoComponent.form.value);
       this.stepper.next();
     } else {
-      this.toastService.error('Veuillez remplir tous les champs requis');
+      this.toastService.error(this.translate.instant('messages.fillAllRequiredFields'));
     }
   }
 
@@ -366,7 +371,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
   submitDocuments(documentsComponent: any): void {
     if (!documentsComponent.areAllDocumentsUploaded()) {
-      this.toastService.error('Veuillez téléverser tous les justificatifs requis');
+      this.toastService.error(this.translate.instant('messages.uploadAllRequiredDocuments'));
       return;
     }
     
@@ -378,7 +383,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
   submitClaimWithValidation(): void {
     if (!this.claimSummaryStep?.isSummaryConfirmed()) {
-      this.toastService.error('Veuillez cocher la case de confirmation avant de soumettre');
+      this.toastService.error(this.translate.instant('messages.confirmationRequired'));
       return;
     }
 
@@ -391,7 +396,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     }
 
     if (!this.contractId) {
-      this.toastService.error('Erreur: contrat non sélectionné');
+      this.toastService.error(this.translate.instant('messages.contractNotSelected'));
       return;
     }
 
@@ -409,7 +414,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
       typeCauseSinistre: {},
       etatValidationOrganisateur: 'AVALIDE',
       envoiMail: true,
-      etatEnCours: 'déclaration client'
+      etatEnCours: this.translate.instant('claimDeclaration.clientDeclaration')
     };
 
     if (this.selectedTypeCauseSinistre && this.selectedTypeCauseSinistre.id) {
@@ -427,7 +432,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        this.toastService.error('Erreur lors de la création de la déclaration');
+        this.toastService.error(this.translate.instant('messages.claimCreationError'));
         this.isLoading = false;
       }
     });
@@ -468,7 +473,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          this.toastService.error(`Erreur lors de l'upload de ${file.nomFichier}`);
+          this.toastService.error(this.translate.instant('messages.fileUploadError', { fileName: file.nomFichier }));
           this.isLoading = false;
         }
       });
@@ -478,11 +483,14 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   }
 
   private mapDocTypeToEnum(docTypeLabel: string): string {
+    const accidentPhoto = this.translate.instant('claimDeclaration.accidentPhoto');
+    const repairQuote = this.translate.instant('claimDeclaration.repairQuote');
+
     const mapping: { [key: string]: string } = {
       'RIB': 'RIB',
       'Justificatif': 'AUTRE',
-      'Photo accident': 'PHOTOACCIDENT',
-      'Devis réparation': 'DEVISREPARATION',
+      [accidentPhoto]: 'PHOTOACCIDENT',
+      [repairQuote]: 'DEVISREPARATION',
       'CERTIFICATMEDICAL': 'CERTIFICATMEDICAL',
       'CERTIFICATEMPLOYEUR': 'CERTIFICATEMPLOYEUR',
       'FACTUREJUSTIFICATIVE': 'FACTUREJUSTIFICATIVE'
@@ -491,26 +499,26 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   }
 
   private handleClaimSuccess(): void {
-    this.toastService.success('Déclaration de sinistre créée avec succès!');
+    this.toastService.success(this.translate.instant('messages.claimCreationSuccess'));
     this.isLoading = false;
     this.router.navigate(['/contracts', this.contractId]);
   }
 
   private validateClaim(): boolean {
     if (!this.claim.type) {
-      this.toastService.error('Veuillez sélectionner un type de garantie');
+      this.toastService.error(this.translate.instant('messages.selectGuaranteeType'));
       return false;
     }
 
     if (!this.claim.dateEvenement) {
-      this.toastService.error('Veuillez renseigner la date du sinistre');
+      this.toastService.error(this.translate.instant('claimDeclaration.claimDateRequired'));
       return false;
     }
 
     const type = (this.claim.type || '').toUpperCase();
     if (["ANNULATION", "INTEMPERIES", "INTERRUPTION", "CANCELR"].includes(type)) {
       if (!this.claim.fichiers || this.claim.fichiers.length === 0) {
-        this.toastService.error('Veuillez téléverser au moins le RIB');
+        this.toastService.error(this.translate.instant('messages.uploadAtLeastRib'));
         return false;
       }
     }

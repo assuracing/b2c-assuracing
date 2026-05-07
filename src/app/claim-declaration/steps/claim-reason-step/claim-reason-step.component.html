@@ -1,9 +1,9 @@
 <div class="reason-selector">
-  <h2>Quel est le motif de votre demande?</h2>
-  <p class="subtitle">Sélectionnez le motif qui correspond à votre situation ({{ getClaimTypeLabel() }})</p>
+  <h2>{{ 'claimDeclaration.reasonQuestion' | translate }}</h2>
+  <p class="subtitle">{{ 'claimDeclaration.selectReasonInstructions' | translate }} ({{ getClaimTypeLabel() }})</p>
 
   <div *ngIf="availableCauses.length === 0" class="no-causes">
-    <p>Aucun motif disponible pour ce type de sinistre.</p>
+    <p>{{ 'claimDeclaration.noReasonsAvailable' | translate }}</p>
   </div>
 
   <mat-radio-group *ngIf="availableCauses.length > 0" [(ngModel)]="selectedCauseId">

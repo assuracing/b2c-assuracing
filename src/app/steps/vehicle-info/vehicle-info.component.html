@@ -2,11 +2,11 @@
 
 <div class="login-form">
 
-    <h3> Votre véhicule </h3>
+    <h3> {{ 'vehicleStep.heading' | translate }} </h3>
     <div class="form-group">
         <label for="type"></label>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Type véhicule</mat-label>
+          <mat-label>{{ 'vehicleStep.type' | translate }}</mat-label>
           <mat-select formControlName="type" required [disabled]="showVehicleTypeTooltip">
             <mat-select-trigger>
               <mat-icon>{{ getVehicleIcon(form.get('type')?.value) }}</mat-icon>
@@ -23,10 +23,10 @@
     <div class="form-group">
       <label for="brand"></label>
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Marque</mat-label>
+        <mat-label>{{ 'vehicleStep.brand' | translate }}</mat-label>
         <mat-select formControlName="brand" required panelClass="brand-select-panel" (openedChange)="onBrandPanelOpened($event)">
           <div class="search-container">
-            <input #brandSearchInput class="search-input" placeholder="Rechercher..." (click)="$event.stopPropagation()" (input)="filterBrands($event)">
+            <input #brandSearchInput class="search-input" [placeholder]="'common.search' | translate" (click)="$event.stopPropagation()" (input)="filterBrands($event)">
           </div>
           <mat-option *ngFor="let brand of filteredBrands" [value]="brand">
             {{brand}}
@@ -36,51 +36,51 @@
   </div>
 
     <div class="form-group">
-        <label for="model">Modèle</label>
+        <label for="model">{{ 'vehicleStep.model' | translate }}</label>
         
         <input formControlName="model" type="text" id="model" class="form-control" required>
     </div>
 
     <div class="radio">
-        <label> <strong>Numéro d'identification</strong>
+        <label> <strong>{{ 'vehicleStep.identificationNumber' | translate }}</strong>
           <app-adaptive-tooltip
-           text="Si c'est un véhicule de location, selectionnez immatriculation et renseignez 'Location'">
+            text="{{ 'vehicleStep.rentalTooltip' | translate }}">"
           </app-adaptive-tooltip>
         </label>
         <div class="radio-group">
-            <label for="immat">Immatriculation</label>
+            <label for="immat">{{ 'vehicleStep.licensePlate' | translate }}</label>
             <input type="radio" id="immat" formControlName="identificationNumber" value="immat">
         </div>
         <div class="radio-group">
-            <label for="chassis">Nº chassis</label>
+            <label for="chassis">{{ 'vehicleStep.chassisNumber' | translate }}</label>
             <input type="radio" id="chassis" formControlName="identificationNumber" value="chassis">
         </div>
         <div class="radio-group">
-            <label for="serie">Nº série</label>
+            <label for="serie">{{ 'vehicleStep.serialNumber' | translate }}</label>
             <input type="radio" id="serie" formControlName="identificationNumber" value="serie">
         </div>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'immat'">
-        <label for="immatNumber">Immatriculation</label>
+        <label for="immatNumber">{{ 'vehicleStep.licensePlate' | translate }}</label>
         <input formControlName="immatNumber" type="text" id="immatNumber" class="form-control" required>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'chassis'">
-        <label for="chassisNumber">Nº chassis</label>
+        <label for="chassisNumber">{{ 'vehicleStep.chassisNumber' | translate }}</label>
         <input formControlName="chassisNumber" type="text" id="chassisNumber" class="form-control" required>
     </div>
 
     <div class="form-group" *ngIf="form.get('identificationNumber')?.value === 'serie'">
-        <label for="serieNumber">Nº série</label>
+        <label for="serieNumber">{{ 'vehicleStep.serialNumber' | translate }}</label>
         <input formControlName="serieNumber" type="text" id="serieNumber" class="form-control" required>
     </div>
 
     <div class="form-group" *ngIf="userAge && userAge >= 18 && form.get('type')?.value === 'moto'">
         <label for="titreConduite"></label>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Titre de conduite</mat-label>
-          <mat-select formControlName="titreConduite" [disabled]="showDriveLicenseTooltip">
+          <mat-label>{{ 'vehicleStep.drivingLicense' | translate }}</mat-label>
+          <mat-select formControlName="titreConduite" [disabled]="showDriveLicenseTooltip" [disabled]="showDriveLicenseTooltip">
             <mat-option *ngFor="let license of getFilteredLicenseTypes()" [value]="license.value">
               {{license.label}}
             </mat-option>
@@ -93,36 +93,36 @@
     </div>
 
     <div class="radio" *ngIf="userAge && userAge < 18 && form.get('type')?.value === 'moto'">
-      <label> <strong>Possédez-vous le CASM ?</strong>
+      <label> <strong>{{ 'vehicleStep.casm' | translate }}</strong>
         <app-adaptive-tooltip
           *ngIf="showDriveLicenseTooltip"
           text="{{getDriveLicenseTooltipMessage()}}">
         </app-adaptive-tooltip>
       </label>
       <div class="radio-group">
-          <label for="hasCasm">Oui</label>
-          <input type="radio" id="hasCasm" formControlName="hasCasm" name="casmGroup" value="Oui">
+          <label for="hasCasm">{{ 'common.yes' | translate }}</label>
+          <input type="radio" id="hasCasm" formControlName="hasCasm" name="casmGroup" value="yes">
       </div>
       <div class="radio-group">
-          <label for="hasntCasm">Non</label>
-          <input type="radio" id="hasntCasm" formControlName="hasCasm" name="casmGroup" value="Non">
+          <label for="hasntCasm">{{ 'common.no' | translate }}</label>
+          <input type="radio" id="hasntCasm" formControlName="hasCasm" name="casmGroup" value="no">
       </div>
     </div>
 
     <div class="radio" *ngIf="form.get('type')?.value === 'auto'">
-      <label> <strong>Possédez-vous le permis B ?</strong>
+      <label> <strong>{{ 'vehicleStep.licenseB' | translate }}</strong>
         <app-adaptive-tooltip
           *ngIf="showDriveLicenseTooltip"
           text="{{getDriveLicenseTooltipMessage()}}">
         </app-adaptive-tooltip>
       </label>
       <div class="radio-group">
-          <label for="hasPermisB">Oui</label>
-          <input type="radio" id="hasPermisB" formControlName="hasPermisB" name="permisBGroup" value="Oui">
+          <label for="hasPermisB">{{ 'common.yes' | translate }}</label>
+          <input type="radio" id="hasPermisB" formControlName="hasPermisB" name="permisBGroup" value="yes">
       </div>
       <div class="radio-group">
-          <label for="hasntPermisB">Non</label>
-          <input type="radio" id="hasntPermisB" formControlName="hasPermisB" name="permisBGroup" value="Non">
+          <label for="hasntPermisB">{{ 'common.no' | translate }}</label>
+          <input type="radio" id="hasntPermisB" formControlName="hasPermisB" name="permisBGroup" value="no">
       </div>
     </div>
 

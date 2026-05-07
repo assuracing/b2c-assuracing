@@ -35,7 +35,7 @@ import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Circuit {
   id: number;
@@ -123,40 +123,58 @@ interface ContractResponse {
   templateUrl: './event-coverage.component.html',
   styleUrls: ['./event-coverage.component.scss', '../motors-league/motors-league.component.scss', '../app-second.component.scss', '../app.component.scss']
 })
-export class EventCoverageComponent {
+export class EventCoverageComponent implements OnInit, OnDestroy {
   labelPosition: 'end' | 'bottom' = 'end';
-  public nationalities: string[] = [
-  'Française',
-  'Allemande',
-  'Autrichienne',
-  'Belge',
-  'Britannique',
-  'Bulgare',
-  'Chypriote',
-  'Croate',
-  'Danoise',
-  'Espagnole',
-  'Estonienne',
-  'Finlandaise',
-  'Grecque',
-  'Hongroise',
-  'Irlandaise',
-  'Italienne',
-  'Lettonne',
-  'Lituanienne',
-  'Luxembourgeoise',
-  'Maltaise',
-  'Néerlandaise',
-  'Polonaise',
-  'Portugaise',
-  'Roumaine',
-  'Slovaque',
-  'Slovène',
-  'Suédoise',
-  'Suisse',
-  'Tchèque'
-];
-  private apiUrl: string;
+  private nationalitiesKeys = [
+    'french', 'german', 'austrian', 'belgian', 'british', 'bulgarian', 'cypriot', 'croatian',
+    'danish', 'spanish', 'estonian', 'finnish', 'greek', 'hungarian', 'irish', 'italian',
+    'latvian', 'lithuanian', 'luxembourgish', 'maltese', 'dutch', 'polish', 'portuguese',
+    'romanian', 'slovak', 'slovenian', 'swedish', 'swiss', 'czech'
+  ];
+  private nationalitiesFrenchLabels: { [key: string]: string } = {
+    french: 'Française',
+    german: 'Allemande',
+    austrian: 'Autrichienne',
+    belgian: 'Belge',
+    british: 'Britannique',
+    bulgarian: 'Bulgare',
+    cypriot: 'Chypriote',
+    croatian: 'Croate',
+    danish: 'Danoise',
+    spanish: 'Espagnole',
+    estonian: 'Estonienne',
+    finnish: 'Finlandaise',
+    greek: 'Grecque',
+    hungarian: 'Hongroise',
+    irish: 'Irlandaise',
+    italian: 'Italienne',
+    latvian: 'Lettone',
+    lithuanian: 'Lituanienne',
+    luxembourgish: 'Luxembourgeoise',
+    maltese: 'Maltaise',
+    dutch: 'Néerlandaise',
+    polish: 'Polonaise',
+    portuguese: 'Portugaise',
+    romanian: 'Roumaine',
+    slovak: 'Slovaque',
+    slovenian: 'Slovène',
+    swedish: 'Suédoise',
+    swiss: 'Suisse',
+    czech: 'Tchèque'
+  };
+  public nationalities: string[] = [];
+  public nationalitiesMap: Map<string, string> = new Map();  
+  private licenseTypesKeys = ['licenseA', 'licenseB', 'casm', 'ffsa'];
+  public licenseTypes: string[] = [];
+  public licenseTypesMap: Map<string, string> = new Map();
+  
+  private claimStatusesKeys = [
+    'awaitingDocuments', 'inProgress', 'declined', 'settled', 'noFollowUp',
+    'clientDeclarationStatus', 'organizerDeclaration', 'completeFile', 'fileToRegularize', 'statusUnknown'
+  ];
+  public claimStatuses: string[] = [];
+  public claimStatusesMap: Map<string, string> = new Map();
+    private apiUrl: string;
 
   constructor( 
     private fb: FormBuilder,
@@ -169,7 +187,8 @@ export class EventCoverageComponent {
     private router: Router,
     private envService: EnvironmentService,
     private breakpointObserver: BreakpointObserver,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private translateService: TranslateService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -178,6 +197,54 @@ export class EventCoverageComponent {
     this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
       this.labelPosition = result.matches ? 'bottom' : 'end';
     });
+  }
+
+  ngOnInit(): void {
+    this.updateNationalities();
+    this.updateLicenseTypes();
+    this.updateClaimStatuses();
+    
+    const langChangeSub = this.translateService.onLangChange.subscribe(() => {
+      this.updateNationalities();
+      this.updateLicenseTypes();
+      this.updateClaimStatuses();
+    });
+    this.subscriptions.push(langChangeSub);
+  }
+
+  private updateNationalities(): void {
+    this.nationalitiesMap.clear();
+    this.nationalities = this.nationalitiesKeys.map(key => {
+      const translation = this.translateService.instant(`nationalities.${key}`);
+      this.nationalitiesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private updateLicenseTypes(): void {
+    this.licenseTypesMap.clear();
+    this.licenseTypes = this.licenseTypesKeys.map(key => {
+      const translation = this.translateService.instant(`licenseTypes.${key}`);
+      this.licenseTypesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private updateClaimStatuses(): void {
+    this.claimStatusesMap.clear();
+    this.claimStatuses = this.claimStatusesKeys.map(key => {
+      const translation = this.translateService.instant(`claimStatuses.${key}`);
+      this.claimStatusesMap.set(key, translation);
+      return key;
+    });
+  }
+
+  private getFrenchNationalityValue(nationalityValue: string): string {
+    if (!nationalityValue) {
+      return '';
+    }
+
+    return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
   async onContinueGuaranteeStep(stepper: MatStepper) {
@@ -331,7 +398,7 @@ export class EventCoverageComponent {
       city: [''],
       birthdate: [''],
       nationality: '',
-      country: 'France',
+      country: 'france',
     });
     this.personalForm.get('country')?.valueChanges.subscribe((country: string) => {
       const postalCodeControl = this.personalForm.get('postalCode');
@@ -358,14 +425,14 @@ export class EventCoverageComponent {
     });
 
     this.vehicleForm.get('hasCasm')?.valueChanges.subscribe(value => {
-      if(value === 'Oui') {
+      if(value === 'yes') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
       }
     });
 
     this.vehicleForm.get('hasPermisB')?.valueChanges.subscribe(value => {
-      if(value === 'Oui') {
+      if(value === 'yes') {
         this.vehicleForm.get('titreConduite')?.clearValidators();
         this.vehicleForm.get('titreConduite')?.updateValueAndValidity();
       }
@@ -455,13 +522,13 @@ export class EventCoverageComponent {
   changeRoleText(role: string): string {
     switch(role){
       case 'PILOTE':
-        return 'pilote';
+        return this.translateService.instant('eventCoverage.eventRoles.pilote');
       case 'PASSAGER':
-        return 'passager';
+        return this.translateService.instant('eventCoverage.eventRoles.passager');
       case 'PHOTOGRAPHE_VIDEASTE':
-        return 'photographe-vidéaste';
+        return this.translateService.instant('eventCoverage.eventRoles.photographeVideaste');
       case 'MECANICIEN':
-        return 'mécanicien';
+        return this.translateService.instant('eventCoverage.eventRoles.mecanicien');
       default:
         return role;
     }
@@ -500,8 +567,10 @@ export class EventCoverageComponent {
     const birthDate = this.personalForm?.get('birthdate')?.value;
     if(!birthDate) return;
     const age = this.calculateAge(new Date(birthDate));
-    const driveLicenseType = this.vehicleForm.get('hasPermisB')?.value ? 'Permis B' : 'CASM';
-    if(age > 16 && age < 18 && driveLicenseType === 'CASM' && this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('hasCasm')?.value === 'Non'){
+    const driveLicenseType = this.vehicleForm.get('hasPermisB')?.value
+      ? this.translateService.instant('licenseTypes.licenseB')
+      : this.translateService.instant('licenseTypes.casm');
+    if(age > 16 && age < 18 && driveLicenseType === this.translateService.instant('licenseTypes.casm') && this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('hasCasm')?.value === 'no'){
       this.dialog.open(DriveLicenseAgeRestrictionDialogComponent, {
         width: '450px',
         disableClose: true,
@@ -509,7 +578,7 @@ export class EventCoverageComponent {
       });
       return;
     }
-    else if(age > 19 && driveLicenseType === 'Permis B' && this.vehicleForm.get('type')?.value === 'auto' && this.vehicleForm.get('hasPermisB')?.value === 'Non'){
+    else if(age > 19 && driveLicenseType === this.translateService.instant('licenseTypes.licenseB') && this.vehicleForm.get('type')?.value === 'auto' && this.vehicleForm.get('hasPermisB')?.value === 'no'){
       this.dialog.open(DriveLicenseAgeRestrictionDialogComponent, {
         width: '450px',
         disableClose: true,
@@ -547,20 +616,26 @@ export class EventCoverageComponent {
 
   formatVehicleType(type: string): string {
     const types: { [key: string]: string } = {
-      'moto': 'Moto',
-      'auto': 'Auto'
+      'moto': this.translateService.instant('eventCoverage.vehicleTypes.moto'),
+      'auto': this.translateService.instant('eventCoverage.vehicleTypes.auto')
     };
     return types[type] || type;
   }
 
   formatPermisType(type: string): string {
     const types: { [key: string]: string } = {
-      'permis_a': 'Permis A',
-      'permis_b': 'Permis B',
-      'casm': 'CASM',
-      'licence_ffsa': 'Licence FFSA'
+      'permis_a': this.translateService.instant('licenseTypes.licenseA'),
+      'permis_b': this.translateService.instant('licenseTypes.licenseB'),
+      'casm': this.translateService.instant('licenseTypes.casm'),
+      'licence_ffsa': this.translateService.instant('licenseTypes.ffsa')
     };
     return types[type] || type;
+  }
+
+  getTermsRoleLabel(): string {
+    return this.isMinor()
+      ? this.translateService.instant('summary.legalRepresentative')
+      : this.translateService.instant('summary.insured');
   }
 
   calculateAge(birthDate: Date): number {
@@ -612,7 +687,7 @@ export class EventCoverageComponent {
     const coverageData = this.coverageOptionsForm.value;
     
     if (!trackdayData || !vehicleData || !coverageData) {
-      this.priceCalculationError = 'Veuillez remplir tous les champs obligatoires';
+      this.priceCalculationError = this.translateService.instant('common.fillRequired');
       return;
     }
     
@@ -729,11 +804,11 @@ export class EventCoverageComponent {
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
         numeroPermisA: vehicleData.numeroPermisA || '',
-        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'Oui' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
+        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : 'NC',
         numeroPermisB: vehicleData.numeroPermisB || '',
-        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'Oui' ? 'Oui' : 'NC',
-        nationalite: this.personalForm.get('nationality')?.value,
+        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : 'NC',
+        nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
       },
       marque: vehicleData.brand || 'ND',
       modele: vehicleData.model || 'ND',
@@ -801,25 +876,25 @@ export class EventCoverageComponent {
     const selectedGuarantees: string[] = [];
 
     if (coverageForm.get('intemperies')?.value) {
-      selectedGuarantees.push('Intempéries');
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
     }
     if (coverageForm.get('annulation')?.value) {
-      selectedGuarantees.push('Annulation');
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
     }
     if (coverageForm.get('interruption')?.value) {
-      selectedGuarantees.push('Interruption');
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.interruptionRisk'));
     }
     if (coverageForm.get('protectionPilote')?.value) {
       const level = coverageForm.get('protectionPilote')?.value;
-      selectedGuarantees.push(`Protection du pilote niveau ${level}`);
+      selectedGuarantees.push(`${this.translateService.instant('eventCoverage.guarantees.corporateAccident')} niveau ${level}`);
     }
     if (coverageForm.get('defenseRecours')?.value) {
-      selectedGuarantees.push('Défense Recours');
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.legalProtection'));
     }
 
     const eventDate = trackdayForm.get('eventDate')?.value;
     const duration = trackdayForm.get('duration')?.value;
-    const circuit = this.trackdayForm.get('circuit')?.value || 'Circuit non spécifié';
+    const circuit = this.trackdayForm.get('circuit')?.value || this.translateService.instant('eventContracts.notSpecified');
     const totalPrime = this.eventCoverageOptions?.totalPrime || 0;
 
     const formattedDate = new Date(eventDate).toLocaleDateString('fr-FR', {
@@ -828,9 +903,13 @@ export class EventCoverageComponent {
       day: 'numeric'
     });
 
-    return `Vous avez sélectionné les garanties : <strong>${selectedGuarantees.join('</strong>, <strong>')}</strong>
-    pour votre événement du ${formattedDate} de ${duration} jour(s) à : ${circuit}.
-    La prime totale est de ${totalPrime} €`;
+    const summary = this.translateService.instant('eventCoverage.summarySentence', {
+      date: formattedDate,
+      duration: duration,
+      circuit: circuit
+    });
+
+    return `${this.translateService.instant('eventCoverage.selectedGuarantees')} <strong>${selectedGuarantees.join('</strong>, <strong>')}</strong> ${summary}. ${this.translateService.instant('eventCoverage.totalPrime')} <strong>${totalPrime}€</strong>.`;
   }
 
   private calculateGarantiePrice(codeProduit: number): void {
@@ -878,10 +957,10 @@ export class EventCoverageComponent {
     this.userService.sendVerificationEmail(email).subscribe({
       next: () => {
         this.stepper.next();
-        this.toastService.success('Code de verification envoyé, ce code devra etre renseigné à la dernière étape');
+        this.toastService.success(this.translateService.instant('representativeLegal.verificationCodeSent'));
       },
       error: (err) => {
-        this.toastService.error('Erreur lors de l envoi du code de verification');
+        this.toastService.error(this.translateService.instant('messages.sendVerificationCodeError'));
       }
     });
   }
@@ -891,11 +970,11 @@ export class EventCoverageComponent {
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success('Code de verification validé');
+        this.toastService.success(this.translateService.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
       error: (err) => {
-        this.toastService.error('Code de verification invalide');
+        this.toastService.error(this.translateService.instant('messages.verificationCodeInvalid'));
       }
     });
   }
@@ -910,3 +989,6 @@ export class EventCoverageComponent {
     return diffInDays < 21;
 }
 }
+
+
+
