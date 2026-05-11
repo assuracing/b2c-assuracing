@@ -129,7 +129,15 @@ export class ContractDetailsComponent implements OnInit {
 
     this.contractService.getContractFiles(this.contractId).subscribe({
       next: (files) => {
-        this.files = files || [];
+        this.files = (files || []).map((f: any) => {
+          const file = { ...f };
+          if (!file.url && (file.content || file.contentContentType)) {
+            const base = file.content || '';
+            const contentType = file.contentContentType || 'application/octet-stream';
+            file.url = `data:${contentType};base64,${base}`;
+          }
+          return file;
+        });
         this.loading = false;
       },
       error: (_err) => {
