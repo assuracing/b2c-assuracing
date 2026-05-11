@@ -93,9 +93,9 @@ export class OrganizerService {
       return of(null);
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/api/allorganisateursclientent/1`).pipe(
-      map(organizers => {
-        return organizers.find(org => 
+    return this.http.get<any[]>(`${this.apiUrl}/api/client-entreprises`).pipe(
+      map(entreprises => {
+        return entreprises.find(org => 
           org.nom && organizerName && 
           org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
         ) || null;

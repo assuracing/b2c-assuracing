@@ -589,7 +589,7 @@ export class EventCoverageOptionsComponent {
 
   private hasPartnerOrganizerFlag(): boolean {
     const organizer = this.selectedOrganizerData;
-    return organizer?.rco === true || organizer?.rco === 'true';
+    return organizer?.rco === true;
   }
 
   isPartnerOrganizer(): boolean {

@@ -402,6 +402,7 @@
       "weatherCancellationInterruption": "Intempéries, Annulation & Interruption",
       "corporateAccident": "Protection Corporelle (Accident Individuel)",
       "responsabilityRecourse": "Responsabilité / Recours (RC - obligatoire)",
+      "rcIncluded" : "RC incluse",
       "included": "inclus",
       "validateSection": "Valider la section",
       "inscriptionDate": "Date d'inscription à l'événement",
