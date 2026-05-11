@@ -408,6 +408,7 @@
       "weatherCancellationInterruption": "Bad Weather, Cancellation & Interruption",
       "corporateAccident": "Bodily Injury (Individual Accident)",
       "responsabilityRecourse": "Liability / Recourse (RC - mandatory)",
+      "rcIncluded" : "Civil liability included",
       "included": "included",
       "validateSection": "Validate section",
       "inscriptionDate": "Event registration date",
