@@ -27,7 +27,7 @@
              [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
-          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">close</mat-icon>
+              <mat-icon class="toggle-icon-large">health_and_safety</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
                [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
@@ -37,6 +37,7 @@
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
               {{ 'motorsLeague.corporateProtectionAnnual' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
+                <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">delete</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getProtectionPiloteAmount()) }}
               </span>
@@ -120,7 +121,7 @@
              [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
-          <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">close</mat-icon>
+            <mat-icon class="toggle-icon-large">handshake</mat-icon>
           <div style="flex:1; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
                [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
@@ -130,6 +131,7 @@
                  (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
               {{ 'motorsLeague.responsibilityRecourseAnnual' | translate }}
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
+              <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">delete</mat-icon>
               <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
                 {{ formatPrice(getResponsabiliteRecoursAmount()) }}
               </span>

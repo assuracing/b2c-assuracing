@@ -408,7 +408,7 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
     const today = new Date().toISOString().split('T')[0];
     const eventDate = new Date(this.claim.dateEvenement).toISOString().split('T')[0];
-
+    
     const payload: any = {
       typeSinistre: { id: this.claimService.getTypeSinistreId(this.claim.type) },
       dateSinistre: eventDate,
