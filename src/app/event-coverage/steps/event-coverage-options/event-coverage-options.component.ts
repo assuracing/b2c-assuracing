@@ -98,23 +98,6 @@ export class EventCoverageOptionsComponent {
     this.form.get('inscriptionDate')?.valueChanges.subscribe(date => {
       this.checkAnnulationAvailability(date);
     });
-  
-    if (this.trackdayForm) {
-      this.trackdayForm.get('organizer')?.valueChanges.pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(organizerId => {
-        if (organizerId) {
-          this.checkProductsAvailability(organizerId);
-        } else {
-          this.resetProductAvailability();
-        }
-      });
-  
-      const currentOrganizerId = this.trackdayForm.get('organizer')?.value;
-      if (currentOrganizerId) {
-        this.checkProductsAvailability(currentOrganizerId);
-      }
-    }
 
     this.initializeProtectionPrices();
   }
@@ -402,7 +385,7 @@ export class EventCoverageOptionsComponent {
   private updateFormControlsAvailability(): void {
     const controls = this.form.controls;
     
-    if (this.selectedOrganizerData?.organisateurPartenaireRC === true) {
+    if (this.hasPartnerOrganizerFlag()) {
       controls['responsabiliteCivile'].disable();
       controls['responsabiliteCivile'].setValue(true);
     } else {
@@ -604,8 +587,12 @@ export class EventCoverageOptionsComponent {
     });
   }
 
-  isPartnerOrganizer(): boolean {
-    return this.selectedOrganizerData?.organisateurPartenaireRC === true;
+  private hasPartnerOrganizerFlag(): boolean {
+    const organizer = this.selectedOrganizerData;
+    return organizer?.rco === true || organizer?.rco === 'true';
   }
 
+  isPartnerOrganizer(): boolean {
+    return this.hasPartnerOrganizerFlag();
+  }
 }

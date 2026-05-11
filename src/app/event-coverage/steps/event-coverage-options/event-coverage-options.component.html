@@ -301,10 +301,10 @@
               </app-adaptive-tooltip>
             </span>
           </mat-slide-toggle>
-          <p *ngIf="isPartnerOrganizer()" class="inclus" style="font-weight: normal; font-size: 13px; color: #0ba2cf; margin-top: 2px; ">
-            <p>{{ 'eventCoverage.guarantees.partnerOrganizerMessage' | translate }}
-            <mat-icon style="font-size: 24px; margin-right: 4px;">sentiment_very_satisfied</mat-icon>
-          </p>
+          <div *ngIf="isPartnerOrganizer()" class="partner-organizer-message inclus">
+            <span>{{ 'eventCoverage.guarantees.partnerOrganizerMessage' | translate }}</span>
+            <mat-icon>sentiment_very_satisfied</mat-icon>
+          </div>
           <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
         </div>
         <div class="risk-group">
@@ -316,7 +316,7 @@
             <mat-icon class="toggle-icon">gavel</mat-icon>
             <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.legalProtection' | translate }}</strong>
           </span>
-        </mat-slide-toggle>
+        </mat-slide-toggle> 
           <div class="risk-details">
             <p>{{ 'eventCoverage.defenseRecourseDescription' | translate }}</p>
             <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
