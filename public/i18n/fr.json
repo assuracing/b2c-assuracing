@@ -126,7 +126,7 @@
     "completeEntryToContinue": "Vous devez valider ou supprimer la garantie en cours de saisie pour continuer"
   },
   "eventContracts": {
-    "title": "Contrats événementiels",
+    "title": "Contrats à l'évènement",
     "searchLabel": "Rechercher un contrat",
     "searchPlaceholder": "Rechercher par entreprise, contrat...",
     "yearFilter": "Année",
