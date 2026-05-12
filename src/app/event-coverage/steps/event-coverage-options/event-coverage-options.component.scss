@@ -150,23 +150,7 @@
     }
 
 
-  .partner-organizer-message {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 2px;
-    font-weight: 400;
-    font-size: 13px;
-    color: #0ba2cf;
-
-    .mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      color: #0ba2cf;
-    }
-  }
-
+  .partner-organizer-message,
   .premium-organizer-message {
     display: flex;
     align-items: center;
