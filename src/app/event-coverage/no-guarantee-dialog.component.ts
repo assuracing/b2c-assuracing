@@ -11,23 +11,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   template: `
     <h2 mat-dialog-title>{{ 'messages.noGuaranteeSelected' | translate }}</h2>
     <mat-dialog-content>
-      <p>{{ 'messages.confirmContinueNoGuarantee' | translate }}</p>
-      <p>{{ 'messages.continueNoGuarantee' | translate }}</p>
+      <p>{{ 'messages.selectGuarantee' | translate }}</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
-      <button mat-raised-button color="primary" (click)="onConfirm()">{{ 'common.yes' | translate }}</button>
+      <button mat-button (click)="onOk()">{{ 'common.ok' | translate }}</button>
     </mat-dialog-actions>
   `
 })
 export class NoGuaranteeDialogComponent {
   constructor(private dialogRef: MatDialogRef<NoGuaranteeDialogComponent>, private translate: TranslateService) {}
 
-  onCancel() {
-    this.dialogRef.close(false);
-  }
-  onConfirm() {
-    this.dialogRef.close(true);
+  onOk() {
+    this.dialogRef.close();
   }
 }
 
