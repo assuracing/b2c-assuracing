@@ -319,7 +319,14 @@
             <span>{{ 'eventCoverage.guarantees.partnerOrganizerMessage' | translate }}</span>
             <mat-icon>sentiment_very_satisfied</mat-icon>
           </div>
-          <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</p>
+          <p>{{ 'eventCoverage.guarantees.premium' | translate }} : 
+            <ng-container *ngIf="isPartnerOrganizer() && form.get('responsabiliteCivile')?.value">
+              {{ 'eventCoverage.guarantees.included' | translate }}
+            </ng-container>
+            <ng-container *ngIf="!isPartnerOrganizer() || !form.get('responsabiliteCivile')?.value">
+              {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}
+            </ng-container>
+          </p>
         </div>
         <div class="risk-group">
           <mat-slide-toggle

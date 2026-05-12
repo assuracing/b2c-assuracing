@@ -559,7 +559,12 @@ export class EventCoverageOptionsComponent {
     } else if (section === 'protectionPilote') {
       shouldValidate = this.form.get('protectionPilote')?.value > 0;
     } else if (section === 'responsabiliteRecours') {
-      if (this.hasPartnerOrganizerFlag() && this.form.get('responsabiliteCivile')?.value && !this.form.get('defenseRecours')?.value) shouldValidate = false;
+      const responsabiliteSelected = !!this.form.get('responsabiliteCivile')?.value;
+      const defenseSelected = !!this.form.get('defenseRecours')?.value;
+
+      shouldValidate = responsabiliteSelected || defenseSelected;
+
+      if (this.hasPartnerOrganizerFlag() && responsabiliteSelected && !defenseSelected) shouldValidate = false;
     }
 
     if (!shouldValidate) {
