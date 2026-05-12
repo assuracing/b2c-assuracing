@@ -684,8 +684,6 @@
     "noContractId": "No contract ID provided",
     "cannotLoadContractDetails": "Cannot load contract details",
     "noGuaranteeSelected": "You have not selected any guarantee",
-    "confirmContinueNoGuarantee": "Are you sure you want to continue without a guarantee?",
-    "continueNoGuarantee": "If you continue without a guarantee, you will be redirected to the home page",
     "deleteSelectionQuestionTitle": "Delete selection?",
     "deleteSelectionQuestion": "Are you sure you want to delete the selection of the guarantee",
     "selectPlaceholder": "Select",
