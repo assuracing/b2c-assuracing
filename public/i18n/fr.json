@@ -422,6 +422,7 @@
       },
       "premium": "Prime",
       "partnerOrganizerMessage": "Votre organisateur, partenaire Assuracing, a déjà souscrit pour vous !",
+      "premiumOrganizerMessage": "Votre organisateur, partenaire premium Assuracing, a souscrit l'intempéries pour vous !",
       "autoLicenseInfo": "Il est possible d'être assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans",
       "motoLicenseInfo": "Il est possible d'être assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans"
     },

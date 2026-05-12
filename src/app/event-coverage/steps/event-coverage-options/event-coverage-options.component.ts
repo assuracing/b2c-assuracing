@@ -391,13 +391,18 @@ export class EventCoverageOptionsComponent {
     } else {
       controls['responsabiliteCivile'].enable();
     }
-    
-    const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
-    if (intemperiesAvailable) {
-      controls['intemperies'].enable();
-    } else {
+
+    if (this.isPremiumPartnerFlag()) {
       controls['intemperies'].disable();
-      controls['intemperies'].setValue(false);
+      controls['intemperies'].setValue(true);
+    } else {
+      const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
+      if (intemperiesAvailable) {
+        controls['intemperies'].enable();
+      } else {
+        controls['intemperies'].disable();
+        controls['intemperies'].setValue(false);
+      }
     }
 
     const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
@@ -594,5 +599,14 @@ export class EventCoverageOptionsComponent {
 
   isPartnerOrganizer(): boolean {
     return this.hasPartnerOrganizerFlag();
+  }
+
+  private isPremiumPartnerFlag(): boolean {
+    const organizer = this.selectedOrganizerData;
+    return organizer?.premiumassuracing === true;
+  }
+
+  isPremiumPartner(): boolean {
+    return this.isPremiumPartnerFlag();
   }
 }

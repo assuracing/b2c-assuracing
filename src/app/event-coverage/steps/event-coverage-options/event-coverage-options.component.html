@@ -86,6 +86,10 @@
             <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
               {{ 'eventCoverage.notAvailableEventDate' | translate }}
             </small>
+            <div *ngIf="isPremiumPartner()" class="premium-organizer-message inclus">
+              <span>{{ 'eventCoverage.guarantees.premiumOrganizerMessage' | translate }}</span>
+              <mat-icon>sentiment_very_satisfied</mat-icon>
+            </div>
             <div class="risk-details">
               <ul>
                 <li>{{ 'eventCoverage.guarantees.coverageDetails.weather80' | translate }}</li>

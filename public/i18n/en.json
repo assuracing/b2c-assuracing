@@ -428,6 +428,7 @@
       },
       "premium": "Premium: ",
       "partnerOrganizerMessage": "Your organizer, Assuracing partner, has already subscribed for you!",
+      "premiumOrganizerMessage": "Your organizer, premium Assuracing partner, has subscribed to weather coverage for you!",
       "autoLicenseInfo": "It is possible to be insured for car from 16 to 19 years old without a B license. The B license is mandatory from 19 years old",
       "motoLicenseInfo": "It is possible to be insured for motorcycle from 16 to 18 years old with the CASM license. The license is mandatory from 18 years old"
     },
