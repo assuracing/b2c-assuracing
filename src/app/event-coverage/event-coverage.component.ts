@@ -496,6 +496,14 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   garantiePrices: { [key: string]: number } = {};
 
   calculateIAIPrices() {
+    if (!this.coverageOptionsForm.get('iai')?.value) {
+      ['INTEMPERIES', 'ANNULATION', 'INTERRUPTION'].forEach(garantie => {
+        delete this.garantiePrices[garantie];
+      });
+      this.garantiePrices = { ...this.garantiePrices };
+      return;
+    }
+
     const amount = this.coverageOptionsForm.get('reservationAmount')?.value;
     if (amount && amount > 0) {
       ['INTEMPERIES', 'ANNULATION', 'INTERRUPTION'].forEach(garantie => {

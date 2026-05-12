@@ -416,7 +416,7 @@
       "cancellationRisk": "Cancellation risk",
       "interruptionRisk": "Interruption risk",
       "badWeatherRisk": "Bad weather risk",
-      "civilLiability": "Civil Liability",
+      "civilLiability": "Civil Liability",  
       "legalProtection": "Legal Protection",
       "coverageDetails": {
         "weather80": "80% in case of cancellation",
@@ -429,6 +429,7 @@
       "premium": "Premium: ",
       "partnerOrganizerMessage": "Your organizer, Assuracing partner, has already subscribed for you!",
       "premiumOrganizerMessage": "Premium Partner Organizer Assuracing - product available!",
+      "fillRequiredFields": "Please fill in the fields",
       "autoLicenseInfo": "It is possible to be insured for car from 16 to 19 years old without a B license. The B license is mandatory from 19 years old",
       "motoLicenseInfo": "It is possible to be insured for motorcycle from 16 to 18 years old with the CASM license. The license is mandatory from 18 years old"
     },

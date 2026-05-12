@@ -211,6 +211,29 @@ export class EventCoverageOptionsComponent {
     return price % 1 === 0 ? `${price} €` : price.toFixed(2).replace('.', ',') + ' €';
   }
 
+  private hasIaiGuaranteeSelected(): boolean {
+    return !!(
+      this.form.get('intemperies')?.value ||
+      this.form.get('annulation')?.value ||
+      this.form.get('interruption')?.value
+    );
+  }
+
+  canValidateIai(): boolean {
+    if (!this.hasIaiGuaranteeSelected()) {
+      return true;
+    }
+
+    const inscriptionDate = this.form.get('inscriptionDate')?.value;
+    const reservationAmount = this.form.get('reservationAmount')?.value;
+
+    return !!inscriptionDate && reservationAmount !== null && reservationAmount !== undefined && reservationAmount !== '';
+  }
+
+  getIaiValidateLabel(): string {
+    return this.canValidateIai() ? 'common.validate' : 'eventCoverage.guarantees.fillRequiredFields';
+  }
+
   PROTECTION_LEVELS: { [key: number]: ProtectionLevel } = {
     1: { death: 7600, disability: 18500, price: 0 },
     2: { death: 25000, disability: 37500, price: 0 },
@@ -511,6 +534,9 @@ export class EventCoverageOptionsComponent {
     }
 
     this.form.patchValue(patchValues);
+    if (section === 'iai') {
+      this.reservationAmountChanged.emit();
+    }
     this.validatedSections[section] = false;
 
     if (this.activeSection === section) {

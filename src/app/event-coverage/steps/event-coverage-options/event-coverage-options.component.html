@@ -148,7 +148,17 @@
               <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.interruption) }}</p>  
             </div>
           </div>
-        <button mat-button class="mat-button" (click)="validateSection('iai')">{{ 'common.validate' | translate }}</button>
+        <div style="display: inline-block; position: relative;">
+          <div
+            [matTooltip]="!canValidateIai() ? ('eventCoverage.guarantees.fillRequiredFields' | translate) : ''"
+            matTooltipPosition="above"
+            matTooltipShowDelay="200"
+            matTooltipTouchGestures="on">
+            <button mat-button class="mat-button iai-validate-button" [class.iai-validate-button-disabled]="!canValidateIai()" [disabled]="!canValidateIai()" (click)="validateSection('iai')">
+              {{ getIaiValidateLabel() | translate }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     </div>
