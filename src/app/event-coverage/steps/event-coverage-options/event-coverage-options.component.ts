@@ -392,17 +392,12 @@ export class EventCoverageOptionsComponent {
       controls['responsabiliteCivile'].enable();
     }
 
-    if (this.isPremiumPartnerFlag()) {
-      controls['intemperies'].disable();
-      controls['intemperies'].setValue(true);
+    const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
+    if (intemperiesAvailable) {
+      controls['intemperies'].enable();
     } else {
-      const intemperiesAvailable = this.productAvailability['INTEMPERIES'] !== false && !this.disableIntempAnnul;
-      if (intemperiesAvailable) {
-        controls['intemperies'].enable();
-      } else {
-        controls['intemperies'].disable();
-        controls['intemperies'].setValue(false);
-      }
+      controls['intemperies'].disable();
+      controls['intemperies'].setValue(false);
     }
 
     const annulationAvailable = this.productAvailability['ANNULATION'] !== false && !this.disableIntempAnnul && !this.annulationDisabledByInscriptionDate;
