@@ -50,63 +50,70 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     }
     
     canAllowMultipleJustificatifs(): boolean {
-      const productName = (this.contractProductName || '').toUpperCase();
-      const claimType = (this.claimType || '').toUpperCase();
-      
-      if (claimType === 'INTERRUPTION') {
-        return true;
-      }
-      
-      return productName.includes('RC') || 
-             productName.includes('PJ') || 
-             productName.includes('IA') ||
-             productName.includes('ANNULATION+') || 
-             productName.includes('INTEMPERIES+') ||
-             productName.includes('CANCELR+') || productName.includes('CANCELR') ||
-             productName.includes('PROTECTION JURIDIQUE') || 
-             productName.includes('RESPONSABILITÉ') ||
-             (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'));
+      // const productName = (this.contractProductName || '').toUpperCase();
+      // const claimType = (this.claimType || '').toUpperCase();
+      // 
+      // if (claimType === 'INTERRUPTION') {
+      //   return true;
+      // }
+      // 
+      // return productName.includes('RC') || 
+      //        productName.includes('PJ') || 
+      //        productName.includes('IA') ||
+      //        productName.includes('ANNULATION+') || 
+      //        productName.includes('INTEMPERIES+') ||
+      //        productName.includes('CANCELR+') || productName.includes('CANCELR') ||
+      //        productName.includes('PROTECTION JURIDIQUE') || 
+      //        productName.includes('RESPONSABILITÉ') ||
+      //        (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'));
+
+      // return false;
+      return true;
     }
 
     private doesNeedJustificatif(): boolean {
-      const productName = (this.contractProductName || '').toUpperCase();
-      const claimType = (this.claimType || '').toUpperCase();
-      
-      if (productName.includes('ANNULATION+')) {
-        return claimType === 'ANNULATION';
-      }
-      if (productName.includes('INTEMPERIES+')) {
-        return claimType === 'ANNULATION';
-      }
-      if (productName.includes('CANCELR+') || productName.includes('CANCELR')) {
-        return false;
-      }
-      
-      if (productName.includes('INTEMPERIES') && !productName.includes('INTEMPERIES+')) {
-        return false;
-      }
-      
-      if (productName.includes('RC') || 
-          productName.includes('PJ') || 
-          productName.includes('IA') ||
-          productName.includes('PROTECTION JURIDIQUE') || 
-          productName.includes('RESPONSABILITÉ') ||
-          (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'))) {
-        return false;
-      }
-      
-      return productName.includes('ANNULATION');
+      // const productName = (this.contractProductName || '').toUpperCase();
+      // const claimType = (this.claimType || '').toUpperCase();
+      // 
+      // if (productName.includes('ANNULATION+')) {
+      //   return claimType === 'ANNULATION';
+      // }
+      // if (productName.includes('INTEMPERIES+')) {
+      //   return claimType === 'ANNULATION';
+      // }
+      // if (productName.includes('CANCELR+') || productName.includes('CANCELR')) {
+      //   return false;
+      // }
+      // 
+      // if (productName.includes('INTEMPERIES') && !productName.includes('INTEMPERIES+')) {
+      //   return false;
+      // }
+      // 
+      // if (productName.includes('RC') || 
+      //     productName.includes('PJ') || 
+      //     productName.includes('IA') ||
+      //     productName.includes('PROTECTION JURIDIQUE') || 
+      //     productName.includes('RESPONSABILITÉ') ||
+      //     (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'))) {
+      //   return false;
+      // }
+      // 
+      // return productName.includes('ANNULATION');
+
+      return false;
     }
 
     private doesNeedPhotoDevis(): boolean {
-      const productName = (this.contractProductName || '').toUpperCase();
-      const claimType = (this.claimType || '').toUpperCase();
-      
-      if (claimType === 'INTERRUPTION') {
-        return true;
-      }
-      
-      return productName.includes('INTERRUPTION');
+      // const productName = (this.contractProductName || '').toUpperCase();
+      // const claimType = (this.claimType || '').toUpperCase();
+      // 
+      // if (claimType === 'INTERRUPTION') {
+      //   return true;
+      // }
+      // 
+      // return productName.includes('INTERRUPTION');
+
+      return false;
     }
     
   private _claimType?: string;
@@ -189,87 +196,93 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     this.optionalDocSets = {};
     this.isOptionalJustificatif = false;
     this.isRibOnly = false;
-    const productName = this.normalizeString(this.contractProductName || '');
-    const claimType = (this.claimType || '').toUpperCase();
-    
-    this.isIntemperies = productName === 'INTEMPERIES';
-    this.isAnnulation = productName === 'ANNULATION';
-    
-    if (productName.includes('RC') || 
-        productName.includes('PJ') || 
-        productName.includes('IA') ||
-        productName.includes('PROTECTION JURIDIQUE') || 
-        productName.includes('RESPONSABILITÉ') ||
-        (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'))) {
-      this.requiredDocumentTypes.push('RIB');
-      this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
-      this.isOptionalJustificatif = true;
-      return;
-    }
-    
+    // const productName = this.normalizeString(this.contractProductName || '');
+    // const claimType = (this.claimType || '').toUpperCase();
+    // 
+    // this.isIntemperies = productName === 'INTEMPERIES';
+    // this.isAnnulation = productName === 'ANNULATION';
+    // 
+    // if (productName.includes('RC') || 
+    //     productName.includes('PJ') || 
+    //     productName.includes('IA') ||
+    //     productName.includes('PROTECTION JURIDIQUE') || 
+    //     productName.includes('RESPONSABILITÉ') ||
+    //     (productName.includes('INDIVIDUELLE') && productName.includes('ACCIDENT'))) {
+    //   this.requiredDocumentTypes.push('RIB');
+    //   this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
+    //   this.isOptionalJustificatif = true;
+    //   return;
+    // }
+    // 
+    // this.requiredDocumentTypes = ['RIB'];
+    // 
+    // if (productName === 'INTERRUPTION') {
+    //   this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
+    //   return;
+    // }
+    // 
+    // if (productName === 'ANNULATION') {
+    //   this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
+    //   return;
+    // }
+    // 
+    // if (productName === 'INTEMPERIES') {
+    //   this.isRibOnly = true;
+    //   return;
+    // }
+    // 
+    // if (productName.includes('ANNULATION+')) {
+    //   if (claimType === 'INTERRUPTION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
+    //   } else if (claimType === 'ANNULATION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
+    //   } else if (claimType === 'INTEMPERIES') {
+    //     this.isRibOnly = true;
+    //   } else {
+    //     this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
+    //     this.isOptionalJustificatif = true;
+    //   }
+    //   return;
+    // }
+    // 
+    // if (productName.includes('INTEMPERIES+')) {
+    //   if (claimType === 'INTERRUPTION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
+    //   } else if (claimType === 'ANNULATION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
+    //   } else if (claimType === 'INTEMPERIES') {
+    //     this.isRibOnly = true;
+    //   } else {
+    //     this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
+    //     this.isOptionalJustificatif = true;
+    //   }
+    //   return;
+    // }
+    // 
+    // if (productName.includes('CANCELR')) {
+    //   if (claimType === 'INTERRUPTION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
+    //   } else if (claimType === 'ANNULATION') {
+    //     this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
+    //   } else if (claimType === 'INTEMPERIES') {
+    //     this.isRibOnly = true;
+    //   } else {
+    //     this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
+    //     this.isOptionalJustificatif = true;
+    //   }
+    //   return;
+    // }
+    // 
+    // if (this.doesNeedJustificatif()) {
+    //   this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
+    // }
+
+    this.isIntemperies = false;
+    this.isAnnulation = false;
+    this.isRibOnly = false;
     this.requiredDocumentTypes = ['RIB'];
-    
-    if (productName === 'INTERRUPTION') {
-      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
-      return;
-    }
-    
-    if (productName === 'ANNULATION') {
-      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
-      return;
-    }
-    
-    if (productName === 'INTEMPERIES') {
-      this.isRibOnly = true;
-      return;
-    }
-    
-    
-    if (productName.includes('ANNULATION+')) {
-      if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
-      } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
-      } else if (claimType === 'INTEMPERIES') {
-        this.isRibOnly = true;
-      } else {
-        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
-        this.isOptionalJustificatif = true;
-      }
-      return;
-    }
-    
-    if (productName.includes('INTEMPERIES+')) {
-      if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
-      } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
-      } else if (claimType === 'INTEMPERIES') {
-        this.isRibOnly = true;
-      } else {
-        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
-        this.isOptionalJustificatif = true;
-      }
-      return;
-    }
-    
-    if (productName.includes('CANCELR')) {
-      if (claimType === 'INTERRUPTION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.accidentPhoto'), this.translate.instant('documentTypes.repairQuote'));
-      } else if (claimType === 'ANNULATION') {
-        this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
-      } else if (claimType === 'INTEMPERIES') {
-        this.isRibOnly = true;
-      } else {
-        this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
-        this.isOptionalJustificatif = true;
-      }
-      return;
-    }
-    
-    if (this.doesNeedJustificatif()) {
-      this.requiredDocumentTypes.push(this.translate.instant('documentTypes.supportingDocuments'));
-    }
+    this.optionalDocSets['OPTIONAL'] = [this.translate.instant('documentTypes.supportingDocuments')];
+    this.isOptionalJustificatif = true;
   }
 
   private normalizeString(str: string): string {
@@ -386,34 +399,42 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   }
 
   areAllDocumentsUploaded(): boolean {
-    if (this.isOptionalJustificatif && !this.requiredDocumentTypes.includes('Justificatif')) {
-      return this.isDocumentUploaded('RIB');
-    }
+    // if (this.isOptionalJustificatif && !this.requiredDocumentTypes.includes('Justificatif')) {
+    //   return this.isDocumentUploaded('RIB');
+    // }
 
-    if (this.isIntemperies) {
-      return this.isDocumentUploaded('RIB');
-    }
+    // if (this.isIntemperies) {
+    //   return this.isDocumentUploaded('RIB');
+    // }
 
-    if (this.isRibOnly) {
-      return this.isDocumentUploaded('RIB');
-    }
+    // if (this.isRibOnly) {
+    //   return this.isDocumentUploaded('RIB');
+    // }
 
-    if (!this.isDocumentUploaded('RIB')) {
-      return false;
-    }
+    // if (!this.isDocumentUploaded('RIB')) {
+    //   return false;
+    // }
 
-    if (this.doesNeedPhotoDevis()) {
-      const hasPhotoAccident = this.isDocumentUploaded(this.photoAccident);
-      const hasDevisReparation = this.isDocumentUploaded(this.devisReparation);
-      return hasPhotoAccident || hasDevisReparation;
-    }
+    // if (this.doesNeedPhotoDevis()) {
+    //   const hasPhotoAccident = this.isDocumentUploaded(this.photoAccident);
+    //   const hasDevisReparation = this.isDocumentUploaded(this.devisReparation);
+    //   return hasPhotoAccident || hasDevisReparation;
+    // }
 
-    if (this.isAnnulation) {
-      return this.isDocumentUploaded('Justificatif');
-    }
+    // if (this.isAnnulation) {
+    //   return this.isDocumentUploaded('Justificatif');
+    // }
 
-    if (this.doesNeedJustificatif()) {
-      return this.isDocumentUploaded('Justificatif');
+    // if (this.doesNeedJustificatif()) {
+    //   return this.isDocumentUploaded('Justificatif');
+    // }
+
+    // return true;
+
+    for (const docType of this.requiredDocumentTypes) {
+      if (!this.isDocumentUploaded(docType)) {
+        return false;
+      }
     }
 
     return true;

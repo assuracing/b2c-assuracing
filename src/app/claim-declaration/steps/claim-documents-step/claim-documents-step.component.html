@@ -1,5 +1,5 @@
 <div class="documents-container">
-  <div *ngIf="requiredDocumentTypes.length === 0 && !isOptionalJustificatif">
+  <!-- <div *ngIf="requiredDocumentTypes.length === 0 && !isOptionalJustificatif">
     <h2>{{ 'claimDeclaration.documentsLabel' | translate }}</h2>
     <div class="help-box">
       <mat-icon>info</mat-icon>
@@ -77,6 +77,16 @@
       </span>
       <span *ngIf="canAllowMultipleJustificatifs()">
         {{ 'claimDeclaration.optionalDocumentsHelp' | translate }}
+      </span>
+    </div>
+  </div> -->
+
+  <div *ngIf="requiredDocumentTypes.length > 0 || isOptionalJustificatif">
+    <h2>{{ 'claimDeclaration.uploadsHeading' | translate }}</h2>
+    <div class="help-box">
+      <mat-icon>info</mat-icon>
+      <span>
+        {{ 'claimDeclaration.mandatoryAndOptionalDocumentsHelp' | translate }}
       </span>
     </div>
   </div>
