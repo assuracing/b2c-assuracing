@@ -21,6 +21,9 @@ import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/conf
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DateLocaleService, provideMomentDatepicker } from '../core/services/date-locale.service';
 import { Subscription } from 'rxjs';
+import { CountryNationalityService } from '../services/country-nationality.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-user-profil-info',
@@ -38,7 +41,9 @@ import { Subscription } from 'rxjs';
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
-    TranslateModule
+    TranslateModule,
+    MatSelectModule,
+    MatOptionModule
   ],
   providers: [...provideMomentDatepicker()],
   templateUrl: './user-profil-info.component.html',
@@ -52,6 +57,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
   hasAdherentInfo: boolean = false;
   loading: boolean = true;
   isEditing: boolean = false;
+  filteredNationalitiesResult: string[] = [];
 
   constructor(
     private userService: UserService,
@@ -62,7 +68,8 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     @Inject(HttpClient) private http: HttpClient,
     private translate: TranslateService,
     private dateLocaleService: DateLocaleService,
-    private dateAdapter: DateAdapter<any>
+    private dateAdapter: DateAdapter<any>,
+    private countryNationalityService: CountryNationalityService
   ) {
     this.profileForm = this.fb.group({
       civilite: [''],
@@ -75,6 +82,9 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       ville: ['', [Validators.required, Validators.maxLength(100)]],
       codepostal: ['', [Validators.required]]
     });
+
+    this.profileForm.addControl('nationalite', this.fb.control(''));
+    this.profileForm.addControl('paysResidence', this.fb.control(''));
   }
 
   private formatDateLocal(value: any): string | null {
@@ -90,7 +100,67 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription.add(this.dateLocaleService.bindAdapterLocale(this.dateAdapter));
     
+    this.filteredNationalitiesResult = [...this.countryNationalityService.nationalities];
+    
     this.loadUserProfile();
+  }
+
+  get nationalities() {
+    return this.countryNationalityService.nationalities;
+  }
+
+  get nationalitiesMap() {
+    return this.countryNationalityService.nationalitiesMap;
+  }
+
+  get countries() {
+    return this.countryNationalityService.countries;
+  }
+
+  get countriesMap() {
+    return this.countryNationalityService.countriesMap;
+  }
+
+  get filteredCountries() {
+    return this.countryNationalityService.filteredCountries;
+  }
+
+  get filteredNationalities() {
+    return this.filteredNationalitiesResult;
+  }
+
+  get nationalityDisplayValue(): string {
+    const value = this.profileForm.get('nationalite')?.value;
+    return value ? this.countryNationalityService.nationalitiesMap.get(value) || '' : '';
+  }
+
+  get countryDisplayValue(): string {
+    const value = this.profileForm.get('paysResidence')?.value;
+    return value ? this.countryNationalityService.countriesMap.get(value) || '' : '';
+  }
+
+  filterCountries(event: Event): void {
+    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.countryNationalityService.filterCountries(searchValue);
+  }
+
+  filterNationalities(event: Event): void {
+    const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredNationalitiesResult = this.countryNationalityService.nationalities.filter(natKey => 
+      (this.countryNationalityService.nationalitiesMap.get(natKey) || '').toLowerCase().includes(searchValue)
+    );
+  }
+
+  onCountryPanelOpened(isOpen: boolean): void {
+    if (isOpen) {
+      this.countryNationalityService.resetCountryFilter();
+    }
+  }
+
+  onNationalityPanelOpened(isOpen: boolean): void {
+    if (isOpen) {
+      this.filteredNationalitiesResult = [...this.countryNationalityService.nationalities];
+    }
   }
 
   async loadUserProfile() {
@@ -126,7 +196,9 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
             adresse: adherentData.adresse || '',
             ville: adherentData.ville || '',
             codepostal: adherentData.codePostal || adherentData.codepostal || '',
-            dateNaissance: this.formatDateLocal(adherentData.dateNaissance) || null
+            dateNaissance: this.formatDateLocal(adherentData.dateNaissance) || null,
+            nationalite: adherentData.nationalite ? this.countryNationalityService.getNationalityKeyByValue(adherentData.nationalite) : '',
+            paysResidence: adherentData.pays ? this.countryNationalityService.getCountryKeyByValue(adherentData.pays) : ''
           };
           
           this.profileForm.patchValue(formData, { emitEvent: false });
@@ -179,7 +251,9 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
         },
         telephone: formValue.telPortable,
         codePostal: formValue.codepostal,
-        dateNaissance: this.formatDateLocal(formValue.dateNaissance) || null
+          dateNaissance: this.formatDateLocal(formValue.dateNaissance) || null,
+          nationalite: formValue.nationalite ? this.countryNationalityService.nationalitiesMap.get(formValue.nationalite) : null,
+          pays: formValue.paysResidence ? this.countryNationalityService.countriesMap.get(formValue.paysResidence) : null
       };
 
       delete updatedData.createdDate;
