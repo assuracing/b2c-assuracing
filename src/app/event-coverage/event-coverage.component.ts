@@ -479,7 +479,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     RC: 1,
     DEFENSE_RECOURS: 350,
     ANNULATION: 351,
-    INTEMPERIES: 352,
+    INTEMPERIES: 446,
     INTERRUPTION: 353,
     PROTECTION_1: 340,  
     PROTECTION_2: 341, 
@@ -609,6 +609,12 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
     
     this.stepper.next();
+  }
+
+  onOrganizerNameChange(organizerName: string): void {
+    if (this.eventCoverageOptions) {
+      this.eventCoverageOptions.onOrganizerNameChange(organizerName);
+    }
   }
 
   goToEventOrMotorsLeaguePage(): void {
@@ -827,7 +833,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       montantganrantie: coverageData.reservationAmount || 0,
       apporteurId: trackdayData.organizer,
       annual: false,
-      clientEntId: 1,
+      clientEntId: 5,
       dateinscriptionRoulage: formatISODate(coverageData.eventDate),
       language: 'fr'
     };
@@ -844,12 +850,6 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       error: (_err) => {
       }
     });
-  }
-
-  onOrganizerNameChange(organizerName: string): void {
-    if (this.eventCoverageOptions) {
-      this.eventCoverageOptions.checkProductsAvailability(organizerName);
-    }
   }
 
   handleVehicleAdded(vehicle: any) {

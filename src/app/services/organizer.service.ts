@@ -4,26 +4,34 @@ import { Observable, map, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EnvironmentService } from '../core/services/environment.service';
 
+type PartnerOrganizer = {
+  nom: string;
+  premiumassuracing: boolean;
+  rco: boolean;
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class OrganizerService {
   private apiUrl: string;
 
-  private readonly PRODUCT_CODES = {
-    RC: 1,
-    PROTECTION_1: 30,
-    PROTECTION_2: 31,
-    PROTECTION_3: 32,
-    PROTECTION_4: 33,
-    PROTECTION_5: 34,
-    
-    PROTECTION_1_COMP: 35,
-    PROTECTION_2_COMP: 36,
-    PROTECTION_3_COMP: 37,
-    PROTECTION_4_COMP: 38,
-    PROTECTION_5_COMP: 39,
-    INTEMPERIES: 43,
+  private readonly ORGANIZER_NAME_STOP_WORDS = new Set([
+    'de',
+    'des',
+    'du',
+    'le',
+    'la',
+    'les',
+    'l',
+    'd',
+    'et',
+    'and',
+  ]);
+
+  private readonly ORGANIZER_ALIASES: Record<string, string> = {
+    'folembrayarena': 'TRAJECTOIRE GP',
+    'passionvitesseorganisation': 'VITESSE PERFORMANCE',
   };
 
   constructor(
@@ -33,76 +41,134 @@ export class OrganizerService {
     this.apiUrl = this.envService.apiUrl;
   }
 
-  isProductAvailable(organizerName: string, productKey: keyof typeof this.PRODUCT_CODES): Observable<boolean> {
-    const productId = this.PRODUCT_CODES[productKey];
-    if (!productId) {
-      throw new Error(`Code produit invalide: ${productKey}`);
-    }
-
-    return this.http.get<any[]>(`${this.apiUrl}/api/allorganisateursclientent/${productId}`).pipe(
-      map(organizers => {
-        return organizers.some(org => 
-          org.nom && organizerName && 
-          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
-        );
-      }),
-      catchError(_err => {
-        return of(false);
-      })
-    );
+  private normalizeOrganizerName(value: string): string {
+    return (value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[\/|+,.;:()\[\]{}'"’`-]/g, ' ')
+      .replace(/\s+/g, '')
+      .trim();
   }
 
-  checkProductsAvailability(organizerName: string, productKeys: Array<keyof typeof this.PRODUCT_CODES>): Observable<Record<string, boolean>> {
-    if (!organizerName || productKeys.length === 0) {
-      return of({});
-    }
-
-    const checks = productKeys.map(productKey => 
-      this.isProductAvailable(organizerName, productKey).pipe(
-        map(isAvailable => ({ [productKey]: isAvailable }))
-      )
-    );
-
-    return forkJoin(checks).pipe(
-      map((results) => {
-        return results.reduce<Record<string, boolean>>((acc, curr) => ({
-          ...acc,
-          ...curr
-        }), {});
-      })
-    );
+  private getSignificantTokens(value: string): string[] {
+    return this.normalizeOrganizerName(value)
+      .split(' ')
+      .map(token => token.trim())
+      .filter(token => token.length > 1 && !this.ORGANIZER_NAME_STOP_WORDS.has(token));
   }
 
-  getOrganizersForProduct(productKey: keyof typeof this.PRODUCT_CODES): Observable<Array<{id: string, nom: string}>> {
-    const productId = this.PRODUCT_CODES[productKey];
-    if (!productId) {
-      return of([]);
+  private scoreOrganizerMatch(targetName: string, candidateName: string): number {
+    const normalizedTarget = this.normalizeOrganizerName(targetName);
+    const normalizedCandidate = this.normalizeOrganizerName(candidateName);
+
+    if (!normalizedTarget || !normalizedCandidate) {
+      return 0;
     }
+
+    // Match exact après normalisation (sans espaces)
+    if (normalizedTarget === normalizedCandidate) {
+      return 100;
+    }
+
+    // Si l'un contient l'autre (sans espaces)
+    if (normalizedTarget.includes(normalizedCandidate) || normalizedCandidate.includes(normalizedTarget)) {
+      return 92;
+    }
+
+    // Levenshtein distance simplifiée pour les variations mineures (s/t, espaces)
+    const levenshteinScore = this.calculateSimilarity(normalizedTarget, normalizedCandidate);
+    if (levenshteinScore >= 85) {
+      return levenshteinScore;
+    }
+
+    const targetTokens = this.getSignificantTokens(targetName);
+    const candidateTokens = this.getSignificantTokens(candidateName);
+
+    if (targetTokens.length === 0 || candidateTokens.length === 0) {
+      return levenshteinScore;
+    }
+
+    const candidateTokenSet = new Set(candidateTokens);
+    const commonTokens = targetTokens.filter(token => candidateTokenSet.has(token));
+    const overlapRatio = commonTokens.length / Math.max(targetTokens.length, candidateTokens.length);
+
+    if (commonTokens.length >= 2) {
+      return Math.round(70 + overlapRatio * 25);
+    }
+
+    return Math.round(Math.max(levenshteinScore, overlapRatio * 60));
+  }
+
+  private calculateSimilarity(str1: string, str2: string): number {
+    const longer = str1.length > str2.length ? str1 : str2;
+    const shorter = str1.length > str2.length ? str2 : str1;
+    if (longer.length === 0) return 100;
     
-    return this.http.get<Array<{id: string, nom: string}>>(
-      `${this.apiUrl}/api/allorganisateursclientent/${productId}`
-    ).pipe(
-      catchError((error: any) => {
-        return of([]);
-      })
-    );
+    const editDistance = this.levenshteinDistance(longer, shorter);
+    return Math.round((1 - editDistance / longer.length) * 100);
   }
 
-  getOrganizerByName(organizerName: string): Observable<any> {
+  private levenshteinDistance(s1: string, s2: string): number {
+    const costs: number[] = [];
+    for (let i = 0; i <= s1.length; i++) {
+      let lastValue = i;
+      for (let j = 0; j <= s2.length; j++) {
+        if (i === 0) {
+          costs[j] = j;
+        } else if (j > 0) {
+          let newValue = costs[j - 1];
+          if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          }
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+      if (i > 0) costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
+  }
+
+  private findBestOrganizerMatch<T extends { nom?: string }>(targetName: string, organizers: T[]): T | null {
+    if (!targetName || !organizers || organizers.length === 0) {
+      return null;
+    }
+
+    let bestMatch: T | null = null;
+    let bestScore = 0;
+
+    for (const organizer of organizers) {
+      if (!organizer?.nom) {
+        continue;
+      }
+
+      const score = this.scoreOrganizerMatch(targetName, organizer.nom);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = organizer;
+      }
+    }
+
+    return bestScore >= 70 ? bestMatch : null;
+  }
+
+  private resolveOrganizerAlias(organizerName: string): string {
+    const normalized = this.normalizeOrganizerName(organizerName);
+    return this.ORGANIZER_ALIASES[normalized] || organizerName;
+  }
+
+  getOrganizerByName(organizerName: string): Observable<PartnerOrganizer | null> {
     if (!organizerName) {
       return of(null);
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/api/client-entreprises`).pipe(
-      map(entreprises => {
-        return entreprises.find(org => 
-          org.nom && organizerName && 
-          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
-        ) || null;
-      }),
-      catchError((error: any) => {
-        return of(null);
-      })
+    const resolvedName = this.resolveOrganizerAlias(organizerName);
+
+    return this.http.get<PartnerOrganizer[]>(`${this.apiUrl}/api/partners`).pipe(
+      map(partners => this.findBestOrganizerMatch(resolvedName, partners)),
+      catchError(() => of(null))
     );
   }
 }
