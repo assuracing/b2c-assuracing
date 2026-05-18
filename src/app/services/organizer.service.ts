@@ -29,11 +29,6 @@ export class OrganizerService {
     'and',
   ]);
 
-  private readonly ORGANIZER_ALIASES: Record<string, string> = {
-    'folembrayarena': 'TRAJECTOIRE GP',
-    'passionvitesseorganisation': 'VITESSE PERFORMANCE',
-  };
-
   constructor(
     private http: HttpClient,
     private envService: EnvironmentService
@@ -154,20 +149,13 @@ export class OrganizerService {
     return bestScore >= 70 ? bestMatch : null;
   }
 
-  private resolveOrganizerAlias(organizerName: string): string {
-    const normalized = this.normalizeOrganizerName(organizerName);
-    return this.ORGANIZER_ALIASES[normalized] || organizerName;
-  }
-
   getOrganizerByName(organizerName: string): Observable<PartnerOrganizer | null> {
     if (!organizerName) {
       return of(null);
     }
 
-    const resolvedName = this.resolveOrganizerAlias(organizerName);
-
     return this.http.get<PartnerOrganizer[]>(`${this.apiUrl}/api/partners`).pipe(
-      map(partners => this.findBestOrganizerMatch(resolvedName, partners)),
+      map(partners => this.findBestOrganizerMatch(organizerName, partners)),
       catchError(() => of(null))
     );
   }
