@@ -66,6 +66,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private _allCountries: string[] = [];
   private checkEmailSub?: Subscription;
   private subscription = new Subscription();
+  private isPrefillingProfile = false;
 
 
   constructor(
@@ -105,6 +106,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
             )
           ).subscribe((adherent: any) => {
             if (adherent) {
+              this.isPrefillingProfile = true;
               if(adherent.user['login']) this.form.get('email')?.setValue(adherent.user['login']);
               if(adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
               if(adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
@@ -115,7 +117,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
               if(adherent.ville) this.form.get('city')?.setValue(adherent.ville);
               if(adherent.pays) {
                 const countryKey = this.getCountryKeyByValue(adherent.pays);
-                this.form.get('country')?.setValue(countryKey);
+                this.form.get('country')?.setValue(countryKey, { emitEvent: false });
               }
               if(adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
               if(adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
@@ -123,6 +125,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
                 const nationalityKey = this.getNationalityKeyByValue(adherent.nationalite);
                 this.form.get('nationality')?.setValue(nationalityKey);
               }
+              this.isPrefillingProfile = false;
             }
           })
         );
@@ -136,6 +139,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.setupPostalCodeInput();
 
     this.form.get('country')?.valueChanges.subscribe(country => {
+      if (this.isPrefillingProfile) {
+        return;
+      }
       this.form.get('postalCode')?.setValue('');
       this.form.get('city')?.setValue('');
       this.postalCodeSuggestions = [];
@@ -353,7 +359,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     if (adherent.adresse) this.form.get('address')?.setValue(adherent.adresse);
     if (adherent.codepostal) this.form.get('postalCode')?.setValue(adherent.codepostal);
     if (adherent.ville) this.form.get('city')?.setValue(adherent.ville);
-    if (adherent.pays) this.form.get('country')?.setValue(adherent.pays);
+    if (adherent.pays) this.form.get('country')?.setValue(adherent.pays, { emitEvent: false });
     if (adherent.civilite) this.form.get('civility')?.setValue(adherent.civilite);
     if (adherent.complementadresse) this.form.get('addressComplement')?.setValue(adherent.complementadresse);
     
