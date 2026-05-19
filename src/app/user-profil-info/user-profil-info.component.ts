@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DateAdapter } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 import { environment } from '../../environments/environment';
 import { ToastService } from '../services/toast.service';
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -22,8 +23,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DateLocaleService, provideMomentDatepicker } from '../core/services/date-locale.service';
 import { Subscription } from 'rxjs';
 import { CountryNationalityService } from '../services/country-nationality.service';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
+import { getAuthHeaders } from '../core/utils/http-utils';
 
 @Component({
   selector: 'app-user-profil-info',
@@ -38,12 +38,11 @@ import { MatOptionModule } from '@angular/material/core';
     ReactiveFormsModule,
     FormsModule,
     MatIconModule,
+    MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
-    TranslateModule,
-    MatSelectModule,
-    MatOptionModule
+    TranslateModule
   ],
   providers: [...provideMomentDatepicker()],
   templateUrl: './user-profil-info.component.html',
@@ -66,10 +65,10 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private dialog: MatDialog,
     @Inject(HttpClient) private http: HttpClient,
+    private countryNationalityService: CountryNationalityService,
     private translate: TranslateService,
     private dateLocaleService: DateLocaleService,
-    private dateAdapter: DateAdapter<any>,
-    private countryNationalityService: CountryNationalityService
+    private dateAdapter: DateAdapter<any>
   ) {
     this.profileForm = this.fb.group({
       civilite: [''],
@@ -80,11 +79,10 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       dateNaissance: ['', [Validators.required]],
       adresse: ['', [Validators.required, Validators.maxLength(200)]],
       ville: ['', [Validators.required, Validators.maxLength(100)]],
-      codepostal: ['', [Validators.required]]
+      codepostal: ['', [Validators.required]],
+      nationalite: [''],
+      paysResidence: ['']
     });
-
-    this.profileForm.addControl('nationalite', this.fb.control(''));
-    this.profileForm.addControl('paysResidence', this.fb.control(''));
   }
 
   private formatDateLocal(value: any): string | null {
@@ -99,26 +97,9 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscription.add(this.dateLocaleService.bindAdapterLocale(this.dateAdapter));
-    
     this.filteredNationalitiesResult = [...this.countryNationalityService.nationalities];
     
     this.loadUserProfile();
-  }
-
-  get nationalities() {
-    return this.countryNationalityService.nationalities;
-  }
-
-  get nationalitiesMap() {
-    return this.countryNationalityService.nationalitiesMap;
-  }
-
-  get countries() {
-    return this.countryNationalityService.countries;
-  }
-
-  get countriesMap() {
-    return this.countryNationalityService.countriesMap;
   }
 
   get filteredCountries() {
@@ -127,6 +108,14 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
 
   get filteredNationalities() {
     return this.filteredNationalitiesResult;
+  }
+
+  get nationalitiesMap(): Map<string, string> {
+    return this.countryNationalityService.nationalitiesMap;
+  }
+
+  get countriesMap(): Map<string, string> {
+    return this.countryNationalityService.countriesMap;
   }
 
   get nationalityDisplayValue(): string {
@@ -172,27 +161,22 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       if (user?.id) {
         const userId = user.id;
         
-        const token = localStorage.getItem('auth_token');
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });
-        
         const apiUrl = environment.apiUrl; 
         const adherentData = await this.http.get<any>(
           `${apiUrl}/api/adherents/by-user/${userId}`, 
-          { headers }
+          getAuthHeaders()
         ).toPromise();
         
         if (adherentData) {
-          this.userInfo = adherentData;
+          this.userInfo = { ...adherentData, user };
           this.hasAdherentInfo = true;
           
           const formData: any = {
             civilite: adherentData.civilite || '',
-            nom: adherentData.nom || '',
-            prenom: adherentData.prenom || '',
-            email: adherentData.email || user.email || '',
-            telPortable: adherentData.telephone || adherentData.telPortable || '',
+            nom: adherentData.nom || user.lastName || '',
+            prenom: adherentData.prenom || user.firstName || '',
+            email: user.email || '',
+            telPortable: adherentData.telPortable || '',
             adresse: adherentData.adresse || '',
             ville: adherentData.ville || '',
             codepostal: adherentData.codePostal || adherentData.codepostal || '',
@@ -242,22 +226,20 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     if (this.profileForm.valid && this.userInfo) {
       const formValue = this.profileForm.value;
       const updatedData = {
-        ...this.userInfo,
-        ...formValue,
-        id: this.userInfo.id,
-        civilite: formValue.civilite || null,
-        user: {
-          id: this.userInfo.user?.id 
-        },
-        telephone: formValue.telPortable,
-        codePostal: formValue.codepostal,
-          dateNaissance: this.formatDateLocal(formValue.dateNaissance) || null,
-          nationalite: formValue.nationalite ? this.countryNationalityService.nationalitiesMap.get(formValue.nationalite) : null,
-          pays: formValue.paysResidence ? this.countryNationalityService.countriesMap.get(formValue.paysResidence) : null
+        prenom: formValue.prenom,
+        nom: formValue.nom,
+        email: formValue.email,
+        civilite: formValue.civilite,
+        adresse: formValue.adresse,
+        complementadresse: this.userInfo.complementadresse || '',
+        codepostal: formValue.codepostal,
+        ville: formValue.ville,
+        telPortable: formValue.telPortable,
+        telFixe: this.userInfo.telFixe || '',
+        dateNaissance: this.formatDateLocal(formValue.dateNaissance),
+        nationalite: this.countryNationalityService.getFrenchNationalityLabelByKey(formValue.nationalite || ''),
+        paysResidence: this.countryNationalityService.getFrenchCountryLabelByKey(formValue.paysResidence || '')
       };
-
-      delete updatedData.createdDate;
-      delete updatedData.lastModifiedDate;
 
       this.userService.updateUserProfile(updatedData).subscribe(
         (response) => {

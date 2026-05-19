@@ -73,6 +73,20 @@ input[readonly] {
   cursor: not-allowed;
 }
 
+.disabled-field {
+  ::ng-deep {
+    .mdc-text-field {
+      background-color: #f5f5f5;
+    }
+    .mdc-text-field__input {
+      color: #999;
+    }
+    .mdc-floating-label {
+      color: #999 !important;
+    }
+  }
+}
+
 mat-error {
   font-size: 12px;
   margin-top: 4px;

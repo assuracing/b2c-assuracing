@@ -36,6 +36,7 @@ import { AgeRestrictionDialogComponent } from '../shared/components/age-restrict
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CountryNationalityService } from '../services/country-nationality.service';
 
 interface Circuit {
   id: number;
@@ -73,6 +74,7 @@ interface Contract {
     numeroPermisB: string;
     ffsaPermisB: string;
     nationalite: string;
+    pays: string;
   };
   marque: string;
   modele: string;
@@ -188,7 +190,8 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     private envService: EnvironmentService,
     private breakpointObserver: BreakpointObserver,
     private activatedRoute: ActivatedRoute,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private countryNationalityService: CountryNationalityService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -245,6 +248,14 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
 
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
+  }
+
+  private getFrenchCountryValue(countryKey: string): string {
+    if (!countryKey) {
+      return '';
+    }
+
+    return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
   async onContinueGuaranteeStep(stepper: MatStepper) {
@@ -817,6 +828,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         numeroPermisB: vehicleData.numeroPermisB || '',
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : 'NC',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
+        pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
       marque: vehicleData.brand || 'ND',
       modele: vehicleData.model || 'ND',

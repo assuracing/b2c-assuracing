@@ -274,7 +274,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    return this.countryNationalityService.countriesMap.get(countryKey) || countryKey;
+    return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
   ngOnDestroy() {

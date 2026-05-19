@@ -33,9 +33,9 @@
           </div>
 
         <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="form-field disabled-field">
             <mat-label>{{ 'profile.email' | translate }}</mat-label>
-            <input matInput type="email" formControlName="email" [readonly]="!isEditing" required>
+            <input matInput type="email" formControlName="email" readonly required>
             <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
               {{ 'validation.emailRequired' | translate }}
             </mat-error>

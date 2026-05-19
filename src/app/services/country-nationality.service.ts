@@ -311,6 +311,14 @@ export class CountryNationalityService {
   }
 
   public getCountryKeyByValue(value: string): string {
+    if (!value) {
+      return '';
+    }
+
+    if (this.countriesKeys.includes(value)) {
+      return value;
+    }
+
     if (this.countriesFrenchMap[value]) {
       return this.countriesFrenchMap[value];
     }
@@ -321,10 +329,18 @@ export class CountryNationalityService {
       }
     }
     
-    return this.countriesKeys[0] || '';
+    return '';
   }
 
   public getNationalityKeyByValue(value: string): string {
+    if (!value) {
+      return '';
+    }
+
+    if (this.nationalitiesKeys.includes(value)) {
+      return value;
+    }
+
     if (this.nationalitiesFrenchMap[value]) {
       return this.nationalitiesFrenchMap[value];
     }
@@ -336,6 +352,24 @@ export class CountryNationalityService {
     }
     
     return '';
+  }
+
+  public getFrenchCountryLabelByKey(countryKey: string): string {
+    if (!countryKey) {
+      return '';
+    }
+
+    const frenchEntry = Object.entries(this.countriesFrenchMap).find(([, key]) => key === countryKey);
+    return frenchEntry ? frenchEntry[0] : countryKey;
+  }
+
+  public getFrenchNationalityLabelByKey(nationalityKey: string): string {
+    if (!nationalityKey) {
+      return '';
+    }
+
+    const frenchEntry = Object.entries(this.nationalitiesFrenchMap).find(([, key]) => key === nationalityKey);
+    return frenchEntry ? frenchEntry[0] : nationalityKey;
   }
 
   public filterCountries(searchValue: string): void {
