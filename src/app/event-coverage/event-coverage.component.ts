@@ -36,6 +36,7 @@ import { AgeRestrictionDialogComponent } from '../shared/components/age-restrict
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SourceService } from '../core/services/source.service';
 
 interface Circuit {
   id: number;
@@ -51,6 +52,7 @@ interface Contract {
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: number[];
+  source?: string;
   typeEvenement: string;
   typeAssure: string;
   c: {
@@ -188,7 +190,8 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     private envService: EnvironmentService,
     private breakpointObserver: BreakpointObserver,
     private activatedRoute: ActivatedRoute,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private sourceService: SourceService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -795,6 +798,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       nbrjour: trackdayData.duration,
       datedebutroulage: formatISODate(trackdayData.eventDate),
       codeProduit: this.getSelectedProducts(coverageData),
+      source: this.sourceService.getSource() ?? undefined,
       typeEvenement: trackdayData.eventType,
       typeAssure: trackdayData.role,
       c: {

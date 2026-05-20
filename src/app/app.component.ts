@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UserService } from './services/user.service';
+import { SourceService } from './core/services/source.service';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
@@ -28,10 +29,12 @@ export class AppComponent {
   constructor(
     private userService: UserService, 
     private i18nService: I18nService
+    , private sourceService: SourceService
   ) {}
 
   ngOnInit() {
     this.i18nService.getCurrentLanguage();
+    this.sourceService.initFromUrl();
     
     if (this.userService.isLoggedIn()) {
       this.userService.getAccount().subscribe();

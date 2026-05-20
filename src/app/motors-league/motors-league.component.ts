@@ -29,6 +29,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
+import { SourceService } from '../core/services/source.service';
 
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -37,6 +38,7 @@ interface Contract {
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: number[];
+  source?: string;
   c: {  
     adresse: string;
     complementadresse: string;
@@ -167,7 +169,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private sourceService: SourceService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -599,6 +602,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       nbrjour: 0,
       datedebutroulage: formatISODate(new Date().toISOString()),
       codeProduit: productCodes,
+      source: this.sourceService.getSource() ?? undefined,
       c: {
         adresse: this.personalForm.get('address')?.value,
         complementadresse: this.personalForm.get('addressComplement')?.value,
