@@ -13,7 +13,6 @@ export class SourceService {
     'quickracing_guest_web',
     'quickracing_guest_app',
   ]);
-  private readonly fallbackSource = 'quickracing_unknown_placement';
 
   initFromUrl(): void {
     const source = this.normalizeSource(new URLSearchParams(window.location.search).get('source'));
@@ -36,6 +35,6 @@ export class SourceService {
       return null;
     }
 
-    return this.allowedSources.has(normalized) ? normalized : this.fallbackSource;
+    return this.allowedSources.has(normalized) ? normalized : null;
   }
 }
