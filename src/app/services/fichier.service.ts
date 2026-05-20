@@ -35,8 +35,13 @@ export class FichierService {
   uploadFile(sinistreId: number, fichier: Fichier): Observable<any> {
     const payload = {
       nom: fichier.nomFichier || fichier.nom,
+      envoiQuandSinistre: false,
+      envoiQuandRegistration: false,
+      envoiQuandFinContrat: false,
+      parametragePrix: false,
       content: fichier.urlFichier || fichier.content,
       contentContentType: fichier.contentContentType,
+      comment: null,
       typePiece: fichier.typePiece || fichier.type,
       sinistre: { id: sinistreId },
       taille: fichier.taille,
