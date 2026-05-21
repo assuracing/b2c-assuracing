@@ -74,19 +74,19 @@
             <mat-slide-toggle
              labelPosition="before"
              formControlName="intemperies"
-             [disabled]="isProductUnavailable('INTEMPERIES') || disableIntempAnnul">
+              [disabled]="!isPremiumPartner() || disableIntempAnnul">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">thunderstorm</mat-icon>
               <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.badWeatherRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
-            <small *ngIf="isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
+             <small *ngIf="!isPremiumPartner()" class="toggle-unavailable">
               {{ 'eventCoverage.notAvailableOrganizer' | translate }}
             </small>
-            <small *ngIf="disableIntempAnnul && !isProductUnavailable('INTEMPERIES')" class="toggle-unavailable">
+             <small *ngIf="disableIntempAnnul && isPremiumPartner()" class="toggle-unavailable">
               {{ 'eventCoverage.notAvailableEventDate' | translate }}
             </small>
-            <div *ngIf="isPremiumPartner() && !isProductUnavailable('INTEMPERIES')" class="premium-organizer-message inclus">
+            <div *ngIf="isPremiumPartner()" class="premium-organizer-message inclus">
               <span>{{ 'eventCoverage.guarantees.premiumOrganizerMessage' | translate }}</span>
               <mat-icon>sentiment_very_satisfied</mat-icon>
             </div>
@@ -103,19 +103,16 @@
             <mat-slide-toggle
              labelPosition="before"
              formControlName="annulation"
-             [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate || isProductUnavailable('ANNULATION')">
+             [disabled]="disableIntempAnnul || annulationDisabledByInscriptionDate">
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">event_busy</mat-icon>
               <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.cancellationRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
-              <small *ngIf="isProductUnavailable('ANNULATION')" class="toggle-unavailable">
-                {{ 'eventCoverage.notAvailableOrganizer' | translate }}
-              </small>
-              <small *ngIf="!isProductUnavailable('ANNULATION') && disableIntempAnnul" class="toggle-unavailable">
+              <small *ngIf="disableIntempAnnul" class="toggle-unavailable">
                 {{ 'eventCoverage.notAvailableEventDate' | translate }}
               </small>
-              <small *ngIf="!isProductUnavailable('ANNULATION') && !disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
+              <small *ngIf="!disableIntempAnnul && annulationDisabledByInscriptionDate" class="toggle-unavailable">
                 {{ 'eventCoverage.notAvailableInscriptionDate' | translate }}
               </small>
             <div class="risk-details">
@@ -132,15 +129,12 @@
             <mat-slide-toggle
              labelPosition="before"
              formControlName="interruption"
-             [disabled]="isProductUnavailable('INTERRUPTION')">
+             >
              <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">block</mat-icon>
               <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.interruptionRisk' | translate }}</strong>
             </span>
             </mat-slide-toggle>
-            <small *ngIf="isProductUnavailable('INTERRUPTION')" class="toggle-unavailable">
-              {{ 'eventCoverage.notAvailableOrganizer' | translate }}
-            </small>
             <div class="risk-details">
               <ul>
                 <li>{{ 'eventCoverage.guarantees.coverageDetails.interruption50' | translate }}</li>
@@ -332,7 +326,7 @@
           <mat-slide-toggle
           labelPosition="before"
           formControlName="defenseRecours"
-          [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
+          [disabled]="isCalculatingPrice">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon">gavel</mat-icon>
             <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.legalProtection' | translate }}</strong>
