@@ -87,7 +87,14 @@
               <mat-card-content>
                 <div class="documents-grid">
                   <div *ngFor="let docType of getRequiredDocumentTypes(claim)" class="document-add-item">
-                    <label class="doc-add-box" [for]="'fileInput-add-' + claim.id + '-' + docType">
+                    <label
+                      class="doc-add-box"
+                      [for]="'fileInput-add-' + claim.id + '-' + docType"
+                      (dragenter)="onAddDocumentDragEnter($event, claim, docType)"
+                      (dragover)="onAddDocumentDragOver($event, claim, docType)"
+                      (dragleave)="onAddDocumentDragLeave($event, claim, docType)"
+                      (drop)="onAddDocumentDrop($event, claim, docType)"
+                      [class.drag-over]="isDragOverAddDocument(claim, docType)">
                       <mat-icon>cloud_upload</mat-icon>
                       <span class="doc-add-label">{{ 'claimDeclaration.addPrefix' | translate }}{{ docType | lowercase }}</span>
                       <span class="doc-add-size">{{ 'claimDeclaration.fileSizeLimit' | translate }}</span>

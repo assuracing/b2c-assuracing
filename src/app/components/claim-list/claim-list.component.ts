@@ -36,6 +36,7 @@ import { DatePipe } from '@angular/common';
 export class ClaimListComponent implements OnInit, OnChanges {
   @Input() claims: Claim[] = [];
   @Input() contractId: number | null = null;
+  dragOverAddDocTypes: Set<string> = new Set();
 
   private claimStatusesKeys = [
     'awaitingDocuments', 'inProgress', 'declined', 'settled', 'noFollowUp',
@@ -328,28 +329,26 @@ export class ClaimListComponent implements OnInit, OnChanges {
     return mapping[typePiece] || typePiece;
   }
 
-  canAddFileOfType(claim: Claim, fileType: string): boolean {
-    return this.isEditableProduct(claim) && 
-           !this.isClaimClosed(claim) && 
-           !this.hasFileOfType(claim, fileType);
-  }
-
   onFileSelected(event: Event, claim: Claim, docTypeLabel: string): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || !input.files[0] || !claim.id) return;
 
-    const file = input.files[0];
+    this.uploadClaimFile(input.files[0], claim, docTypeLabel, input);
+  }
+
+  private uploadClaimFile(file: File, claim: Claim, docTypeLabel: string, input?: HTMLInputElement): void {
+    if (!claim.id) return;
 
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       this.toastService.error(this.translate.instant('messages.fileTooLarge'));
-      input.value = '';
+      if (input) input.value = '';
       return;
     }
 
     if (!this.canAddMoreFiles(claim)) {
       this.toastService.error(this.translate.instant('messages.fileLimitReached'));
-      input.value = '';
+      if (input) input.value = '';
       return;
     }
 
@@ -370,48 +369,68 @@ export class ClaimListComponent implements OnInit, OnChanges {
       };
 
       this.fichierService.uploadFile(claim.id!, fichier).subscribe({
-        next: (response) => {
+        next: () => {
           this.toastService.success(`${docTypeLabel} téléversé avec succès`);
-          input.value = '';
+          if (input) input.value = '';
           this.reloadFilesForClaim(claim.id!);
         },
-        error: (error) => {
+        error: () => {
           this.toastService.error(this.translate.instant('messages.documentUploadError', { docType: docTypeLabel }));
-          input.value = '';
+          if (input) input.value = '';
         }
       });
     };
 
     reader.onerror = () => {
       this.toastService.error(this.translate.instant('messages.fileReadError'));
-      input.value = '';
+      if (input) input.value = '';
     };
 
     reader.readAsDataURL(file);
   }
 
-  getAddableDocumentTypes(claim: Claim): string[] {
-    const maxFiles = 10;
-    const currentCount = (claim.files || []).length;
-    
-    if (currentCount >= maxFiles) return [];
-    
-    return this.getRequiredDocumentTypes(claim).filter(docType => {
-      const typePiece = this.mapDocLabelToTypePiece(docType);
-      return !this.hasFileOfTypePiece(claim, typePiece);
-    });
+  private getAddDocumentDropKey(claim: Claim, docTypeLabel: string): string {
+    return `${claim.id || 'claim'}-${docTypeLabel}`;
+  }
+
+  isDragOverAddDocument(claim: Claim, docTypeLabel: string): boolean {
+    return this.dragOverAddDocTypes.has(this.getAddDocumentDropKey(claim, docTypeLabel));
+  }
+
+  onAddDocumentDragEnter(event: DragEvent, claim: Claim, docTypeLabel: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverAddDocTypes.add(this.getAddDocumentDropKey(claim, docTypeLabel));
+  }
+
+  onAddDocumentDragOver(event: DragEvent, claim: Claim, docTypeLabel: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverAddDocTypes.add(this.getAddDocumentDropKey(claim, docTypeLabel));
+  }
+
+  onAddDocumentDragLeave(event: DragEvent, claim: Claim, docTypeLabel: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverAddDocTypes.delete(this.getAddDocumentDropKey(claim, docTypeLabel));
+  }
+
+  onAddDocumentDrop(event: DragEvent, claim: Claim, docTypeLabel: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragOverAddDocTypes.delete(this.getAddDocumentDropKey(claim, docTypeLabel));
+
+    const file = event.dataTransfer?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.uploadClaimFile(file, claim, docTypeLabel);
   }
 
   canAddMoreFiles(claim: Claim): boolean {
     const maxFiles = 10;
     return (claim.files || []).length < maxFiles;
-  }
-
-  triggerFileUpload(claim: Claim, docTypeLabel: string): void {
-    if (!this.canEditClaim(claim)) return;
-    const inputId = 'fileInput-' + docTypeLabel;
-    const fileInput = document.getElementById(inputId) as HTMLInputElement;
-    fileInput?.click();
   }
 
   openFile(contentType: any, field: any, filename: any): void {
