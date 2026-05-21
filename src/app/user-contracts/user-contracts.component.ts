@@ -43,7 +43,7 @@ import { DateLocaleService } from '../core/services/date-locale.service';
     TranslateModule,
   ],  
   templateUrl: './user-contracts.component.html',
-  styleUrls: ['./user-contracts.component.scss', '../app-second.component.scss']
+  styleUrls: ['./user-contracts.component.scss', '../app-second.component.scss', './user-contracts2.component.scss']
 })
 export class UserContractsComponent implements AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
