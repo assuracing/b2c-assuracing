@@ -63,6 +63,8 @@
     "address": "Address",
     "city": "City",
     "postalCode": "Postal code"
+    ,"nationality": "Nationality",
+    "countryResidence": "Country of residence"
   },
   "representativeLegal": {
       "verificationCodeSent": "Verification code sent, this code will be required at the last step",

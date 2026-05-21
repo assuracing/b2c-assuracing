@@ -29,7 +29,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
-
+import { CountryNationalityService } from '../services/country-nationality.service';
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 interface Contract {
@@ -56,6 +56,7 @@ interface Contract {
     numeroPermisB: string;
     ffsaPermisB: string;
     nationalite: string;
+    pays: string;
   };
   marque: string;
   modele: string;
@@ -167,7 +168,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private countryNationalityService: CountryNationalityService
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -265,6 +267,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
 
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
+  }
+
+  private getFrenchCountryValue(countryKey: string): string {
+    if (!countryKey) {
+      return '';
+    }
+
+    return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
   ngOnDestroy() {
@@ -618,6 +628,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || '',
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
+        pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
       marque: this.vehicleForm.get('brand')?.value || '',
       modele: this.vehicleForm.get('model')?.value || '',

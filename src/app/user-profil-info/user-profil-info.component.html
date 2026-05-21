@@ -33,9 +33,9 @@
           </div>
 
         <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+          <mat-form-field appearance="outline" class="form-field disabled-field">
             <mat-label>{{ 'profile.email' | translate }}</mat-label>
-            <input matInput type="email" formControlName="email" [readonly]="!isEditing" required>
+            <input matInput type="email" formControlName="email" readonly required>
             <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
               {{ 'validation.emailRequired' | translate }}
             </mat-error>
@@ -89,6 +89,42 @@
             <mat-error *ngIf="profileForm.get('codepostal')?.hasError('required')">
               {{ 'validation.postalCodeRequired' | translate }}
             </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'profile.nationality' | translate }}</mat-label>
+            <input matInput [value]="nationalityDisplayValue" [readonly]="true" *ngIf="!isEditing">
+            <mat-select formControlName="nationalite" *ngIf="isEditing"
+                      panelClass="nationality-select-panel"
+                      (openedChange)="onNationalityPanelOpened($event)">
+              <div class="search-container">
+                <input #searchInput class="search-input" [placeholder]="'common.search' | translate" 
+                       (click)="$event.stopPropagation()" 
+                       (input)="filterNationalities($event)">
+              </div>
+              <mat-option *ngFor="let natKey of filteredNationalities" [value]="natKey">
+                {{ nationalitiesMap.get(natKey) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'profile.countryResidence' | translate }}</mat-label>
+            <input matInput [value]="countryDisplayValue" [readonly]="true" *ngIf="!isEditing">
+            <mat-select formControlName="paysResidence" *ngIf="isEditing"
+                      panelClass="country-select-panel"
+                      (openedChange)="onCountryPanelOpened($event)">
+              <div class="search-container">
+                <input #searchInput class="search-input" [placeholder]="'common.search' | translate" 
+                       (click)="$event.stopPropagation()" 
+                       (input)="filterCountries($event)">
+              </div>
+              <mat-option *ngFor="let countryKey of filteredCountries" [value]="countryKey">
+                {{ countriesMap.get(countryKey) }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
