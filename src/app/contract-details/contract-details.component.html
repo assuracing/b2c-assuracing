@@ -86,7 +86,7 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">{{ 'vehicle.brand' | translate }} </span>
-                <span class="detail-value">{{ vehiculeDetails.marque || ('vehicle.nd' | translate) }}</span>
+                <span class="detail-value">{{ vehiculeDetails.marque || '' }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">{{ 'vehicle.model' | translate }} </span>
@@ -94,15 +94,15 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">{{ 'vehicle.licensePlate' | translate }} </span>
-                <span class="detail-value">{{ vehiculeDetails.immatriculation || ('vehicle.nd' | translate) }} </span>
+                <span class="detail-value">{{ vehiculeDetails.immatriculation || '' }} </span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">{{ 'vehicle.serialNumber' | translate }} </span>
-                <span class="detail-value">{{ vehiculeDetails.numeroserie || ('vehicle.nd' | translate) }}</span>
+                <span class="detail-value">{{ vehiculeDetails.numeroserie || '' }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">{{ 'vehicle.chassisNumber' | translate }} </span>
-                <span class="detail-value">{{ vehiculeDetails.numerochassis || ('vehicle.nd' | translate) }}</span>
+                <span class="detail-value">{{ vehiculeDetails.numerochassis || '' }}</span>
             </div>
         </div>
       </div>
