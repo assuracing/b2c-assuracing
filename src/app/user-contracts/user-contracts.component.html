@@ -93,6 +93,8 @@
                                                         <a *ngFor="let product of element.products; trackBy: trackByProductId" 
                                                              [routerLink]="['/contracts', product.contratID]"
                                                              class="product-item"
+                                                             [class.product-valid]="product.valide"
+                                                             [class.product-invalid]="!product.valide"
                                                              [matTooltip]="getProductTooltip(product.produitID, product.nomcontrat)"
                                                              [attr.aria-label]="getProductTooltip(product.produitID, product.nomcontrat)">
                                                                 <div class="product-icon-container">
@@ -113,6 +115,8 @@
                             <a *ngFor="let product of element.products; trackBy: trackByProductId" 
                                [routerLink]="['/contracts', product.contratID]"
                                class="mobile-product-icon"
+                                         [class.product-valid]="product.valide"
+                                         [class.product-invalid]="!product.valide"
                                [matTooltip]="getProductTooltip(product.produitID, product.nomcontrat)"
                                [attr.aria-label]="getProductTooltip(product.produitID, product.nomcontrat)">
                                 <mat-icon 
@@ -156,8 +160,6 @@
             
             <tr mat-row 
                 *matRowDef="let row; columns: displayedColumns;"
-                [class.row-valid]="row.allValid"
-                [class.row-invalid]="!row.allValid"
                 [attr.aria-label]="('userContracts.contractAriaLabel' | translate: { date: formatDate(row.dateAdhesion), circuit: (row.circuit || ('common.notAvailable' | translate)) })">
             </tr>
                 
