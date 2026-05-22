@@ -392,7 +392,10 @@ export class EventCoverageOptionsComponent {
     const annulationControl = controls['annulation'];
     
     if (rcControl) {
-      if (this.hasPartnerOrganizerFlag()) {
+      if (!this.isPilot()) {
+        rcControl.disable();
+        rcControl.setValue(false);
+      } else if (this.hasPartnerOrganizerFlag()) {
         rcControl.disable();
         rcControl.setValue(true);
       } else {
@@ -613,6 +616,16 @@ export class EventCoverageOptionsComponent {
 
   isPartnerOrganizer(): boolean {
     return this.hasPartnerOrganizerFlag();
+  }
+
+  isPilot(): boolean {
+    return this.role === 'PILOTE';
+  }
+
+  getResponsabiliteRecourseLabelKey(): string {
+    return this.isPilot()
+      ? 'eventCoverage.guarantees.responsabilityRecourse'
+      : 'eventCoverage.guarantees.responsabilityRecourseNoRc';
   }
 
   private isPremiumPartnerFlag(): boolean {
