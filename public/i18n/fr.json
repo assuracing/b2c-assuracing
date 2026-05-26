@@ -355,7 +355,7 @@
     "summaryStep": "Resumé",
     "priceLabel": "Tarif",
     "corporateLiability": "La garantie corporelle la plus complète du marché",
-    "corporateLiabilityDetails": "La garantie comprend : • Décès • Invalidité • Frais Médicaux • Assistance Médicale / Rapatriement • Frais de reconditionnement d'Airbag (hors compétition, jusque 150 €)",
+    "corporateLiabilityDetails": "La garantie comprend :\n• Décès\n• Invalidité\n• Frais Médicaux\n• Assistance Médicale (100k€ à l'étranger) / Rapatriement (frais réels)\n• Frais de reconditionnement d'Airbag (hors compétition, jusque 150 €, à partir de la formule 2)",
     "level": "Niveau",
     "death": "Décès",
     "disability": "Invalidité",
@@ -450,7 +450,7 @@
     "civilLiabilityAnnual": "Responsabilité Civile Annuelle",
     "legalProtectionAnnual": "Protection Juridique Annuelle",
     "corporateProtectionAnnual": "Responsabilité Corporelle Annuelle (Individuelle Accident)",
-    "corporateLiabilityBenefits": "La garantie comprend : • Décès • Invalidité • Frais Médicaux • Assistance Médicale / Rapatriement • Frais de reconditionnement d'Airbag (hors compétition, jusque 150 €)",
+    "corporateLiabilityBenefits": "La garantie comprend :\n• Décès\n• Invalidité\n• Frais Médicaux\n• Assistance Médicale (100k€ à l'étranger) / Rapatriement (frais réels)\n• Frais de reconditionnement d'Airbag (hors compétition, jusque 150 €, à partir de la formule 2)",
     "autoLicenseInfo": "Il est possible d'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans",
     "motoLicenseInfo": "Il est possible d'etre assuré en moto de 16 à 18 ans avec le CASM. Le permis est obligatoire à partir de 18 ans",
     "coverageHeading": "Niveaux de couverture en cas de décès ou d'invalidité :"
