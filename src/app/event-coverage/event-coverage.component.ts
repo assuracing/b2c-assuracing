@@ -833,7 +833,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       montantganrantie: coverageData.reservationAmount || 0,
       apporteurId: trackdayData.organizer,
       annual: false,
-      clientEntId: 5,
+      clientEntId: 1,
       dateinscriptionRoulage: formatISODate(coverageData.eventDate),
       language: 'fr'
     };
