@@ -114,7 +114,7 @@
         </h3>
         <div class="files-list">
           <div *ngFor="let file of files" class="file-item">
-            <mat-icon>description</mat-icon>
+            <mat-icon class="file-type-icon">picture_as_pdf</mat-icon>
             <span class="file-name">{{ file.nom || ('eventContractDetails.fileWithoutName' | translate) }}</span>
             <a [href]="file.url" [attr.download]="file.nom || file.filename" target="_blank" mat-button color="primary" *ngIf="file.url">
               <mat-icon>download</mat-icon> {{ 'eventContractDetails.download' | translate }}
