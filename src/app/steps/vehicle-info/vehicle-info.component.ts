@@ -209,7 +209,6 @@ export class VehicleInfoComponent implements OnInit, OnDestroy, OnChanges {
         this.showDriveLicenseTooltip = true;
       } else {
         driveLicenseControl.enable({ emitEvent: false });
-        driveLicenseControl.setValidators(Validators.required);
         this.showDriveLicenseTooltip = true;
       }
     } else if (vehicleType === 'moto') {
