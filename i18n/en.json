@@ -124,7 +124,8 @@
     "declareClaim": "Declare a claim",
     "completePayment": "Complete payment",
     "completeEntry": "Please complete your current entry",
-    "completeEntryToContinue": "You must validate or delete the guarantee currently being entered to continue"
+    "completeEntryToContinue": "You must validate or delete the guarantee currently being entered to continue",
+    "mandatory": "mandatory"
   },
   "eventContracts": {
     "title": "Event contracts",
@@ -419,6 +420,7 @@
       "badWeatherRisk": "Bad weather risk",
       "civilLiability": "Civil Liability",  
       "legalProtection": "Legal Protection",
+      "legalProtectionResidenceNotice": "You must be domiciled in France to benefit from this guarantee.",
       "coverageDetails": {
         "weather80": "80% in case of cancellation",
         "weather50": "50% in case of driving in the rain",
@@ -456,6 +458,7 @@
     "responsibilityRecourseAnnual": "Annual civil liability & recourse",
     "civilLiabilityAnnual": "Civil liability annual",
     "legalProtectionAnnual": "Legal protection annual",
+    "legalProtectionAnnualResidenceNotice": "You must be domiciled in France to benefit from this guarantee.",
     "corporateProtectionAnnual": "Corporate protection annual",
     "corporateLiabilityBenefits": "The guarantee includes:\n• Death\n• Disability\n• Medical Expenses\n• Medical Assistance (100k€ abroad) / Repatriation (actual costs)\n• Airbag reconditioning costs (non-competition, up to €150, from formula 2)",
     "autoLicenseInfo": "It is possible to be insured for car from 16 to 18 years old with the B license. The license is mandatory from 18 years old",
@@ -829,6 +832,10 @@
     "phoneDigits": "The phone number must contain 10 digits",
     "postalCodeExactly5": "The postal code must contain exactly 5 digits",
     "postalCodeBetween4And8": "The postal code must contain between 4 and 8 alphanumeric characters",
-    "minlength2": "This field must contain at least 2 characters"
+    "minlength2": "This field must contain at least 2 characters",
+    "legalProtectionResidenceRestrictionTitle": "Legal protection unavailable",
+    "legalProtectionResidenceRestriction": "Your place of residence does not allow you to subscribe to Legal Protection. Continue without this guarantee?",
+    "legalProtectionResidenceRestrictionBlocked": "Your place of residence does not allow you to subscribe to Legal Protection. Please select other guarantees.",
+    "continueWithoutGuarantee": "Continue without this guarantee"
   }
 }
