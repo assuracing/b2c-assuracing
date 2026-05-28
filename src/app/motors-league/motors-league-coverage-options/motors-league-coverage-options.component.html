@@ -188,7 +188,10 @@
           [disabled]="isCalculatingPrice || isProductUnavailable('DEFENSE_RECOURS')">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon">gavel</mat-icon>
+            <div class="toggle-text">
               <strong class="toggle-label-medium">{{ 'motorsLeague.legalProtectionAnnual' | translate }}</strong>
+              <small class="toggle-mandatory">{{ 'motorsLeague.legalProtectionAnnualResidenceNotice' | translate }}</small>
+            </div>
           </span>
         </mat-slide-toggle>
           <div class="risk-details">

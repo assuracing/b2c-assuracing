@@ -34,6 +34,7 @@ import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -247,7 +248,80 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
+  private isFrenchResidence(): boolean {
+    return this.personalForm?.get('country')?.value === 'france';
+  }
+
+  private isLegalProtectionRestricted(): boolean {
+    return !!this.coverageOptionsForm?.get('defenseRecours')?.value && !this.isFrenchResidence();
+  }
+
+  private hasOnlyLegalProtectionSelected(): boolean {
+    const form = this.coverageOptionsForm;
+    return !!form?.get('defenseRecours')?.value &&
+      !form.get('intemperies')?.value &&
+      !form.get('annulation')?.value &&
+      !form.get('interruption')?.value &&
+      !(form.get('protectionPilote')?.value > 0) &&
+      !form.get('responsabiliteCivile')?.value;
+  }
+
+  private async confirmWithoutLegalProtection(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translateService.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translateService.instant('messages.legalProtectionResidenceRestriction'),
+        confirmText: this.translateService.instant('messages.continueWithoutGuarantee'),
+        cancelText: this.translateService.instant('common.cancel')
+      }
+    });
+
+    return (await dialogRef.afterClosed().toPromise()) === true;
+  }
+
+  private clearLegalProtectionSelection(): void {
+    this.eventCoverageOptions?.resetLegalProtectionSelection();
+  }
+
+  private async showLegalProtectionBlockedDialog(): Promise<void> {
+    const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translateService.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translateService.instant('messages.legalProtectionResidenceRestrictionBlocked'),
+        okText: this.translateService.instant('common.ok')
+      }
+    });
+
+    await dialogRef.afterClosed().toPromise();
+  }
+
   async onContinueGuaranteeStep(stepper: MatStepper) {
+    if (this.isLegalProtectionRestricted()) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageOptionsForm;
+      const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+      stepper.next();
+      return;
+    }
+
     const form = this.coverageOptionsForm;
     const hasGuarantee = form.get('intemperies')?.value || form.get('annulation')?.value || form.get('interruption')?.value || (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
     
@@ -542,9 +616,39 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNextStep(): void {
+  async goToNextStep(): Promise<void> {
     if (this.stepper && this.stepper.selectedIndex === 2) {
 
+      const isRestrictedLegalProtection = this.isLegalProtectionRestricted();
+      if (isRestrictedLegalProtection) {
+        if (this.hasOnlyLegalProtectionSelected()) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        const confirmed = await this.confirmWithoutLegalProtection();
+        if (!confirmed) {
+          return;
+        }
+
+        this.clearLegalProtectionSelection();
+        const postForm = this.coverageOptionsForm;
+        const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+        if (!hasGuaranteeAfterClear) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        this.advanceFromPersonalStep();
+        return;
+      }
+
+      this.advanceFromPersonalStep();
+    }
+  }
+
+  private advanceFromPersonalStep(): void {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
       const birthDate = this.personalForm?.get('birthdate')?.value;
       const trackdayForm = this.trackdayForm;
       
@@ -765,7 +869,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return products;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     const forms = [this.personalForm, this.eventCoverageForm];
     
     if (this.trackdayForm.get('role')?.value === 'PILOTE') {
@@ -782,6 +886,28 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     const trackdayData = this.trackdayForm.value;
     const personalData = this.personalForm.value;
     const vehicleData = this.vehicleForm.value;
+
+    const hasRestrictedLegalProtection = this.isLegalProtectionRestricted();
+    if (hasRestrictedLegalProtection) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageOptionsForm;
+      const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+    }
+
     const coverageData = this.coverageOptionsForm.value;
     
     const formatISODate = (date: string | Date): string => {
@@ -884,10 +1010,10 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     const selectedGuarantees: string[] = [];
 
     if (coverageForm.get('intemperies')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.badWeatherRisk'));
     }
     if (coverageForm.get('annulation')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.cancellationRisk'));
     }
     if (coverageForm.get('interruption')?.value) {
       selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.interruptionRisk'));
@@ -898,6 +1024,10 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
     if (coverageForm.get('defenseRecours')?.value) {
       selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.legalProtection'));
+    }
+
+    if (coverageForm.get('responsabiliteCivile')?.value) {
+      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.civilLiability'));
     }
 
     const eventDate = trackdayForm.get('eventDate')?.value;

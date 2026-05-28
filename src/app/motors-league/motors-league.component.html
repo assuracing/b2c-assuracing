@@ -33,7 +33,7 @@
 
     <form [formGroup]="coverageForm">
       <app-motors-league-coverage-options [form]="coverageForm" [vehicleType]="vehicleType || undefined"
-(sectionInProgress)="onSectionInProgress($event)"></app-motors-league-coverage-options>
+        (sectionInProgress)="onSectionInProgress($event)"></app-motors-league-coverage-options>
 
       <div class="mt-4">
         <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>

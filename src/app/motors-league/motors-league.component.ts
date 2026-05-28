@@ -31,6 +31,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
 
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 interface Contract {
   selectedCircuit: string;
@@ -267,6 +268,54 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
+  private isFrenchResidence(): boolean {
+    return this.personalForm?.get('country')?.value === 'france';
+  }
+
+  private isLegalProtectionRestricted(): boolean {
+    return !!this.coverageForm?.get('defenseRecours')?.value && !this.isFrenchResidence();
+  }
+
+  private hasOnlyLegalProtectionSelected(): boolean {
+    const form = this.coverageForm;
+    return !!form?.get('defenseRecours')?.value &&
+      !(form.get('protectionPilote')?.value > 0) &&
+      !form.get('responsabiliteCivile')?.value;
+  }
+
+  private async confirmWithoutLegalProtection(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translate.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translate.instant('messages.legalProtectionResidenceRestriction'),
+        confirmText: this.translate.instant('messages.continueWithoutGuarantee'),
+        cancelText: this.translate.instant('common.cancel')
+      }
+    });
+
+    return (await dialogRef.afterClosed().toPromise()) === true;
+  }
+
+  private clearLegalProtectionSelection(): void {
+    this.coverageOptions?.resetLegalProtectionSelection();
+  }
+
+  private async showLegalProtectionBlockedDialog(): Promise<void> {
+    const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translate.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translate.instant('messages.legalProtectionResidenceRestrictionBlocked'),
+        okText: this.translate.instant('common.ok')
+      }
+    });
+
+    await dialogRef.afterClosed().toPromise();
+  }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -280,7 +329,27 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   async onContinueGuaranteeStep(stepper: MatStepper) {
     const form = this.coverageForm;
     const hasGuarantee = (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
-    
+
+    if (this.isLegalProtectionRestricted()) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageForm;
+      const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+    }
+
     if (!hasGuarantee) {
       const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
         width: '400px',
@@ -535,7 +604,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return total;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     const forms = [this.personalForm, this.vehicleForm, this.coverageForm];
     const allFormsValid = forms.every(form => form?.valid);
 
@@ -549,6 +618,27 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     if (!allFormsValid) {
       forms.forEach(form => form.markAllAsTouched());
       return;
+    }
+
+    const hasRestrictedLegalProtection = this.isLegalProtectionRestricted();
+    if (hasRestrictedLegalProtection) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageForm;
+      const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
     }
 
     const formatISODate = (date: string | Date): string => {
@@ -589,7 +679,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       productCodes.push(398);
     }
 
-    if (productCodes.length === 0) {
+    if (productCodes.length === 0 && !hasRestrictedLegalProtection) {
       this.toastService.error(this.translate.instant('messages.noValidGuaranteeSelected'));
       return;
     }
@@ -658,7 +748,37 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
   }
   
-  goToNextStep(): void {
+  async goToNextStep(): Promise<void> {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
+      const isRestrictedLegalProtection = this.isLegalProtectionRestricted();
+      if (isRestrictedLegalProtection) {
+        if (this.hasOnlyLegalProtectionSelected()) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        const confirmed = await this.confirmWithoutLegalProtection();
+        if (!confirmed) {
+          return;
+        }
+
+        this.clearLegalProtectionSelection();
+        const postForm = this.coverageForm;
+        const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+        if (!hasGuaranteeAfterClear) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        this.advanceFromPersonalStep();
+        return;
+      }
+
+      this.advanceFromPersonalStep();
+    }
+  }
+
+  private advanceFromPersonalStep(): void {
     if (this.stepper && this.stepper.selectedIndex === 2) {
       const birthDate = this.personalForm?.get('birthdate')?.value;
       

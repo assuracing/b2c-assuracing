@@ -166,6 +166,18 @@
       height: 20px;
       color: #0ba2cf;
     }
+
+    .partner-message-icon {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      line-height: 1;
+      overflow: visible;
+    }
   }
 
   .iai-validate-button-disabled {
@@ -345,6 +357,27 @@
   }
 }
 
+.validated-toggle {
+  align-items: center;
+  gap: 10px;
+
+  .section-action-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 24px;
+    line-height: 1;
+    overflow: visible;
+  }
+
+  .section-action-delete {
+    color: #d32f2f !important;
+  }
+}
+
 .toggle-label {
   color: #0ba2cf;
   font-weight: bold;
@@ -359,4 +392,17 @@
 .toggle-label-medium {  
   font-weight: 500;
   font-size: 15px;
+}
+
+.toggle-mandatory {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: #02556e;
+  margin: 2px 0 0 0;
+  line-height: 1.1;
+}
+
+.toggle-label-wrapper .toggle-text .toggle-mandatory {
+  text-align: left;
 }
