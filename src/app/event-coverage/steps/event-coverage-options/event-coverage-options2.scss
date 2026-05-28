@@ -20,6 +20,7 @@
   
   .validated-toggle {
     cursor: default;
+    align-items: flex-start;
     
     
     mat-icon[color="warn"] {
@@ -33,6 +34,24 @@
 
   .validated-toggle span {
   white-space: nowrap;
+  }
+
+  .validated-toggle .section-action-icon,
+  .partner-organizer-message .partner-message-icon {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .validated-toggle .section-action-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+
+  .partner-organizer-message .partner-message-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
   }
 
   .toggle-unavailable {
@@ -84,6 +103,17 @@
     flex-wrap: nowrap;
     width: 100%;
     min-width: 0;
+  }
+
+  .toggle-label-wrapper .toggle-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .validated-toggle {
+    max-width: 100%;
   }
 
   .toggle-label-wrapper .toggle-icon,
@@ -161,6 +191,32 @@
   }
 
   .toggle-label-medium {
+    font-size: 14px;
+  }
+
+  .validated-toggle > div,
+  .validated-toggle > div > div {
+    min-width: 0;
+  }
+
+  .validated-toggle mat-icon,
+  .partner-organizer-message mat-icon {
+    flex-shrink: 0;
+  }}
+
+@media (max-width: 400px) {
+  .validated-toggle {
+    font-size: 14px;
+  }
+
+  .validated-toggle .toggle-text-inline,
+  .validated-toggle span,
+  .validated-toggle .toggle-text {
+    min-width: 0;
+  }
+
+  .validated-toggle .toggle-label-strong,
+  .validated-toggle .toggle-label-medium {
     font-size: 14px;
   }
 }

@@ -29,19 +29,19 @@
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'iai'">
               <mat-icon class="toggle-icon-large">warning</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+          <div style="flex:1; min-width:0; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'iai'"
                [matTooltip]="activeSection && activeSection !== 'iai' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'iai'"
                >
-            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+            <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1; cursor:pointer" 
                  (click)="activeSection === 'iai' || !activeSection ? onCartClick('iai') : null">
-              {{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}
+              <span style="min-width:0; white-space:normal;">{{ 'eventCoverage.guarantees.weatherCancellationInterruption' | translate }}</span>
               <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'iai' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
-              <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('iai')">delete</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#0ba2cf'}">
-                {{ formatPrice(getIAIAmount()) }}
+              <mat-icon class="section-action-icon section-action-delete" color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('iai')">delete</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'iai' ? '#9e9e9e' : '#0ba2cf', 'white-space': 'nowrap', 'display': 'inline-flex', 'align-items': 'center', 'flex': '0 0 auto'}">
+                <span style="white-space:nowrap; display:inline-flex; align-items:center;">{{ formatPrice(getIAIAmount()) }}</span>
               </span>
             </div>
           </div>
@@ -88,7 +88,7 @@
             </small>
             <div *ngIf="isPremiumPartner()" class="premium-organizer-message inclus">
               <span>{{ 'eventCoverage.guarantees.premiumOrganizerMessage' | translate }}</span>
-              <mat-icon>sentiment_very_satisfied</mat-icon>
+              <mat-icon class="partner-message-icon">sentiment_very_satisfied</mat-icon>
             </div>
             <div class="risk-details">
               <ul>
@@ -183,18 +183,18 @@
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
              <mat-icon class="toggle-icon-large">health_and_safety</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+          <div style="flex:1; min-width:0; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'protectionPilote'"
                [matTooltip]="activeSection && activeSection !== 'protectionPilote' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'protectionPilote'">
-            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
+            <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1; cursor:pointer" 
                  (click)="activeSection === 'protectionPilote' || !activeSection ? onCartClick('protectionPilote') : null">
-              {{ 'eventCoverage.guarantees.corporateAccident' | translate }}
+              <span style="min-width:0; white-space:normal;">{{ 'eventCoverage.guarantees.corporateAccident' | translate }}</span>
               <mat-icon [color]="activeSection && activeSection !== 'protectionPilote' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
-              <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">delete</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf'}">
-                {{ formatPrice(getProtectionPiloteAmount()) }}
+              <mat-icon class="section-action-icon section-action-delete" color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('protectionPilote')">delete</mat-icon>
+              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'protectionPilote' ? '#9e9e9e' : '#0ba2cf', 'white-space': 'nowrap', 'display': 'inline-flex', 'align-items': 'center', 'flex': '0 0 auto'}">
+                <span style="white-space:nowrap; display:inline-flex; align-items:center;">{{ formatPrice(getProtectionPiloteAmount()) }}</span>
               </span>
             </div>
           </div>
@@ -248,7 +248,9 @@
           matTooltipPosition="above">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon-large">handshake</mat-icon>
-            <strong class="toggle-label-strong">{{ getResponsabiliteRecourseLabelKey() | translate }}</strong>
+            <div class="toggle-text">
+              <strong class="toggle-label-strong">{{ 'eventCoverage.guarantees.responsabilityRecourse' | translate }}</strong>
+            </div>
           </span>
         </mat-slide-toggle>
       </ng-container>
@@ -260,29 +262,29 @@
              [matTooltipPosition]="'above'"
              [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
               <mat-icon class="toggle-icon-large">handshake</mat-icon>
-          <div style="flex:1; display:flex; align-items:center; gap:8px;" 
+          <div style="flex:1; min-width:0; display:flex; align-items:center; gap:8px;" 
                [class.disabled-cart]="activeSection && activeSection !== 'responsabiliteRecours'"
                [matTooltip]="activeSection && activeSection !== 'responsabiliteRecours' ? ('common.completeEntry' | translate) : ''"
                [matTooltipPosition]="'above'"
                [matTooltipDisabled]="!activeSection || activeSection === 'responsabiliteRecours'">
-            <div style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer" 
-                 (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
-              {{ getResponsabiliteRecourseLabelKey() | translate }}
-              <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
-              <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">delete</mat-icon>
-              <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf'}">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1; cursor:pointer" (click)="activeSection === 'responsabiliteRecours' || !activeSection ? onCartClick('responsabiliteRecours') : null">
+                <span style="min-width:0; white-space:normal;">{{ 'eventCoverage.guarantees.responsabilityRecourse' | translate }}</span>
+                <mat-icon class="view-icon" [color]="activeSection && activeSection !== 'responsabiliteRecours' ? 'disabled' : 'primary'">remove_red_eye</mat-icon>
+                <mat-icon color="warn" style="cursor:pointer; color:#d32f2f !important; flex:0 0 auto;" (click)="$event.stopPropagation(); confirmResetSection('responsabiliteRecours')">delete</mat-icon>
+                <span [ngStyle]="{'margin-left': '8px', 'font-weight': '600', 'color': activeSection && activeSection !== 'responsabiliteRecours' ? '#9e9e9e' : '#0ba2cf', 'white-space': 'nowrap', 'display': 'inline-flex', 'align-items': 'center', 'flex': '0 0 auto'}">
                 <ng-container *ngIf="isPartnerOrganizer(); else rcNonPartner">
                   <ng-container *ngIf="!form.get('defenseRecours')?.value; else montantPJ">
                     {{ 'eventCoverage.guarantees.included' | translate }}
                   </ng-container>
                   <ng-template #montantPJ>
-                    {{ formatPrice(PRIME_RATES.defenseRecours) }} <span style="font-size:12px;color:#0ba2cf;">({{ 'eventCoverage.guarantees.rcIncluded' | translate }})</span>
+                    <span style="white-space:nowrap; display:inline-flex; align-items:center;">{{ formatPrice(PRIME_RATES.defenseRecours) }}</span>
+                    <span style="font-size:12px;color:#0ba2cf;white-space:nowrap;">({{ 'eventCoverage.guarantees.rcIncluded' | translate }})</span>
                   </ng-template>
                 </ng-container>
                 <ng-template #rcNonPartner>
-                  {{ formatPrice(getResponsabiliteRecoursAmount()) }}
+                  <span style="white-space:nowrap; display:inline-flex; align-items:center;">{{ formatPrice(getResponsabiliteRecoursAmount()) }}</span>
                 </ng-template>
-              </span>
+                </span>
             </div>
           </div>
         </div>
@@ -296,29 +298,34 @@
             class="inclus-toggle">
             <span class="toggle-label-wrapper">
               <mat-icon class="toggle-icon">security</mat-icon>
-              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.civilLiability' | translate }}</strong>
-              <app-adaptive-tooltip
-                [blink]="true"
-                [style.display]="vehicleType === 'auto' ? 'inline-flex' : 'none'"
-                text="{{ 'eventCoverage.guarantees.autoLicenseInfo' | translate }}">
-              </app-adaptive-tooltip>
-              <app-adaptive-tooltip
-                [blink]="true"
-                [style.display]="vehicleType === 'moto' ? 'inline-flex' : 'none'"
-                text="{{ 'eventCoverage.guarantees.motoLicenseInfo' | translate }}">
-              </app-adaptive-tooltip>
+              <div class="toggle-text">
+                <div style="display:flex; align-items:center; gap:4px; min-width:0;">
+                  <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.civilLiability' | translate }}</strong>
+                  <app-adaptive-tooltip
+                    [blink]="true"
+                    [style.display]="vehicleType === 'auto' ? 'inline-flex' : 'none'"
+                    text="{{ 'eventCoverage.guarantees.autoLicenseInfo' | translate }}">
+                  </app-adaptive-tooltip>
+                  <app-adaptive-tooltip
+                    [blink]="true"
+                    [style.display]="vehicleType === 'moto' ? 'inline-flex' : 'none'"
+                    text="{{ 'eventCoverage.guarantees.motoLicenseInfo' | translate }}">
+                  </app-adaptive-tooltip>
+                </div>
+                <small class="toggle-mandatory">({{ 'common.mandatory' | translate }})</small>
+              </div>
             </span>
           </mat-slide-toggle>
           <div *ngIf="isPartnerOrganizer()" class="partner-organizer-message inclus">
             <span>{{ 'eventCoverage.guarantees.partnerOrganizerMessage' | translate }}</span>
-            <mat-icon>sentiment_very_satisfied</mat-icon>
+            <mat-icon class="partner-message-icon">sentiment_very_satisfied</mat-icon>
           </div>
           <p>{{ 'eventCoverage.guarantees.premium' | translate }} : 
             <ng-container *ngIf="isPartnerOrganizer() && form.get('responsabiliteCivile')?.value">
-              {{ 'eventCoverage.guarantees.included' | translate }}
+              <span style="white-space:nowrap;">{{ 'eventCoverage.guarantees.included' | translate }}</span>
             </ng-container>
             <ng-container *ngIf="!isPartnerOrganizer() || !form.get('responsabiliteCivile')?.value">
-              {{ formatPrice(PRIME_RATES.responsabiliteCivile) }}
+              <span style="white-space:nowrap;">{{ formatPrice(PRIME_RATES.responsabiliteCivile) }}</span>
             </ng-container>
           </p>
         </div>
@@ -329,12 +336,15 @@
           [disabled]="isCalculatingPrice">
           <span class="toggle-label-wrapper">
             <mat-icon class="toggle-icon">gavel</mat-icon>
-            <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.legalProtection' | translate }}</strong>
+            <div class="toggle-text">
+              <strong class="toggle-label-medium">{{ 'eventCoverage.guarantees.legalProtection' | translate }}</strong>
+              <small class="toggle-mandatory">{{ 'eventCoverage.guarantees.legalProtectionResidenceNotice' | translate }}</small>
+            </div>
           </span>
         </mat-slide-toggle> 
           <div class="risk-details">
             <p>{{ 'eventCoverage.defenseRecourseDescription' | translate }}</p>
-            <p>{{ 'eventCoverage.guarantees.premium' | translate }} : {{ formatPrice(PRIME_RATES.defenseRecours) }}</p>
+            <p>{{ 'eventCoverage.guarantees.premium' | translate }} : <span style="white-space:nowrap;">{{ formatPrice(PRIME_RATES.defenseRecours) }}</span></p>
           </div>
         </div>
         <button mat-button class="mat-button" (click)="validateSection('responsabiliteRecours')">{{ 'common.validate' | translate }}</button>

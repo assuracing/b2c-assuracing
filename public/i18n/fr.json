@@ -123,7 +123,8 @@
     "declareClaim": "Déclarer un sinistre",
     "completePayment": "Finaliser le paiement",
     "completeEntry": "Veuillez terminer votre saisie en cours",
-    "completeEntryToContinue": "Vous devez valider ou supprimer la garantie en cours de saisie pour continuer"
+    "completeEntryToContinue": "Vous devez valider ou supprimer la garantie en cours de saisie pour continuer",
+    "mandatory": "obligatoire"
   },
   "eventContracts": {
     "title": "Contrats à l'évènement",
@@ -400,9 +401,9 @@
     "guarantees": {
       "total": "Total",
       "weatherCancellationInterruption": "Intempéries, Annulation & Interruption",
-      "corporateAccident": "Protection Corporelle (Accident Individuel)",
-      "responsabilityRecourse": "Responsabilité / Recours (RC - obligatoire)",
-      "responsabilityRecourseNoRc": "Responsabilité / Recours",
+      "corporateAccident": "Protection Corporelle (Individuelle Accident)",
+      "responsabilityRecourse": "Responsabilité / Recours et PJ",
+      "responsabilityRecourseNoRc": "Responsabilité / Recours et PJ",
       "rcIncluded" : "RC incluse",
       "included": "inclus",
       "validateSection": "Valider la section",
@@ -413,6 +414,7 @@
       "badWeatherRisk": "Risque Intempérie",
       "civilLiability": "Responsabilité Civile",
       "legalProtection": "Protection Juridique",
+      "legalProtectionResidenceNotice": "Vous devez être domicilié en France pour bénéficier de cette garantie",
       "coverageDetails": {
         "weather80": "80% en cas d'annulation",
         "weather50": "50% en cas de conduite sous la pluie",
@@ -449,6 +451,7 @@
     "responsibilityRecourseAnnual": "Garantie Responsabilité / Recours Annuelle",
     "civilLiabilityAnnual": "Responsabilité Civile Annuelle",
     "legalProtectionAnnual": "Protection Juridique Annuelle",
+    "legalProtectionAnnualResidenceNotice": "Vous devez être domicilié en France pour bénéficier de cette garantie.",
     "corporateProtectionAnnual": "Garantie Corporelle Annuelle (Individuelle Accident)",
     "corporateLiabilityBenefits": "La garantie comprend :\n• Décès\n• Invalidité\n• Frais Médicaux\n• Assistance Médicale (100k€ à l'étranger) / Rapatriement (frais réels)\n• Frais de reconditionnement d'Airbag (hors compétition, jusque 150 €, à partir de la formule 2)",
     "autoLicenseInfo": "Il est possible d'etre assuré en auto de 16 à 19 ans sans permis B. Le permis B est obligatoire à partir de 19 ans",
@@ -825,6 +828,10 @@
     "phoneDigits": "Le numéro de téléphone doit contenir 10 chiffres",
     "postalCodeExactly5": "Le code postal doit contenir exactement 5 chiffres",
     "postalCodeBetween4And8": "Le code postal doit contenir entre 4 et 8 caractères alphanumériques",
-    "minlength2": "Ce champ doit contenir au moins 2 caractères"
+    "minlength2": "Ce champ doit contenir au moins 2 caractères",
+    "legalProtectionResidenceRestrictionTitle": "Protection Juridique indisponible",
+    "legalProtectionResidenceRestriction": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Continuer sans cette garantie ?",
+    "legalProtectionResidenceRestrictionBlocked": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Veuillez sélectionner d'autres garanties.",
+    "continueWithoutGuarantee": "Continuer sans cette garantie"
   }
 }

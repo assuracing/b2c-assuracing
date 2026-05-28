@@ -121,8 +121,6 @@ export class EventCoverageOptionsComponent {
     const isInTwoWeeksWindow = inscription >= dateLimite && inscription <= today;
   
     this.annulationDisabledByInscriptionDate = !isInTwoWeeksWindow;
-  
-    this.updateFormControlsAvailability();
   }
 
   get disableIntempAnnul() {
@@ -386,6 +384,10 @@ export class EventCoverageOptionsComponent {
   public organizerName: string = '';
 
   private updateFormControlsAvailability(): void {
+    if (!this.form) {
+      return;
+    }
+
     const controls = this.form.controls;
     const rcControl = controls['responsabiliteCivile'];
     const intempControl = controls['intemperies'];
@@ -422,6 +424,15 @@ export class EventCoverageOptionsComponent {
       }
     }
 
+  }
+
+  public resetLegalProtectionSelection(): void {
+    this.form.get('defenseRecours')?.setValue(false);
+    const rcSelected = !!this.form.get('responsabiliteCivile')?.value;
+    this.form.get('responsabiliteRecours')?.setValue(rcSelected);
+    this.validatedSections['responsabiliteRecours'] = rcSelected;
+    this.wasResponsabiliteRecoursValidated = rcSelected;
+    this.reservationAmountChanged.emit();
   }
 
   private shouldDisableAnnulation(): boolean {
@@ -620,12 +631,6 @@ export class EventCoverageOptionsComponent {
 
   isPilot(): boolean {
     return this.role === 'PILOTE';
-  }
-
-  getResponsabiliteRecourseLabelKey(): string {
-    return this.isPilot()
-      ? 'eventCoverage.guarantees.responsabilityRecourse'
-      : 'eventCoverage.guarantees.responsabilityRecourseNoRc';
   }
 
   private isPremiumPartnerFlag(): boolean {
