@@ -78,6 +78,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       telPortable: ['', [Validators.required]],
       dateNaissance: ['', [Validators.required]],
       adresse: ['', [Validators.required, Validators.maxLength(200)]],
+      complementadresse: [''],
       ville: ['', [Validators.required, Validators.maxLength(100)]],
       codepostal: ['', [Validators.required]],
       nationalite: [''],
@@ -178,6 +179,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
             email: user.email || '',
             telPortable: adherentData.telPortable || '',
             adresse: adherentData.adresse || '',
+            complementadresse: adherentData.complementadresse || '',
             ville: adherentData.ville || '',
             codepostal: adherentData.codePostal || adherentData.codepostal || '',
             dateNaissance: this.formatDateLocal(adherentData.dateNaissance) || null,
@@ -226,12 +228,8 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     if (this.profileForm.valid && this.userInfo) {
       const formValue = this.profileForm.value;
       const updatedData = {
-        prenom: formValue.prenom,
-        nom: formValue.nom,
-        email: formValue.email,
-        civilite: formValue.civilite,
         adresse: formValue.adresse,
-        complementadresse: this.userInfo.complementadresse || '',
+        complementadresse: formValue.complementadresse || '',
         codepostal: formValue.codepostal,
         ville: formValue.ville,
         telPortable: formValue.telPortable,

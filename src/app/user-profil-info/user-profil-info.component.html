@@ -15,17 +15,17 @@
       <mat-card-content>
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="userInfo" class="profile-form">
           <div class="form-row">
-            <mat-form-field appearance="outline" class="form-field">
+            <mat-form-field appearance="outline" class="form-field disabled-field">
               <mat-label>{{ 'profile.lastName' | translate }}</mat-label>
-              <input matInput formControlName="nom" [readonly]="!isEditing" required>
+              <input matInput formControlName="nom" readonly required>
               <mat-error *ngIf="profileForm.get('nom')?.hasError('required')">
                 {{ 'validation.lastNameRequired' | translate }}
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="form-field">
+            <mat-form-field appearance="outline" class="form-field disabled-field">
               <mat-label>{{ 'profile.firstName' | translate }}</mat-label>
-              <input matInput formControlName="prenom" [readonly]="!isEditing" required>
+              <input matInput formControlName="prenom" readonly required>
               <mat-error *ngIf="profileForm.get('prenom')?.hasError('required')">
                 {{ 'validation.firstNameRequired' | translate }}
               </mat-error>
@@ -72,6 +72,13 @@
             <mat-error *ngIf="profileForm.get('adresse')?.hasError('required')">
               {{ 'validation.addressRequired' | translate }}
             </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'profile.addressComplement' | translate }}</mat-label>
+            <input matInput formControlName="complementadresse" [readonly]="!isEditing">
           </mat-form-field>
         </div>
 

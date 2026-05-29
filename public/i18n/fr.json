@@ -60,6 +60,7 @@
     "gender": "Genre",
     "birthDate": "Date de naissance",
     "address": "Adresse",
+    "addressComplement": "Complément d'adresse",
     "city": "Ville",
     "postalCode": "Code postal"
     ,"nationality": "Nationalité",

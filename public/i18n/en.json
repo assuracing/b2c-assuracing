@@ -61,6 +61,7 @@
     "birthDate": "Birth date",
     "gender": "Gender",
     "address": "Address",
+    "addressComplement": "Address complement",
     "city": "City",
     "postalCode": "Postal code"
     ,"nationality": "Nationality",
