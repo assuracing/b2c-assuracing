@@ -361,7 +361,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   error: string | null = null;
   subscriptions: Subscription[] = [];
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
-  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions!: EventCoverageOptionsComponent;
+  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions?: EventCoverageOptionsComponent;
 
   circuits: Circuit[] = [];
   isLoadingCircuits = true;
