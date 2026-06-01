@@ -778,6 +778,11 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.translateService.instant(`nationalities.${key}`);
   }
 
+  formatPrice(price: number | undefined): string {
+    if (price === undefined) return '-- €';
+    return price % 1 === 0 ? `${price} €` : price.toFixed(2).replace('.', ',') + ' €';
+  }
+
   calculateAge(birthDate: Date): number {
     const today = new Date();
     const birth = new Date(birthDate);
