@@ -1,6 +1,6 @@
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
@@ -406,8 +406,8 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    const today = new Date().toISOString().split('T')[0];
-    const eventDate = new Date(this.claim.dateEvenement).toISOString().split('T')[0];
+    const today = this.formatClaimDate(new Date());
+    const eventDate = this.formatClaimDate(this.claim.dateEvenement);
 
       const payload: any = {
       typeSinistre: { id: this.claimService.getTypeSinistreId(this.claim.type) },
@@ -528,5 +528,10 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  private formatClaimDate(value: any): string {
+    const date = value?.toDate ? value.toDate() : value;
+    return date ? formatDate(date, 'yyyy-MM-dd', 'fr-FR') : '';
   }
 }
