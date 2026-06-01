@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCardModule } from '@angular/material/card';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PersonalInfoComponent } from '../event-coverage/steps/personal-info/personal-info.component';
 import { VehicleInfoComponent } from '../steps/vehicle-info/vehicle-info.component';
@@ -77,7 +78,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, MatCardModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
@@ -564,6 +565,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         representativeEmail: this.RepresentativeLegalForm?.get('representativeEmail')?.value
       } : null
     };
+  }
+
+  getCivilityLabel(value: string): string {
+    if (!value) return '';
+    if (value === 'M') return this.translate.instant('personalInfoStep.men');
+    if (value === 'Mme' || value === 'F') return this.translate.instant('personalInfoStep.women');
+    return value;
   }
 
   getCoverageAmounts(level: number | null): { death: number; disability: number } | undefined {

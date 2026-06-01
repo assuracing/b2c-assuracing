@@ -92,12 +92,15 @@
 
   <mat-step [stepControl]="summaryForm">
     <ng-template matStepLabel>{{ 'motorsLeague.summaryStep' | translate }}</ng-template>
-    <div class="login-form">
+    <div class="summary-login login-form">
       <div class="summary-container">
         <h3>{{ 'summary.personalInfo' | translate }}</h3>
+          <p *ngIf="personalForm.get('civility')?.value" class="text-dark"><strong>{{ 'summary.civility' | translate }} :</strong> {{ getCivilityLabel(personalForm.get('civility')?.value) }}</p>
           <p class="text-dark"><strong>{{ 'summary.lastname' | translate }} :</strong> {{personalForm.get('lastname')?.value}}</p>
           <p class="text-dark"><strong>{{ 'summary.firstname' | translate }} :</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p *ngIf="personalForm.get('birthdate')?.value" class="text-dark"><strong>{{ 'summary.birthdate' | translate }} :</strong> {{ personalForm.get('birthdate')?.value | date:'longDate' }}</p>
           <p class="text-dark"><strong>{{ 'summary.address' | translate }} :</strong> {{personalForm.get('address')?.value}}</p>
+          <p *ngIf="personalForm.get('postalCode')?.value || personalForm.get('city')?.value" class="text-dark"><strong>{{ 'summary.city' | translate }} :</strong> {{personalForm.get('postalCode')?.value}} {{personalForm.get('city')?.value}}</p>
           <p class="text-dark"><strong>{{ 'summary.nationality' | translate }} :</strong> {{personalForm.get('nationality')?.value}}</p>
           <p class="text-dark"><strong>{{ 'summary.email' | translate }} :</strong> {{personalForm.get('email')?.value}}</p>
           <p class="text-dark"><strong>{{ 'summary.phone' | translate }} :</strong> {{personalForm.get('phone')?.value}}</p>
@@ -130,28 +133,32 @@
         </li>
       </ul>
 
-      <p class="text-dark-center" style="color: #111; font-weight: bold;">
-        {{ 'motorsLeague.totalPremium' | translate }}
-        <span>
-          {{ getTotalPrime() ? formatNumber(getTotalPrime()) : '--' }} €
-        </span>
-      </p>
-    </div>
-      <div class="signature-section">
-        <p class="text-dark">{{ 'summary.iHereby' | translate }} {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
-          {{isMinor() ? ('summary.legalRepresentative' | translate) : ('summary.insured' | translate)}} <span [innerHTML]="'common.confirmationText' | translate"></span>
-          <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
-        </p>
-        
-        <p class="text-red" *ngIf="isMinor()">{{ 'summary.verificationCode' | translate }}{{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
-
-        <form [formGroup]="summaryForm">
-          <mat-form-field *ngIf="isMinor()">
-            <mat-label>{{ 'summary.verificationCode' | translate }}</mat-label>
-            <input matInput type="text" formControlName="verificationCode">
-          </mat-form-field>
-        </form>
+      <div class="coverage-summary" role="status">
+        <p style="margin:0">{{ 'motorsLeague.totalPremium' | translate }} <strong>{{ getTotalPrime() ? formatNumber(getTotalPrime()) : '--' }} €</strong></p>
       </div>
+    </div>
+      <mat-card class="signature-card">
+        <mat-card-content>
+          <div class="signature-section">
+            <p class="text-dark">{{ 'summary.iHereby' | translate }} {{isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value}}, 
+              {{isMinor() ? ('summary.legalRepresentative' | translate) : ('summary.insured' | translate)}} <span [innerHTML]="'common.confirmationText' | translate"></span>
+            </p>
+
+            <div class="signature-actions">
+              <mat-checkbox class="agree-checkbox" [checked]="acceptTerms" (change)="acceptTerms = $event.checked">{{ 'summary.iAgree' | translate }}</mat-checkbox>
+            </div>
+
+            <p class="text-red" *ngIf="isMinor()">{{ 'summary.verificationCode' | translate }}{{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+
+            <form [formGroup]="summaryForm">
+              <mat-form-field *ngIf="isMinor()">
+                <mat-label>{{ 'summary.verificationCode' | translate }}</mat-label>
+                <input matInput type="text" formControlName="verificationCode">
+              </mat-form-field>
+            </form>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
     <div class="mt-4">
       <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>

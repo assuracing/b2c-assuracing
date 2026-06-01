@@ -21,6 +21,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 import { ToastService } from '../services/toast.service';
 import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
 import { VehicleInfoComponent } from './steps/vehicle-info/vehicle-info.component';
@@ -121,6 +122,7 @@ interface ContractResponse {
     EventCoverageOptionsComponent,
     MatSnackBarModule,
     MatRadioModule,
+    MatCardModule,
     TranslateModule,
   ],
   templateUrl: './event-coverage.component.html',
@@ -759,6 +761,23 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       : this.translateService.instant('summary.insured');
   }
 
+  getCivilityLabel(value: string): string {
+    if (!value) return '';
+    if (value === 'M') return this.translateService.instant('personalInfoStep.men');
+    if (value === 'Mme' || value === 'F') return this.translateService.instant('personalInfoStep.women');
+    return value;
+  }
+
+  getCountryLabel(key: string): string {
+    if (!key) return '';
+    return this.translateService.instant(`countries.${key}`);
+  }
+
+  getNationalityLabel(key: string): string {
+    if (!key) return '';
+    return this.translateService.instant(`nationalities.${key}`);
+  }
+
   calculateAge(birthDate: Date): number {
     const today = new Date();
     const birth = new Date(birthDate);
@@ -1008,50 +1027,60 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatCoverageSummary(): string {
+  getSelectedGuarantees(): { name: string; icon: string }[] {
     const coverageForm = this.coverageOptionsForm;
-    const trackdayForm = this.trackdayForm;
-    const selectedGuarantees: string[] = [];
+    const selectedGuarantees: { name: string; icon: string }[] = [];
 
     if (coverageForm.get('intemperies')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.badWeatherRisk'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.badWeatherRisk'),
+        icon: 'thunderstorm'
+      });
     }
     if (coverageForm.get('annulation')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.cancellationRisk'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.cancellationRisk'),
+        icon: 'event_busy'
+      });
     }
     if (coverageForm.get('interruption')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.interruptionRisk'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.interruptionRisk'),
+        icon: 'block'
+      });
     }
     if (coverageForm.get('protectionPilote')?.value) {
       const level = coverageForm.get('protectionPilote')?.value;
-      selectedGuarantees.push(`${this.translateService.instant('eventCoverage.guarantees.corporateAccident')} niveau ${level}`);
+      selectedGuarantees.push({
+        name: `${this.translateService.instant('eventCoverage.guarantees.corporateAccident')} niveau ${level}`,
+        icon: 'health_and_safety'
+      });
     }
     if (coverageForm.get('defenseRecours')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.legalProtection'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.legalProtection'),
+        icon: 'gavel'
+      });
     }
 
     if (coverageForm.get('responsabiliteCivile')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.civilLiability'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.civilLiability'),
+        icon: 'security'
+      });
     }
 
-    const eventDate = trackdayForm.get('eventDate')?.value;
-    const duration = trackdayForm.get('duration')?.value;
-    const circuit = this.trackdayForm.get('circuit')?.value || this.translateService.instant('eventContracts.notSpecified');
-    const totalPrime = this.eventCoverageOptions?.totalPrime || 0;
+    return selectedGuarantees;
+  }
 
-    const formattedDate = new Date(eventDate).toLocaleDateString('fr-FR', {
+  getFormattedEventDate(): string {
+    const eventDate = this.trackdayForm.get('eventDate')?.value;
+    if (!eventDate) return '';
+    return new Date(eventDate).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
-
-    const summary = this.translateService.instant('eventCoverage.summarySentence', {
-      date: formattedDate,
-      duration: duration,
-      circuit: circuit
-    });
-
-    return `${this.translateService.instant('eventCoverage.selectedGuarantees')} <strong>${selectedGuarantees.join('</strong>, <strong>')}</strong> ${summary}. ${this.translateService.instant('eventCoverage.totalPrime')} <strong>${totalPrime}€</strong>.`;
   }
 
   private calculateGarantiePrice(codeProduit: number): void {
