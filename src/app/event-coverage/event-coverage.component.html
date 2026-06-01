@@ -89,13 +89,18 @@
   
     <mat-step [stepControl]="summaryForm">
       <ng-template matStepLabel>{{ 'eventCoverage.summaryStep' | translate }}</ng-template>
-      <div class="login-form">
+      <div class="summary-login login-form">
         <h2 class="text-dark">{{ 'summary.title' | translate }}</h2>
         <div class="summary-container">
+          <p *ngIf="personalForm.get('civility')?.value"><strong>{{ 'summary.civility' | translate }} :</strong> {{ getCivilityLabel(personalForm.get('civility')?.value) }}</p>
           <p><strong>{{ 'summary.lastname' | translate }} :</strong> {{personalForm.get('lastname')?.value}}</p>
           <p><strong>{{ 'summary.firstname' | translate }} :</strong> {{personalForm.get('firstname')?.value}}</p>
+          <p *ngIf="personalForm.get('birthdate')?.value"><strong>{{ 'summary.birthdate' | translate }} :</strong> {{ personalForm.get('birthdate')?.value | date:'longDate' }}</p>
           <p><strong>{{ 'summary.address' | translate }} :</strong> {{personalForm.get('address')?.value}}</p>
-          <p><strong>{{ 'summary.nationality' | translate }} :</strong> {{personalForm.get('nationality')?.value}}</p>
+          <p *ngIf="personalForm.get('addressComplement')?.value"><strong>{{ 'summary.addressComplement' | translate }} :</strong> {{personalForm.get('addressComplement')?.value}}</p>
+          <p *ngIf="personalForm.get('postalCode')?.value || personalForm.get('city')?.value"><strong>{{ 'summary.city' | translate }} :</strong> {{personalForm.get('postalCode')?.value}} {{personalForm.get('city')?.value}}</p>
+          <p *ngIf="personalForm.get('country')?.value"><strong>{{ 'summary.country' | translate }} :</strong> {{ getCountryLabel(personalForm.get('country')?.value) }}</p>
+          <p><strong>{{ 'summary.nationality' | translate }} :</strong> {{ getNationalityLabel(personalForm.get('nationality')?.value) }}</p>
           <p><strong>{{ 'summary.email' | translate }} :</strong> {{personalForm.get('email')?.value}}</p>
           <p><strong>{{ 'summary.phone' | translate }} :</strong> {{personalForm.get('phone')?.value}}</p>
         </div>
@@ -113,12 +118,49 @@
           </div>
         </div>
 
-        <p class="text-dark" [innerHTML]="formatCoverageSummary()"></p>
+        <div class="coverage-summary">
+          <div class="section-header">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ 'eventCoverage.selectedGuarantees' | translate }}</span>
+          </div>
+          <div class="summary-guarantees">
+            <div *ngFor="let g of getSelectedGuarantees()" class="guarantee-tag">
+              <mat-icon>{{ g.icon }}</mat-icon>
+              <span>{{ g.name }}</span>
+            </div>
+          </div>
+          <div class="event-info-header">
+            <mat-icon>event_note</mat-icon>
+            <span>{{ 'eventCoverage.eventInfo' | translate }}</span>
+          </div>
+          <div class="summary-event-info">
+            <div class="info-row">
+              <mat-icon>event</mat-icon>
+              <span>{{ getFormattedEventDate() }}</span>
+            </div>
+            <div class="info-row">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ trackdayForm.get('duration')?.value }} jour(s)</span>
+            </div>
+            <div class="info-row">
+              <mat-icon>place</mat-icon>
+              <span>{{ trackdayForm.get('circuit')?.value || ('eventContracts.notSpecified' | translate) }}</span>
+            </div>
+          </div>
+          <div class="summary-total">
+            <span>{{ 'eventCoverage.totalPrime' | translate }}</span>
+            <span class="price">{{ eventCoverageOptions.totalPrime || 0 }}€</span>
+          </div>
+        </div>
 
-        <p class="text-dark" [innerHTML]="'summary.terms' | translate : {name: (isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value), role: getTermsRoleLabel()}" ></p>
-        <p>
-          <mat-checkbox [checked]="acceptTerms" (change)="acceptTerms = $event.checked"></mat-checkbox>
-        </p>
+        <mat-card class="signature-card">
+          <mat-card-content>
+            <p class="text-dark" [innerHTML]="'summary.terms' | translate : {name: (isMinor() ? RepresentativeLegalForm.get('representativeLastname')?.value + ' ' + RepresentativeLegalForm.get('representativeFirstname')?.value : personalForm.get('lastname')?.value + ' ' + personalForm.get('firstname')?.value), role: getTermsRoleLabel()}"></p>
+            <div class="signature-actions">
+              <mat-checkbox class="agree-checkbox" [checked]="acceptTerms" (change)="acceptTerms = $event.checked">{{ 'summary.iAgree' | translate }}</mat-checkbox>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
         <p class="text-red" *ngIf="isMinor()">{{ 'summary.verificationMessage' | translate }} {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
