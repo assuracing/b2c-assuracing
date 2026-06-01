@@ -103,6 +103,10 @@ export class TrackdayComponent implements OnInit {
     this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
     this.setupAutocomplete();
     this.loadOrganizers();
+    this.updateVehicleTypeValidator();
+    this.form.get('role')?.valueChanges.subscribe(() => {
+      this.updateVehicleTypeValidator();
+    });
     this.translate.onLangChange.subscribe(() => {
       this.initializeArrays();
     });
