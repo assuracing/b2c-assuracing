@@ -322,6 +322,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private _allCountries: string[] = [];
   private checkEmailSub?: Subscription;
   private subscription = new Subscription();
+  private isFillingFromApi = false;
 
 
   constructor(
@@ -357,6 +358,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
             )
           ).subscribe((adherent: any) => {
             if (adherent) {
+              this.isFillingFromApi = true;
               if(adherent.user['login']) this.form.get('email')?.setValue(adherent.user['login']);
               if(adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
               if(adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
@@ -375,6 +377,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
                 const nationalityKey = this.getNationalityKeyByValue(adherent.nationalite);
                 this.form.get('nationality')?.setValue(nationalityKey);
               }
+              setTimeout(() => {
+                this.isFillingFromApi = false;
+              }, 0);
             }
           })
         );
@@ -388,10 +393,12 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.setupPostalCodeInput();
 
     this.form.get('country')?.valueChanges.subscribe(country => {
-      this.form.get('postalCode')?.setValue('');
-      this.form.get('city')?.setValue('');
-      this.postalCodeSuggestions = [];
-      this.showPostalCodeSuggestions = false;
+      if (!this.isFillingFromApi) {
+        this.form.get('postalCode')?.setValue('');
+        this.form.get('city')?.setValue('');
+        this.postalCodeSuggestions = [];
+        this.showPostalCodeSuggestions = false;
+      }
     });
   }
 
@@ -621,6 +628,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private updateFormWithAdherentData(adherent: any): void {
     if (!adherent) return;
 
+    this.isFillingFromApi = true;
     if (adherent.user?.['login']) this.form.get('email')?.setValue(adherent.user['login']);
     if (adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
     if (adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
@@ -638,5 +646,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.form.get('lastname')?.disable();
     
     this.form.markAllAsTouched();
+    
+    setTimeout(() => {
+      this.isFillingFromApi = false;
+    }, 0);
   }
 }
