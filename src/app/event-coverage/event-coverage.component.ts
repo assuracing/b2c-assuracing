@@ -71,6 +71,7 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
+    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
@@ -971,6 +972,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
+        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
         numeroPermisA: vehicleData.numeroPermisA || '',
         cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',

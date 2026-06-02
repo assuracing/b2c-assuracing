@@ -485,7 +485,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
   onPostalCodeInput() {
     const country = this.form.get('country')?.value;
-    if (country !== 'France') {
+    if (country !== 'france') {
       this.postalCodeSuggestions = [];
       this.showPostalCodeSuggestions = false;
       return;

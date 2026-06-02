@@ -41,7 +41,7 @@ interface Contract {
   datedebutroulage: string;
   codeProduit: number[];
   source?: string;
-  c: {  
+  c: {
     adresse: string;
     complementadresse: string;
     civilite: string;
@@ -54,6 +54,7 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
+    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
@@ -270,6 +271,11 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
 
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
+  }
+
+  private getCountryLabel(key: string): string {
+    if (!key) return '';
+    return this.translate.instant(`countries.${key}`);
   }
 
   private isFrenchResidence(): boolean {
@@ -714,6 +720,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
+        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
         numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || '',
         cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',
