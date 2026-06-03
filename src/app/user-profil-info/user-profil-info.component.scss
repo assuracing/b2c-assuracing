@@ -37,6 +37,12 @@ mat-card-header {
   gap: 1rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  overflow: visible;
+}
+
+.profile-form,
+.profile-card mat-card-content {
+  overflow: visible;
 }
 
 .form-field {
@@ -89,7 +95,7 @@ mat-datepicker-toggle {
     display: flex;
     flex-direction: column;
   }
-  
+
   .profile-card {
     padding: 1rem;
     flex: 1;
@@ -110,6 +116,102 @@ mat-datepicker-toggle {
     button {
       width: 100%;
       min-width: auto;
+    }
+  }
+
+  .city-field {
+    margin-top: 1.5rem;
+  }
+}
+.postal-code-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  align-self: flex-start;
+
+  &.has-suggestions .postal-code-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .postal-code-field ::ng-deep .mat-mdc-text-field-wrapper {
+    overflow: visible;
+  }
+}
+
+.postal-code-field {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.postal-code-row {
+  align-items: flex-start;
+}
+
+.postal-code-row.postal-suggestions-open {
+  position: relative;
+  z-index: 1001;
+}
+
+.postal-code-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
+  margin-top: 2px;
+  top: 100%;
+
+  .suggestion-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .postal-code {
+      font-weight: 600;
+      color: #1976d2;
+      background: #e3f2fd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .city-name {
+      flex: 1;
+      margin-left: 12px;
+      color: #333;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: #f5f9ff;
+
+      .postal-code {
+        background: #bbdefb;
+      }
+    }
+
+    &:active {
+      background-color: #e3f2fd;
     }
   }
 }
