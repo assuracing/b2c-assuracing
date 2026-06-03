@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Inject, OnDestroy, ElementRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
@@ -21,15 +21,17 @@ import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/conf
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DateLocaleService, provideMomentDatepicker } from '../core/services/date-locale.service';
 import { Subscription } from 'rxjs';
+import { PostalCodeService, PostalCodeInfo } from '../services/postal-code.service';
+import { fromEvent, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-user-profil-info',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatButtonModule, 
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
     MatCardModule,
     MatSnackBarModule,
     ReactiveFormsModule,
@@ -44,14 +46,19 @@ import { Subscription } from 'rxjs';
   templateUrl: './user-profil-info.component.html',
   styleUrls: ['./user-profil-info.component.scss']
 })
-export class UserProfilInfoComponent implements OnInit, OnDestroy {
-  @ViewChild('picker') picker: any; 
-  
+export class UserProfilInfoComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('picker') picker: any;
+  @ViewChild('postalCodeInput') postalCodeInput!: ElementRef;
+
   profileForm: FormGroup;
   userInfo: any = null;
   hasAdherentInfo: boolean = false;
   loading: boolean = true;
   isEditing: boolean = false;
+
+  postalCodeSuggestions: PostalCodeInfo[] = [];
+  showPostalCodeSuggestions = false;
+  private postalCodeSubs = new Subscription();
 
   constructor(
     private userService: UserService,
@@ -62,7 +69,8 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     @Inject(HttpClient) private http: HttpClient,
     private translate: TranslateService,
     private dateLocaleService: DateLocaleService,
-    private dateAdapter: DateAdapter<any>
+    private dateAdapter: DateAdapter<any>,
+    private postalCodeService: PostalCodeService
   ) {
     this.profileForm = this.fb.group({
       civilite: [''],
@@ -81,7 +89,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     if (!value) return null;
     const d = value instanceof Date ? value : new Date(value);
     if (isNaN(d.getTime())) return null;
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
   today = new Date();
@@ -89,34 +97,36 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscription.add(this.dateLocaleService.bindAdapterLocale(this.dateAdapter));
-    
     this.loadUserProfile();
+  }
+
+  ngAfterViewInit() {
+    if (this.postalCodeInput) {
+      this.setupPostalCodeInput();
+    }
   }
 
   async loadUserProfile() {
     this.loading = true;
-    
+
     try {
       const user = await this.userService.getAccount().toPromise();
-      
+
       if (user?.id) {
         const userId = user.id;
-        
+
         const token = localStorage.getItem('auth_token');
         const headers = new HttpHeaders({
           'Authorization': `Bearer ${token}`
         });
-        
-        const apiUrl = environment.apiUrl; 
-        const adherentData = await this.http.get<any>(
-          `${apiUrl}/api/adherents/by-user/${userId}`, 
+
+        const apiUrl = environment.apiUrl;
+        const adherentData = await this.http.get<any>(`${apiUrl}/api/adherents/by-user/${userId}`,
           { headers }
         ).toPromise();
-        
         if (adherentData) {
           this.userInfo = adherentData;
           this.hasAdherentInfo = true;
-          
           const formData: any = {
             civilite: adherentData.civilite || '',
             nom: adherentData.nom || '',
@@ -128,7 +138,6 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
             codepostal: adherentData.codePostal || adherentData.codepostal || '',
             dateNaissance: this.formatDateLocal(adherentData.dateNaissance) || null
           };
-          
           this.profileForm.patchValue(formData, { emitEvent: false });
         } else {
           throw new Error('Aucune donnée adhérent trouvée');
@@ -140,6 +149,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       this.toastService.error(this.translate.instant('messages.loadProfileError'));
     } finally {
       this.loading = false;
+      setTimeout(() => this.setupPostalCodeInput());
     }
   }
 
@@ -163,9 +173,10 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       });
     } else {
       this.isEditing = true;
+      setTimeout(() => this.setupPostalCodeInput());
     }
   }
-  
+
   onSubmit() {
     if (this.profileForm.valid && this.userInfo) {
       const formValue = this.profileForm.value;
@@ -175,7 +186,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
         id: this.userInfo.id,
         civilite: formValue.civilite || null,
         user: {
-          id: this.userInfo.user?.id 
+          id: this.userInfo.user?.id
         },
         telephone: formValue.telPortable,
         codePostal: formValue.codepostal,
@@ -189,7 +200,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
         (response) => {
           this.toastService.success(this.translate.instant('messages.profileUpdateSuccess'));
           this.isEditing = false;
-          this.loadUserProfile(); 
+          this.loadUserProfile();
         },
         (error) => {
           this.toastService.error(this.translate.instant('messages.profileUpdateError'));
@@ -200,5 +211,60 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.postalCodeSubs.unsubscribe();
+  }
+
+  private setupPostalCodeInput() {
+    const postalCodeInput = this.postalCodeInput?.nativeElement;
+    if (!postalCodeInput) return;
+
+    this.postalCodeSubs.unsubscribe();
+    this.postalCodeSubs = new Subscription();
+
+    const input$ = fromEvent(postalCodeInput, 'input').pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    );
+
+    this.postalCodeSubs.add(
+      input$.subscribe(() => this.onPostalCodeInput())
+    );
+  }
+
+  onPostalCodeInput() {
+    const country = this.userInfo?.pays;
+    if (country !== 'France' && country !== 'france') {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    const value = String(
+      this.profileForm.get('codepostal')?.value ?? this.postalCodeInput?.nativeElement?.value ?? ''
+    );
+
+    if (!/^\d+$/.test(value)) {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    this.postalCodeService.searchPostalCodes(value).subscribe(suggestions => {
+      this.postalCodeSuggestions = suggestions;
+      this.showPostalCodeSuggestions = this.postalCodeSuggestions.length > 0;
+    });
+  }
+
+  onPostalCodeBlur() {
+    setTimeout(() => {
+      this.showPostalCodeSuggestions = false;
+    }, 200);
+  }
+
+  selectPostalCode(postalCodeInfo: PostalCodeInfo) {
+    this.profileForm.get('codepostal')?.setValue(postalCodeInfo.code);
+    this.profileForm.get('ville')?.setValue(postalCodeInfo.city);
+    this.postalCodeSuggestions = [];
+    this.showPostalCodeSuggestions = false;
   }
 }

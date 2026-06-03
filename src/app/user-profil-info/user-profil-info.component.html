@@ -75,21 +75,48 @@
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
+        <div
+          class="form-row postal-code-row"
+          [class.postal-suggestions-open]="showPostalCodeSuggestions && postalCodeSuggestions.length > 0 && isEditing">
+          <div
+            class="postal-code-wrapper form-field"
+            [class.has-suggestions]="showPostalCodeSuggestions && postalCodeSuggestions.length > 0 && isEditing">
+            <mat-form-field appearance="outline" class="postal-code-field" subscriptSizing="dynamic">
+              <mat-label>{{ 'profile.postalCode' | translate }}</mat-label>
+              <input
+                matInput
+                #postalCodeInput
+                formControlName="codepostal"
+                [readonly]="!isEditing"
+                autocomplete="off"
+                (input)="onPostalCodeInput()"
+                (focus)="onPostalCodeInput()"
+                (blur)="onPostalCodeBlur()">
+              <mat-error *ngIf="profileForm.get('codepostal')?.hasError('required')">
+                {{ 'validation.postalCodeRequired' | translate }}
+              </mat-error>
+            </mat-form-field>
+            <div
+              *ngIf="showPostalCodeSuggestions && postalCodeSuggestions.length > 0 && isEditing"
+              class="postal-code-suggestions"
+              (mousedown)="$event.preventDefault()">
+              <div
+                *ngFor="let item of postalCodeSuggestions"
+                class="suggestion-item"
+                (mousedown)="selectPostalCode(item)">
+                <span class="postal-code">{{ item.code }}</span>
+                <span class="city-name">{{ item.city }}</span>
+              </div>
+            </div>
+          </div>
+          <mat-form-field appearance="outline" class="form-field city-field">
             <mat-label>{{ 'profile.city' | translate }}</mat-label>
             <input matInput formControlName="ville" [readonly]="!isEditing" required>
             <mat-error *ngIf="profileForm.get('ville')?.hasError('required')">
               {{ 'validation.cityRequired' | translate }}
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>{{ 'profile.postalCode' | translate }}</mat-label>
-            <input matInput formControlName="codepostal" [readonly]="!isEditing">
-            <mat-error *ngIf="profileForm.get('codepostal')?.hasError('required')">
-              {{ 'validation.postalCodeRequired' | translate }}
-            </mat-error>
-          </mat-form-field>
+
         </div>
 
         <div class="button-row" *ngIf="isEditing">
