@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { PersonalInfoComponent } from '../event-coverage/steps/personal-info/personal-info.component';
 import { VehicleInfoComponent } from '../steps/vehicle-info/vehicle-info.component';
 import { MotorsLeagueCoverageOptionsComponent } from './motors-league-coverage-options/motors-league-coverage-options.component';
@@ -139,6 +139,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
   personalForm!: FormGroup;
   vehicleForm!: FormGroup;
+  vehicleTypeForm!: FormGroup;
   coverageForm!: FormGroup;
   paymentForm!: FormGroup;
   RepresentativeLegalForm! : FormGroup;
@@ -227,6 +228,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         postalCodeControl.setValidators([Validators.required, Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
       }
       postalCodeControl.updateValueAndValidity();
+      this.updateCoverageFormValidity();
     });
   }
 
@@ -273,6 +275,36 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
+  private atLeastOneGuaranteeSelected(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const protectionPilote = group.get('protectionPilote')?.value;
+      const defenseRecours = group.get('defenseRecours')?.value;
+      const responsabiliteCivile = group.get('responsabiliteCivile')?.value;
+
+      const hasGuarantee = (protectionPilote > 0) || defenseRecours || responsabiliteCivile;
+
+      return hasGuarantee ? null : { atLeastOneGuaranteeRequired: true };
+    };
+  }
+
+  private legalProtectionResidenceValidator(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const defenseRecours = !!group.get('defenseRecours')?.value;
+
+      if (!defenseRecours || this.isFrenchResidence()) {
+        return null;
+      }
+
+      return { legalProtectionResidenceRestricted: true };
+    };
+  }
+
+  private updateCoverageFormValidity(): void {
+    this.coverageForm?.updateValueAndValidity({ emitEvent: false });
+  }
+
   private getCountryLabel(key: string): string {
     if (!key) return '';
     return this.translate.instant(`countries.${key}`);
@@ -310,6 +342,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
   private clearLegalProtectionSelection(): void {
     this.coverageOptions?.resetLegalProtectionSelection();
+    this.updateCoverageFormValidity();
   }
 
   private async showLegalProtectionBlockedDialog(): Promise<void> {
@@ -377,6 +410,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   onVehicleTypeChange(type: 'auto' | 'moto'): void {
     this.vehicleType = type;
     this.vehicleForm?.get('type')?.setValue(type);
+    this.vehicleTypeForm?.get('vehicleType')?.setValue(type);
   }
 
   getVehicleIcon(type: string): string {
@@ -439,6 +473,10 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   }
 
   private initializeForms() {
+    this.vehicleTypeForm = this.fb.group({
+      vehicleType: ['', Validators.required]
+    });
+
     this.summaryForm = this.fb.group({
       verificationCode: ['', Validators.required]
     });
@@ -505,8 +543,12 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.coverageForm = new FormGroup({
-    });
+    this.coverageForm = this.fb.group({
+      protectionPilote: [0],
+      defenseRecours: [false],
+      responsabiliteCivile: [false],
+      responsabiliteRecours: [false]
+    }, { validators: [this.atLeastOneGuaranteeSelected(), this.legalProtectionResidenceValidator()] });
 
     this.RepresentativeLegalForm = this.fb.group({
       representativeLastname: ['', Validators.required],

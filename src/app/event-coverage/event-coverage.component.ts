@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -254,6 +254,39 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
   }
 
+  private atLeastOneGuaranteeSelected(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const intemperies = group.get('intemperies')?.value;
+      const annulation = group.get('annulation')?.value;
+      const interruption = group.get('interruption')?.value;
+      const protectionPilote = group.get('protectionPilote')?.value;
+      const defenseRecours = group.get('defenseRecours')?.value;
+      const responsabiliteCivile = group.get('responsabiliteCivile')?.value;
+
+      const hasGuarantee = intemperies || annulation || interruption || (protectionPilote > 0) || defenseRecours || responsabiliteCivile;
+
+      return hasGuarantee ? null : { atLeastOneGuaranteeRequired: true };
+    };
+  }
+
+  private legalProtectionResidenceValidator(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const defenseRecours = !!group.get('defenseRecours')?.value;
+
+      if (!defenseRecours || this.isFrenchResidence()) {
+        return null;
+      }
+
+      return { legalProtectionResidenceRestricted: true };
+    };
+  }
+
+  private updateCoverageFormValidity(): void {
+    this.coverageOptionsForm?.updateValueAndValidity({ emitEvent: false });
+  }
+
   private isFrenchResidence(): boolean {
     return this.personalForm?.get('country')?.value === 'france';
   }
@@ -289,6 +322,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
 
   private clearLegalProtectionSelection(): void {
     this.eventCoverageOptions?.resetLegalProtectionSelection();
+    this.updateCoverageFormValidity();
   }
 
   private async showLegalProtectionBlockedDialog(): Promise<void> {
@@ -453,7 +487,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       protectionPilote: [0],
       defenseRecours: [false],
       responsabiliteCivile: [false]
-    });
+    }, { validators: [this.atLeastOneGuaranteeSelected(), this.legalProtectionResidenceValidator()] });
 
     this.coverageOptionsForm.valueChanges.subscribe(() => {
       const intemperiesPrime = this.coverageOptionsForm.get('intemperies')?.value ? 10 : 0;
@@ -464,6 +498,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       const responsabiliteCivilePrime = this.coverageOptionsForm.get('responsabiliteCivile')?.value ? 14 : 0;
       const totalPrime = intemperiesPrime + annulationPrime + interruptionPrime + protectionPrime + defenseRecoursPrime + responsabiliteCivilePrime;
       this.coverageOptionsForm.patchValue({ totalPrime });
+      this.coverageOptionsForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
     });
 
     this.personalForm = this.fb.group({
@@ -489,6 +524,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         postalCodeControl.setValidators([Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
       }
       postalCodeControl.updateValueAndValidity();
+      this.updateCoverageFormValidity();
     });
 
     this.vehicleForm = this.fb.group({

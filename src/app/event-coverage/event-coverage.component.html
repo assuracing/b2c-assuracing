@@ -39,7 +39,7 @@
           <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
           <div style="display: inline-block; position: relative;">
             <div [matTooltip]="(sectionInProgress ? 'common.completeEntryToContinue' : '') | translate" matTooltipPosition="above">
-              <button mat-button [disabled]="!coverageOptionsForm.valid || sectionInProgress" (click)="onContinueGuaranteeStep(stepper)">
+              <button mat-button [disabled]="sectionInProgress" (click)="onContinueGuaranteeStep(stepper)">
                 {{ sectionInProgress ? ('common.completeEntry' | translate) : ('common.continue' | translate) }}
               </button>
             </div>

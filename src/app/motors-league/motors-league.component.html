@@ -1,18 +1,18 @@
 <mat-horizontal-stepper linear [labelPosition]="labelPosition" #stepper (selectionChange)="onStepChange($event)" style="background-color: #02556e;">
-  <mat-step>
+  <mat-step [stepControl]="vehicleTypeForm">
     <ng-template matStepLabel>{{ 'vehicleStep.heading' | translate }}</ng-template>
-    
-    <form class="login-form">
+
+    <form [formGroup]="vehicleTypeForm" class="login-form">
       <div class="form-group">
         <div class="vehicle-group" style="margin-top: 20px;">
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>{{ 'vehicleStep.heading' | translate }}</mat-label>
-            <mat-select [value]="vehicleType" (selectionChange)="onVehicleTypeChange($event.value)">
+            <mat-select formControlName="vehicleType" (selectionChange)="onVehicleTypeChange($event.value)">
               <mat-select-trigger>
-                <mat-icon>{{ getVehicleIcon(vehicleType) }}</mat-icon>
-                {{ getVehicleLabel(vehicleType) }}
+                <mat-icon>{{ getVehicleIcon(vehicleTypeForm.get('vehicleType')?.value) }}</mat-icon>
+                {{ getVehicleLabel(vehicleTypeForm.get('vehicleType')?.value) }}
               </mat-select-trigger>
-          
+
               <mat-option *ngFor="let v of vehicleTypes" [value]="v.value">
                 <mat-icon>{{ v.icon }}</mat-icon> {{ vehicleTypesMap.get(v.value) }}
               </mat-option>
@@ -22,7 +22,7 @@
 
         <div class="mt-4">
           <button mat-button (click)="goToYearlyGuarantee()">{{ 'common.back' | translate }}</button>
-          <button mat-button matStepperNext [disabled]="!vehicleType">{{ 'common.continue' | translate }}</button>
+          <button mat-button matStepperNext [disabled]="!vehicleTypeForm.valid">{{ 'common.continue' | translate }}</button>
         </div>
       </div>
     </form>
@@ -40,7 +40,7 @@
         <div style="display: inline-block; position: relative;">
           <div [matTooltip]="(sectionInProgress ? 'common.completeEntry' : '') | translate" matTooltipPosition="above">
             <button mat-button
-                    [disabled]="!coverageForm.valid || sectionInProgress"
+                    [disabled]="sectionInProgress"
                     (click)="onContinueGuaranteeStep(stepper)">
               {{ sectionInProgress ? ('common.completeEntry' | translate) : ('common.continue' | translate) }}
             </button>
