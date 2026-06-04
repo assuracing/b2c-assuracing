@@ -1,7 +1,7 @@
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -85,6 +85,8 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   labelPosition: 'end' | 'bottom' = 'end';
 
   steps: { label: string, icon: string }[] = [];
+  infoForm!: FormGroup;
+  documentsForm!: FormGroup;
 
   constructor(
     public claimService: ClaimService,
@@ -93,14 +95,27 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private fb: FormBuilder
   ) {
     this.breakpointObserver.observe(['(max-width: 785px)']).subscribe(result => {
       this.labelPosition = result.matches ? 'bottom' : 'end';
     });
   }
 
+  private initializeForms(): void {
+    this.infoForm = this.fb.group({
+      dateEvenement: ['', Validators.required],
+      description: ['']
+    });
+
+    this.documentsForm = this.fb.group({
+      documentsUploaded: [false, Validators.requiredTrue]
+    });
+  }
+
   ngOnInit(): void {
+    this.initializeForms();
     this.steps = [
       { label: this.translate.instant('claimDeclaration.guaranteeType'), icon: 'category' },
       { label: this.translate.instant('claimDeclaration.requestReason'), icon: 'help' },
@@ -271,6 +286,8 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     if (this.claimDocumentsStep) {
       this.claimDocumentsStep.resetFiles();
     }
+
+    this.documentsForm.reset({ documentsUploaded: false });
   }
 
   onClaimTypeSelected(typeId: number): void {
@@ -353,10 +370,11 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
   }
 
   submitInfo(infoComponent: any): void {
-    if (infoComponent.form.valid) {
+    if (this.infoForm.valid) {
       this.onClaimInfoSubmitted(infoComponent.form.value);
       this.stepper.next();
     } else {
+      this.infoForm.markAllAsTouched();
       this.toastService.error(this.translate.instant('messages.fillAllRequiredFields'));
     }
   }
@@ -369,19 +387,27 @@ export class ClaimDeclarationComponent implements OnInit, OnDestroy {
     this.claim.fichiers = fichiers;
   }
 
+  onDocumentsStateChanged(state: { fichiers: Fichier[]; isValid: boolean }): void {
+    this.claim.fichiers = state.fichiers;
+    this.documentsForm.patchValue({ documentsUploaded: state.isValid });
+    this.documentsForm.updateValueAndValidity();
+  }
+
   onBankingSubmitted(banking: any): void {
     this.claim = { ...this.claim, ...banking };
   }
 
-  submitDocuments(documentsComponent: any): void {
+  submitDocuments(documentsComponent: ClaimDocumentsStepComponent): void {
+    this.onDocumentsStateChanged({
+      fichiers: documentsComponent.uploadedFiles,
+      isValid: documentsComponent.areAllDocumentsUploaded()
+    });
+
     if (!documentsComponent.areAllDocumentsUploaded()) {
       this.toastService.error(this.translate.instant('messages.uploadAllRequiredDocuments'));
       return;
     }
-    
-    if (documentsComponent.uploadedFiles.length > 0) {
-      this.onDocumentsSubmitted(documentsComponent.uploadedFiles);
-    }
+
     this.stepper.next();
   }
 
