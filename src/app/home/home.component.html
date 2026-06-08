@@ -17,22 +17,45 @@
 <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_USER') && !userService.hasRole('ROLE_ADMIN')"
   class="container-app">
   <h2 class="text-light">{{ 'home.welcomeAuth' | translate }}{{ userService.getUser()?.firstName }} !</h2>
-  <button (click)="goToUserContracts()" class="btn btn-test">
-    <mat-icon style="vertical-align: middle; margin-right: 4px;">list_alt</mat-icon>
-      {{ 'home.myContractsBtn' | translate }}
-  </button>
-  <button (click)="goToGuaranteeChoice()" class="btn btn-test">
-    <mat-icon style="vertical-align: middle; margin-right: 4px;">assignment</mat-icon>
-      {{ 'home.subscribeBtn' | translate }}
-  </button>
-  <button (click)="goToUserProfilInfo()" class="btn btn-test">
-      <mat-icon style="vertical-align: middle; margin-right: 4px;">settings</mat-icon>
-      {{ 'home.personalInfoBtn' | translate }}
-  </button>
-  <button (click)="goToClaimDeclaration()" class="btn btn-test">
-      <mat-icon style="vertical-align: middle; margin-right: 4px;">report_problem</mat-icon>
-      {{ 'home.claimBtn' | translate }}
-  </button>
+  
+  <div class="primary-buttons-wrapper">
+    <div class="primary-buttons">
+      <div class="button-block primary-block">
+        <button (click)="goToGuaranteeChoice()" class="btn btn-test btn-large">
+          <span class="btn-content">
+            <mat-icon class="btn-icon" style="color: #0ba2cf;">add_circle</mat-icon>
+            <span class="btn-text">{{ 'home.subscribeBtn' | translate }}</span>
+          </span>
+        </button>
+      </div>
+      
+      <div class="button-block">
+        <button (click)="goToClaimDeclaration()" class="btn btn-test btn-danger">
+          <span class="btn-content">
+            <mat-icon class="btn-icon danger-icon" style="color: #dc3545;">report_problem</mat-icon>
+            <span class="btn-text">{{ 'home.claimBtn' | translate }}</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="secondary-buttons">
+    <div class="button-block secondary-block">
+      <button (click)="goToUserContracts()" class="btn btn-test">
+        <span class="btn-content">
+          <mat-icon class="btn-icon">list_alt</mat-icon>
+          <span class="btn-text">{{ 'home.myContractsBtn' | translate }}</span>
+        </span>
+      </button>
+      <button (click)="goToUserProfilInfo()" class="btn btn-test">
+        <span class="btn-content">
+          <mat-icon class="btn-icon">settings</mat-icon>
+          <span class="btn-text">{{ 'home.personalInfoBtn' | translate }}</span>
+        </span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="userService.isLoggedIn() && userService.hasRole('ROLE_ADMIN')">

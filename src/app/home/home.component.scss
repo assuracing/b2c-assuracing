@@ -46,3 +46,253 @@
     font-size: 1rem;
     margin: 0;
 }
+
+.container-app h2 {
+    margin-top: 0;
+    margin-bottom: 120px;
+}
+
+.primary-buttons-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.primary-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0;
+    width: 100%;
+    align-items: center;
+}
+
+.primary-buttons .button-block {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.primary-buttons .btn.btn-large,
+.primary-buttons .btn.btn-danger {
+    width: 100% !important;
+    max-width: 420px !important;
+}
+
+.secondary-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 120px;
+    width: 100%;
+}
+
+.button-block {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.primary-buttons .button-block {
+    justify-content: center !important;
+}
+
+.primary-block {
+    margin-bottom: 5px;
+}
+
+.secondary-block {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    margin: 0;
+    height: 50px;
+    width: 100%;
+    max-width: 400px;
+    min-height: 44px;
+    align-items: center;
+    background-color: #ffffff;
+    border: 0;
+    border-radius: 100px;
+    box-sizing: border-box;
+    color: #02556e;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: flex-start;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 0 20px;
+    text-align: center;
+    touch-action: manipulation;
+    transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.btn-icon {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.btn-text {
+    flex: 1;
+    text-align: center;
+}
+
+.btn-test:hover {
+    background-color: #02556e;
+    color: #ffffff;
+}
+
+.btn.btn-large {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    height: 60px !important;
+    max-width: 420px !important;
+    padding: 0 25px !important;
+    animation: glow 1.5s ease-in-out infinite;
+    border: 3px solid #0ba2cf !important;
+    box-shadow: 0 0 20px rgba(11, 162, 207, 0.4);
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(11, 162, 207, 0.4);
+        border-color: #0ba2cf;
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(11, 162, 207, 0.8);
+        border-color: #0ba2cf;
+    }
+}
+
+.btn.btn-large:hover {
+    background-color: #02556e !important;
+    color: #ffffff !important;
+    animation: none;
+    border: 3px solid #0ba2cf !important;
+    box-shadow: 0 0 25px rgba(11, 162, 207, 0.8) !important;
+}
+
+.btn.btn-danger {
+    border: 2px solid #dc3545 !important;
+    height: 58px !important;
+    max-width: 420px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding: 0 25px !important;
+}
+
+.btn.btn-danger:hover {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+.btn.btn-danger:hover .danger-icon {
+    color: #ffffff !important;
+}
+
+.secondary-block .btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+
+    .container-app h2 {
+        margin-top: 30px;
+    }
+    .primary-buttons {
+        gap: 12px;
+        margin-top: 20px;
+    }
+    
+    .secondary-buttons {
+        gap: 12px;
+        margin-top: 60px;
+    }
+    
+    .primary-block {
+        margin-bottom: 30px;
+    }
+    
+    .secondary-block {
+        flex-direction: row;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+    
+    .btn {
+        height: 48px;
+        font-size: 14px;
+    }
+    
+    .btn.btn-large {
+        height: 65px !important;
+        font-size: 18px !important;
+        max-width: 420px !important;
+        padding: 0 25px !important;
+    }
+    
+    .secondary-block .btn {
+        min-width: auto;
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .primary-buttons {
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .secondary-buttons {
+        gap: 10px;
+        margin-top: 50px;
+    }
+    
+    .primary-block {
+        margin-bottom: 20px;
+    }
+    
+    .secondary-block {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn {
+        height: 44px;
+        font-size: 13px;
+        padding: 0 15px;
+    }
+    
+    .btn.btn-large {
+        height: 62px !important;
+        font-size: 17px !important;
+        max-width: 400px !important;
+        padding: 0 23px !important;
+    }
+    
+    .secondary-block .btn {
+        font-size: 16px !important;
+    }
+}
