@@ -553,38 +553,31 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
             if (user?.email && user.email.toLowerCase() === email.toLowerCase()) {
               return;
             }
-            const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-              disableClose: true
-            });
-            
-            dialogRef.afterClosed().subscribe((result) => {
-              if (result?.success && result.adherent) {
-                this.updateFormWithAdherentData(result.adherent);
-              }
-              if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
-                this.emailControl?.setValue('');
-              } else if (result && typeof result === 'object' && result.email) {
-                this.emailControl?.setValue(result.email);
-              }
-            });
+            this.openEmailExistsDialog();
           },
           error: () => {
-            const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-              disableClose: true
-            });
-            
-            dialogRef.afterClosed().subscribe((result) => {
-              if (result?.success && result.adherent) {
-                this.updateFormWithAdherentData(result.adherent);
-              }
-              if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
-                this.emailControl?.setValue('');
-              } else if (result && typeof result === 'object' && result.email) {
-                this.emailControl?.setValue(result.email);
-              }
-            });
+            this.openEmailExistsDialog();
           }
         });
+      }
+    });
+  }
+
+  private openEmailExistsDialog() {
+    const email = this.emailControl?.value;
+    const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
+      disableClose: true,
+      data: { email: email }
+    });
+    
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success && result.adherent) {
+        this.updateFormWithAdherentData(result.adherent);
+      }
+      if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
+        this.emailControl?.setValue('');
+      } else if (result && typeof result === 'object' && result.email) {
+        this.emailControl?.setValue(result.email);
       }
     });
   }
