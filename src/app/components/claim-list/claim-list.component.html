@@ -80,7 +80,8 @@
             <span *ngIf="!hasFileOfType(claim, docType)" class="missing-file">{{ 'claimDetails.notProvided' | translate }}</span>
           </div>
           
-          <div *ngIf="canEditClaim(claim)" class="documents-add-section">
+          <!-- <div *ngIf="canEditClaim(claim)" class="documents-add-section"> -->
+            <div class="documents-add-section">
             <h5>{{ 'claimDetails.addDocument' | translate }}</h5>
             
             <mat-card class="documents-cards">
