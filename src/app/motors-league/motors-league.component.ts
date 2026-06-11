@@ -160,6 +160,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   labelPosition: 'end' | 'bottom' = 'end';
   vehicleType: 'auto' | 'moto' | '' = '';
   userAge: number = 0;
+  canResendCode: boolean = true;
+  resendCodeCooldown: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -798,7 +800,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
         window.location.href = paymentUrl;
       },
-      error: (_err) => {
+      error: (err) => {
+        const errorMessage = err.error?.detail || err.error?.response || err.error?.message || this.translate.instant('messages.contractCreationError');
+        this.toastService.error(errorMessage);
       }
     });
   }
@@ -883,16 +887,41 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     });
   }
 
+  resendVerificationCode(): void {
+    if (!this.canResendCode) return;
+
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.summaryForm.get('verificationCode')?.setValue('');
+        this.toastService.success(this.translate.instant('representativeLegal.verificationCodeSent'));
+
+        this.canResendCode = false;
+        this.resendCodeCooldown = 30;
+        const timer = setInterval(() => {
+          this.resendCodeCooldown--;
+          if (this.resendCodeCooldown <= 0) {
+            clearInterval(timer);
+            this.canResendCode = true;
+          }
+        }, 1000);
+      },
+      error: (_err) => {
+        this.toastService.error(this.translate.instant('messages.sendVerificationCodeError'));
+      }
+    });
+  }
+
   verifyCode(): void {
     const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success(this.translate.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
-      error: (_err) => {
-        this.toastService.error(this.translate.instant('messages.verificationCodeInvalid'));
+      error: (err) => {
+        const errorMessage = err.error?.response || this.translate.instant('messages.verificationCodeInvalid');
+        this.toastService.error(errorMessage);
       }
     });
   }

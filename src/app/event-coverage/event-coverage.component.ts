@@ -395,6 +395,8 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   isLoading: boolean = false
   error: string | null = null;
   subscriptions: Subscription[] = [];
+  canResendCode: boolean = true;
+  resendCodeCooldown: number = 0;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
   @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions?: EventCoverageOptionsComponent;
 
@@ -1039,7 +1041,9 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
 
         window.location.href = paymentUrl;
       },
-      error: (_err) => {
+      error: (err) => {
+        const errorMessage = err.error?.detail || err.error?.response || err.error?.message || this.translateService.instant('messages.contractCreationError');
+        this.toastService.error(errorMessage);
       }
     });
   }
@@ -1179,16 +1183,41 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     });
   }
 
+  resendVerificationCode(): void {
+    if (!this.canResendCode) return;
+
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.summaryForm.get('verificationCode')?.setValue('');
+        this.toastService.success(this.translateService.instant('representativeLegal.verificationCodeSent'));
+
+        this.canResendCode = false;
+        this.resendCodeCooldown = 30;
+        const timer = setInterval(() => {
+          this.resendCodeCooldown--;
+          if (this.resendCodeCooldown <= 0) {
+            clearInterval(timer);
+            this.canResendCode = true;
+          }
+        }, 1000);
+      },
+      error: (err) => {
+        this.toastService.error(this.translateService.instant('messages.sendVerificationCodeError'));
+      }
+    });
+  }
+
   verifyCode(): void {
     const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success(this.translateService.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
       error: (err) => {
-        this.toastService.error(this.translateService.instant('messages.verificationCodeInvalid'));
+        const errorMessage = err.error?.response || this.translateService.instant('messages.verificationCodeInvalid');
+        this.toastService.error(errorMessage);
       }
     });
   }
