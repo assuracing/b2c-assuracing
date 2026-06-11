@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, Optional } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -37,9 +37,14 @@ export class EmailExistsDialogComponent {
     private dialogRef: MatDialogRef<EmailExistsDialogComponent>,
     private dialog: MatDialog,
     private userService: UserService,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { email?: string }
   ) {
     this.apiUrl = this.envService.apiUrl;
+  }
+
+  get email(): string {
+    return this.data?.email || '';
   }
 
   wrongEmail() {
@@ -53,6 +58,7 @@ export class EmailExistsDialogComponent {
         width: '600px',
         maxWidth: '90vw',
         panelClass: 'login-dialog',
+        data: { email: this.email }
       });
       
       dialogRef.afterClosed().subscribe((result) => {
