@@ -45,7 +45,7 @@
           <mat-label>{{ 'eventCoverage.trackday.organizer' | translate }}</mat-label>
           <mat-select [formControl]="getFormControl('organizer')" #organizerSelect panelClass="organizer-select-panel" (openedChange)="onOrganizerPanelOpened($event)" (selectionChange)="onOrganizerSelect($event)">
             <div class="search-container">
-              <input #organizerSearchInput class="search-input" placeholder="{{ 'eventCoverage.trackday.searchOrganizer' | translate }}" (click)="$event.stopPropagation()" (input)="filterOrganizers($event)">
+              <input #organizerSearchInput class="search-input" placeholder="{{ 'eventCoverage.trackday.searchOrganizer' | translate }}" (click)="$event.stopPropagation()" (input)="filterOrganizers($event)" (keydown)="onSearchInputKeydown($event)">
             </div>
             <mat-option *ngIf="isLoadingOrganizers" disabled>
               <mat-spinner diameter="20" class="spinner"></mat-spinner>

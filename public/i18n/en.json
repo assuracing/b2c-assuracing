@@ -66,7 +66,7 @@
   },
   "representativeLegal": {
       "verificationCodeSent": "Verification code sent, this code will be required at the last step",
-      "codeEmailNotice": "A verification code has been sent to your email.",
+      "codeEmailNotice": "A verification code will be sent to your email.",
       "legalRepresentativeTitle": "Legal Representative Information",
       "legalRepresentativeInfo": "The legal representative (Minor insured)"
   },
@@ -481,8 +481,11 @@
     "phone": "Phone",
     "drivingLicense": "Driving License",
     "vehicle": "Vehicle",
-    "verificationCode": "Verification Code",
+    "verificationCode": "Verification code",
+    "verificationCodeSendAt": "Verification Code sent to",
     "verificationMessage": "Please enter the verification code that has been sent to your email",
+    "resendCode": "Resend code",
+    "resendCodeWait": "Retry in",
     "iHereby": "I, the undersigned",
     "insured": "insured",
     "legalRepresentative": "legal representative of the insured person named above",

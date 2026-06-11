@@ -86,7 +86,6 @@
         </div>
       </form>
     </mat-step>
-  
     <mat-step [stepControl]="summaryForm">
       <ng-template matStepLabel>{{ 'eventCoverage.summaryStep' | translate }}</ng-template>
       <div class="summary-login login-form">
@@ -162,13 +161,18 @@
           </mat-card-content>
         </mat-card>
 
-        <p class="text-red" *ngIf="isMinor()">{{ 'summary.verificationMessage' | translate }} {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
+        <p class="text-red" style="margin-top:10px;" *ngIf="isMinor()">{{ 'summary.verificationMessage' | translate }} {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
         <form [formGroup]="summaryForm">
           <mat-form-field *ngIf="isMinor()">
             <mat-label>{{ 'summary.verificationCode' | translate }}</mat-label>
             <input matInput type="text" formControlName="verificationCode">
           </mat-form-field>
+          <div *ngIf="isMinor()">
+            <button mat-button (click)="resendVerificationCode()" [disabled]="!canResendCode" style="margin-top: 5px;">
+              {{ canResendCode ? ('summary.resendCode' | translate) : ('summary.resendCodeWait' | translate) + ' (' + resendCodeCooldown + 's)' }}
+            </button>
+          </div>
         </form>
     </div>
 

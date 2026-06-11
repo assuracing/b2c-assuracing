@@ -206,6 +206,12 @@ export class TrackdayComponent implements OnInit {
       )
     );
   }
+
+  onSearchInputKeydown(event: KeyboardEvent) {
+    if (event.key === ' ') {
+      event.stopPropagation();
+    }
+  }
   
   getFormControl(controlName: string): FormControl {
     return this.form.get(controlName) as FormControl;
