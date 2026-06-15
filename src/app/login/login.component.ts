@@ -1,8 +1,8 @@
-import { Component, Optional } from '@angular/core';
+import { Component, Optional, Inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../services/toast.service';
 import { CommonModule } from '@angular/common';
@@ -25,8 +25,13 @@ export class LoginComponent {
     private router: Router,
     private toastService: ToastService,
     private translate: TranslateService,
-    @Optional() private dialogRef?: MatDialogRef<LoginComponent>
-  ) {}
+    @Optional() private dialogRef?: MatDialogRef<LoginComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { email?: string }
+  ) {
+    if (data?.email) {
+      this.username = data.email;
+    }
+  }
 
   onLogin() {
     this.authService.login(this.username, this.password, this.rememberMe).subscribe({
