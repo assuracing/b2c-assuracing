@@ -230,6 +230,10 @@ export class ClaimListComponent implements OnInit, OnChanges {
     return this.isEditableProduct(claim) && !this.isClaimClosed(claim);
   }
 
+  canAddDocuments(claim: Claim): boolean {
+    return claim.etatEnCours !== 'réglé' && claim.etatEnCours !== 'refusé' && claim.etatEnCours !== 'sans suite';
+  }
+
   getRequiredDocumentTypes(claim: Claim): string[] {
     if (!claim.typeSinistre?.nom) {
       return [
