@@ -10,6 +10,19 @@
   min-height: 100vh;
 }
 
+.container-app {
+  position: relative;
+  padding-top:80px
+}
+
+.header-actions {
+  position: absolute !important;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px) !important;
+}
+
 .btn {
     margin: 10px 0;
     height: 50px;
@@ -35,17 +48,4 @@ h2 {
     font-size: 24px;
     color: #333;
     text-align: center;
-}
-
-.back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: auto !important;
-    min-width: 120px;
-    padding: 0 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
 }
