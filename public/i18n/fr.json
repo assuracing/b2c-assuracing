@@ -843,5 +843,39 @@
     "legalProtectionResidenceRestriction": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Continuer sans cette garantie ?",
     "legalProtectionResidenceRestrictionBlocked": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Veuillez sélectionner d'autres garanties.",
     "continueWithoutGuarantee": "Continuer sans cette garantie"
+  },
+  "footer": {
+    "assuracing": "Assuracing",
+    "description": "Votre assurance pour les sports mécaniques",
+    "legal": "Légal",
+    "privacyPolicy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "cgu": "CGU",
+    "cookies": "Gestion des cookies",
+    "contact": "Contact",
+    "rights": "Tous droits réservés."
+  },
+  "contractConsents": {
+    "cgu": "J'accepte les Conditions Générales d'Utilisation (CGU)",
+    "readCgu": "(lire les CGU)",
+    "readCgv": "(lire les CGV)",
+    "privacyPolicy": "J'accepte la Politique de Confidentialité",
+    "readPrivacy": "(lire la politique)",
+    "healthDataConsent": "En cochant cette case, je consens expressément au traitement des données relatives à ma pratique sportive automobile et, le cas échéant, aux données de santé nécessaires à la gestion de mon contrat et de mes futurs sinistres.",
+    "healthDataWarning": "Conformément à l'article 9 du RGPD, le traitement des données de santé nécessite votre consentement explicite.",
+    "commercialOffers": "J'accepte de recevoir des offres commerciales et la newsletter d'Assuracing."
+  },
+  "registrationConsents": {
+    "title": "Consentements d'Inscription",
+    "description": "Pour créer votre compte, veuillez accepter les conditions suivantes :",
+    "mandatorySection": "Consentements obligatoires",
+    "optionalSection": "Consentements facultatifs",
+    "cgu": "J'accepte les Conditions Générales d'Utilisation (CGU) du site et j'ai pris connaissance de la Politique de Confidentialité.",
+    "readCgu": "(lire les CGU)",
+    "privacyPolicy": "J'ai pris connaissance de la Politique de Confidentialité",
+    "readPrivacy": "(lire la politique)",
+    "commercialOffers": "J'accepte de recevoir des offres commerciales et la newsletter d'Assuracing.",
+    "partnerSharing": "J'accepte que mes données soient partagées avec les partenaires d'Assuracing pour recevoir leurs offres.",
+    "note": "Les champs marqués d'un astérisque (*) sont obligatoires. Vous pouvez retirer votre consentement à tout moment depuis votre compte."
   }
 }

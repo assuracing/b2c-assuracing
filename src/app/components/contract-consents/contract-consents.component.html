@@ -1,0 +1,71 @@
+<div class="contract-consents compact">
+  <div class="consent-item mandatory" *ngIf="shouldShowConsent()">
+    <label class="consent-label">
+      <mat-checkbox
+        [(ngModel)]="consents.cgu"
+        (change)="onConsentChange()"
+        class="consent-checkbox"
+        color="primary"
+      >
+        <span class="consent-text">
+          {{ 'contractConsents.cgu' | translate }}
+          <a href="/CGU_Assuracing_Version_Detaillee.pdf" target="_blank" class="consent-link">
+            {{ 'contractConsents.readCgu' | translate }}
+          </a>
+        </span>
+      </mat-checkbox>
+    </label>
+  </div>
+
+  <div class="consent-item mandatory" *ngIf="shouldShowConsent()">
+    <label class="consent-label">
+      <mat-checkbox
+        [(ngModel)]="consents.privacyPolicy"
+        (change)="onConsentChange()"
+        class="consent-checkbox"
+        color="primary"
+      >
+        <span class="consent-text">
+          {{ 'contractConsents.privacyPolicy' | translate }}
+          <a href="/VAX CONSEILS-charte de protection des données personnelles.pdf" target="_blank" class="consent-link">
+            {{ 'contractConsents.readPrivacy' | translate }}
+          </a>
+        </span>
+      </mat-checkbox>
+    </label>
+  </div>
+
+  <div class="consent-item mandatory health-data" *ngIf="shouldShowConsent()">
+    <label class="consent-label">
+      <mat-checkbox
+        [(ngModel)]="consents.healthDataConsent"
+        (change)="onConsentChange()"
+        class="consent-checkbox"
+        color="primary"
+      >
+        <span class="consent-text">
+          {{ 'contractConsents.healthDataConsent' | translate }}
+        </span>
+      </mat-checkbox>
+    </label>
+    <div class="health-data-warning">
+      <mat-icon class="warning-icon">warning</mat-icon>
+      <span>{{ 'contractConsents.healthDataWarning' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="consent-item optional" *ngIf="shouldShowConsent()">
+    <label class="consent-label">
+      <mat-checkbox
+        [(ngModel)]="consents.commercialOffers"
+        (change)="onConsentChange()"
+        class="consent-checkbox"
+        color="primary"
+      >
+        <span class="consent-text">
+          {{ 'contractConsents.commercialOffers' | translate }}
+        </span>
+      </mat-checkbox>
+    </label>
+  </div>
+</div>

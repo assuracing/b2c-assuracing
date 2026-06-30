@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +32,7 @@ import { RepresentativeLegalComponent } from '../steps/representative-legal/repr
 import { TrackdayComponent } from './steps/trackday/trackday.component';
 import { PaymentComponent } from '../steps/payment/payment.component';
 import { EventCoverageOptionsComponent } from "./steps/event-coverage-options/event-coverage-options.component";
+import { ContractConsentsComponent, ContractConsents } from '../components/contract-consents/contract-consents.component';
 import { VehicleService } from '../services/vehicle.service';
 import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
@@ -79,6 +82,13 @@ interface Contract {
     ffsaPermisB: string;
     nationalite: string;
   };
+  consent: {
+    cguConsent: boolean;
+    privacyPolicyConsent: boolean;
+    healthDataConsent: boolean;
+    commercialOffersConsent: boolean;
+  };
+  coverageAccepted: boolean;
   marque: string;
   modele: string;
   typevehicule: string;
@@ -121,6 +131,7 @@ interface ContractResponse {
     TrackdayComponent,
     PaymentComponent,
     EventCoverageOptionsComponent,
+    ContractConsentsComponent,
     MatSnackBarModule,
     MatRadioModule,
     MatCardModule,
@@ -182,7 +193,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   public claimStatusesMap: Map<string, string> = new Map();
     private apiUrl: string;
 
-  constructor( 
+  constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private contractService: ContractService,
@@ -195,7 +206,8 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private activatedRoute: ActivatedRoute,
     private translateService: TranslateService,
-    private sourceService: SourceService
+    private sourceService: SourceService,
+    private cdr: ChangeDetectorRef
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -210,7 +222,9 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     this.updateNationalities();
     this.updateLicenseTypes();
     this.updateClaimStatuses();
-    
+
+    this.loadExistingConsents();
+
     const langChangeSub = this.translateService.onLangChange.subscribe(() => {
       this.updateNationalities();
       this.updateLicenseTypes();
@@ -395,6 +409,14 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   isLoading: boolean = false
   error: string | null = null;
   subscriptions: Subscription[] = [];
+  contractConsents: ContractConsents = {
+    cgu: false,
+    privacyPolicy: false,
+    healthDataConsent: false,
+    commercialOffers: false
+  };
+  contractConsentsValid: boolean = false;
+  hasExistingConsentsValue: boolean = false;
   canResendCode: boolean = true;
   resendCodeCooldown: number = 0;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
@@ -1018,6 +1040,13 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
       },
+      consent: {
+        cguConsent: this.contractConsents.cgu,
+        privacyPolicyConsent: this.contractConsents.privacyPolicy,
+        healthDataConsent: this.contractConsents.healthDataConsent,
+        commercialOffersConsent: this.contractConsents.commercialOffers,
+      },
+      coverageAccepted: this.acceptTerms,
       marque: vehicleData.brand || '',
       modele: vehicleData.model || '',
       typevehicule: this.trackdayForm.get('vehicleType')?.value || this.vehicleForm.get('type')?.value,
@@ -1230,7 +1259,74 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     const diffInMs = eventDate.getTime() - now.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     return diffInDays < 21;
-}
+  }
+
+  onContractConsentsChange(consents: ContractConsents): void {
+    this.contractConsents = consents;
+  }
+
+  onContractConsentsValidityChange(isValid: boolean): void {
+    this.contractConsentsValid = isValid;
+  }
+
+  isContractConsentsValid(): boolean {
+    return this.hasExistingConsents() || this.contractConsentsValid;
+  }
+
+  loadExistingConsents(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.hasExistingConsentsValue = false;
+      return;
+    }
+
+    this.userService.getAccount().pipe(
+      switchMap((account: any) => {
+        if (!account || !account.id) {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+          return of(null);
+        }
+        return this.userService.getAdherentId().pipe(
+          switchMap((adherentId) => {
+            return this.http.get<any>(`${this.envService.apiUrl}/api/consent/${adherentId}`);
+          })
+        );
+      })
+    ).subscribe({
+      next: (consentDTO) => {
+        if (consentDTO) {
+          const hasConsents = consentDTO.cguConsent !== null ||
+                            consentDTO.privacyPolicyConsent !== null ||
+                            consentDTO.healthDataConsent !== null ||
+                            consentDTO.commercialOffersConsent !== null;
+          if (hasConsents) {
+            this.contractConsents = {
+              cgu: consentDTO.cguConsent || false,
+              privacyPolicy: consentDTO.privacyPolicyConsent || false,
+              healthDataConsent: consentDTO.healthDataConsent || false,
+              commercialOffers: consentDTO.commercialOffersConsent || false
+            };
+            this.hasExistingConsentsValue = true;
+            this.cdr.detectChanges();
+          } else {
+            this.hasExistingConsentsValue = false;
+            this.cdr.detectChanges();
+          }
+        } else {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        this.hasExistingConsentsValue = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  hasExistingConsents(): boolean {
+    return this.hasExistingConsentsValue;
+  }
 }
 
 

@@ -147,6 +147,13 @@
             <div class="signature-actions">
               <mat-checkbox class="agree-checkbox" [checked]="acceptTerms" (change)="acceptTerms = $event.checked">{{ 'summary.iAgree' | translate }}</mat-checkbox>
             </div>
+            
+          <app-contract-consents
+            class="compact"
+            [(consents)]="contractConsents"
+            [alreadyConsented]="hasExistingConsents()"
+            (validityChange)="onContractConsentsValidityChange($event)">
+          </app-contract-consents>
 
             <p class="text-red" style="margin-top:10px;" *ngIf="isMinor()">{{ 'summary.verificationMessage' | translate }} {{RepresentativeLegalForm.get('representativeEmail')?.value}}</p>
 
@@ -165,10 +172,11 @@
         </mat-card-content>
       </mat-card>
     </div>
+
     <div class="mt-4">
       <button mat-button matStepperPrevious>{{ 'common.back' | translate }}</button>
-      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || (isMinor() && !summaryForm.valid)">{{ 'common.validate' | translate }}</button>
-      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms">{{ 'common.validate' | translate }}</button>
+      <button mat-button *ngIf="isMinor()" (click)="verifyCode()" [disabled]="!acceptTerms || !isContractConsentsValid() || (isMinor() && !summaryForm.valid)">{{ 'common.validate' | translate }}</button>
+      <button mat-button *ngIf="!isMinor()" (click)="onSubmit()" [disabled]="!acceptTerms || !isContractConsentsValid()">{{ 'common.validate' | translate }}</button>
     </div>
   </mat-step>
 
