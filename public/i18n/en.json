@@ -1,6 +1,7 @@
 {
   "auth": {
     "login": "Login",
+    "loginBlocked": "Try again in",
     "username": "Username",
     "password": "Password",
     "rememberMe": "Remember me",
@@ -825,6 +826,7 @@
     "verificationCodeValid": "Verification code validated",
     "loginSuccess": "Login successful",
     "loginError": "Invalid username or password",
+    "accountBlocked": "Too many failed login attempts. Please try again in 15 minutes.",
     "uploadAllMandatoryDocuments": "Please upload all mandatory documents before continuing.",
     "invalidFileFormat": "Format not accepted. Accepted files: {{extensions}}",
     "duplicateFile": "The file \"{{fileName}}\" is already uploaded",
@@ -847,5 +849,10 @@
     "legalProtectionResidenceRestriction": "Your place of residence does not allow you to subscribe to Legal Protection. Continue without this guarantee?",
     "legalProtectionResidenceRestrictionBlocked": "Your place of residence does not allow you to subscribe to Legal Protection. Please select other guarantees.",
     "continueWithoutGuarantee": "Continue without this guarantee"
+  },
+  "error": {
+    "blocked": "Too many failed login attempts. Please try again in 15 minutes.",
+    "loginError": "Invalid credentials. Attempts remaining: {{remaining}}",
+    "authentication-error": "Authentication error"
   }
 }
