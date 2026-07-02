@@ -29,9 +29,12 @@ export class ContractConsentsComponent {
   };
 
   @Input() alreadyConsented: boolean = false;
+  @Input() showSelectAll: boolean = false;
 
   @Output() consentsChange = new EventEmitter<ContractConsents>();
   @Output() validityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  selectAll: boolean = false;
 
   constructor(private router: Router) {}
 
@@ -39,7 +42,17 @@ export class ContractConsentsComponent {
     return !this.alreadyConsented;
   }
 
+  onSelectAllChange(): void {
+    this.consents.cgu = this.selectAll;
+    this.consents.privacyPolicy = this.selectAll;
+    this.consents.healthDataConsent = this.selectAll;
+    this.consents.commercialOffers = this.selectAll;
+    this.consentsChange.emit(this.consents);
+    this.checkValidity();
+  }
+
   onConsentChange(): void {
+    this.selectAll = this.consents.cgu && this.consents.privacyPolicy && this.consents.healthDataConsent && this.consents.commercialOffers;
     this.consentsChange.emit(this.consents);
     this.checkValidity();
   }

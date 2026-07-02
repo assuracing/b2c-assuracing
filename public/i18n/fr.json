@@ -38,6 +38,11 @@
     "personalInfoBtn": "Mes informations personnelles",
     "claimBtn": "Déclarer un sinistre"
   },
+  "consentDialog": {
+    "title": "Consentements requis",
+    "description": "Merci de valider les consentements ci-dessous pour continuer.",
+    "accept": "Valider"
+  },
   "guaranties": {
     "productQuestion": "Quel type de produit recherchez-vous ? ",
     "annualGuaranties": "Garanties à l'année",
@@ -863,7 +868,8 @@
     "readPrivacy": "(lire la politique)",
     "healthDataConsent": "En cochant cette case, je consens expressément au traitement des données relatives à ma pratique sportive automobile et, le cas échéant, aux données de santé nécessaires à la gestion de mon contrat et de mes futurs sinistres.",
     "healthDataWarning": "Conformément à l'article 9 du RGPD, le traitement des données de santé nécessite votre consentement explicite.",
-    "commercialOffers": "J'accepte de recevoir des offres commerciales et la newsletter d'Assuracing."
+    "commercialOffers": "J'accepte de recevoir des offres commerciales et la newsletter d'Assuracing.",
+    "selectAll": "Tout sélectionner"
   },
   "registrationConsents": {
     "title": "Consentements d'Inscription",

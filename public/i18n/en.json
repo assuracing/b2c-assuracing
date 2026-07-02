@@ -39,6 +39,11 @@
     "personalInfoBtn": "My personal information",
     "claimBtn": "Declare a claim"
   },
+  "consentDialog": {
+    "title": "Required consents",
+    "description": "Please confirm the consent items below to continue.",
+    "accept": "Accept"
+  },
   "guaranties": {
     "productQuestion": "What type of product are you looking for?",
     "annualGuaranties": "Annual guarantees",
@@ -867,7 +872,8 @@
     "readPrivacy": "(read policy)",
     "healthDataConsent": "By checking this box, I expressly consent to the processing of data related to my motorsport practice and, where applicable, health data necessary for the management of my contract and any future claims.",
     "healthDataWarning": "In accordance with Article 9 of the GDPR, the processing of health data requires your explicit consent.",
-    "commercialOffers": "I accept to receive commercial offers and the Assuracing newsletter."
+    "commercialOffers": "I accept to receive commercial offers and the Assuracing newsletter.",
+    "selectAll": "Select all"
   },
   "registrationConsents": {
     "title": "Registration Consents",
