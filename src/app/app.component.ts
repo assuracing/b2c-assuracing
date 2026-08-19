@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastComponent } from './toast';
 import { TranslateModule } from '@ngx-translate/core';
 import { I18nService } from './core/services/i18n.service';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   standalone: true,
@@ -18,7 +19,8 @@ import { I18nService } from './core/services/i18n.service';
     FormsModule, 
     HttpClientModule, 
     ToastComponent, 
-    TranslateModule
+    TranslateModule,
+    FooterComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -28,8 +30,8 @@ export class AppComponent {
 
   constructor(
     private userService: UserService, 
-    private i18nService: I18nService
-    , private sourceService: SourceService
+    private i18nService: I18nService,
+    private sourceService: SourceService
   ) {}
 
   ngOnInit() {
