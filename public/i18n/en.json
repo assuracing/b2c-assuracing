@@ -40,6 +40,11 @@
     "personalInfoBtn": "My personal information",
     "claimBtn": "Declare a claim"
   },
+  "consentDialog": {
+    "title": "Required consents",
+    "description": "Please confirm the consent items below to continue.",
+    "accept": "Accept"
+  },
   "guaranties": {
     "productQuestion": "What type of product are you looking for?",
     "annualGuaranties": "Annual guarantees",
@@ -854,5 +859,40 @@
     "blocked": "Too many failed login attempts. Please try again in 15 minutes.",
     "loginError": "Invalid credentials. Attempts remaining: {{remaining}}",
     "authentication-error": "Authentication error"
+  },
+  "footer": {
+    "assuracing": "Assuracing",
+    "description": "Your insurance partner for motorsports",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms and Conditions",
+    "cgu": "Terms of Use",
+    "cookies": "Cookie Settings",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "contractConsents": {
+    "cgu": "I accept the Terms of Use (CGU)",
+    "readCgu": "(read CGU)",
+    "readCgv": "(read CGV)",
+    "privacyPolicy": "I accept the Privacy Policy",
+    "readPrivacy": "(read policy)",
+    "healthDataConsent": "By checking this box, I expressly consent to the processing of data related to my motorsport practice and, where applicable, health data necessary for the management of my contract and any future claims.",
+    "healthDataWarning": "In accordance with Article 9 of the GDPR, the processing of health data requires your explicit consent.",
+    "commercialOffers": "I accept to receive commercial offers and the Assuracing newsletter.",
+    "selectAll": "Select all"
+  },
+  "registrationConsents": {
+    "title": "Registration Consents",
+    "description": "To create your account, please accept the following conditions:",
+    "mandatorySection": "Mandatory consents",
+    "optionalSection": "Optional consents",
+    "cgu": "I accept the Terms of Use (CGU) of the site and I have read the Privacy Policy.",
+    "readCgu": "(read CGU)",
+    "privacyPolicy": "I have read the Privacy Policy",
+    "readPrivacy": "(read policy)",
+    "commercialOffers": "I accept to receive commercial offers and the Assuracing newsletter.",
+    "partnerSharing": "I accept that my data be shared with Assuracing partners to receive their offers.",
+    "note": "Fields marked with an asterisk (*) are mandatory. You can withdraw your consent at any time from your account."
   }
 }

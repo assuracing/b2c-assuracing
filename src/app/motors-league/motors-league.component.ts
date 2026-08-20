@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepper } from '@angular/material/stepper';
@@ -18,6 +19,8 @@ import { CommonModule } from '@angular/common';
 import { RepresentativeLegalComponent } from "../steps/representative-legal/representative-legal.component";
 import { VehicleService } from '../services/vehicle.service';
 import { Subscription } from 'rxjs';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ContractService } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -35,6 +38,7 @@ import { SourceService } from '../core/services/source.service';
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ContractConsentsComponent, ContractConsents } from '../components/contract-consents/contract-consents.component';
 interface Contract {
   selectedCircuit: string;
   nbrjour: number;
@@ -62,6 +66,13 @@ interface Contract {
     ffsaPermisB: string;
     nationalite: string;
   };
+  consent: {
+    cguConsent: boolean;
+    privacyPolicyConsent: boolean;
+    healthDataConsent: boolean;
+    commercialOffersConsent: boolean;
+  };
+  coverageAccepted: boolean;
   marque: string;
   modele: string;
   typevehicule: string;
@@ -79,7 +90,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, MatCardModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, MatCardModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule, ContractConsentsComponent],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
@@ -147,7 +158,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   step1Page: number = 1;
   step2Page: number = 1;
   sectionInProgress: boolean = false;
-  
+  contractConsents: ContractConsents = {
+    cgu: false,
+    privacyPolicy: false,
+    healthDataConsent: false,
+    commercialOffers: false
+  };
+  contractConsentsValid: boolean = false;
+  hasExistingConsentsValue: boolean = false;
   vehicles: any[] = [];
   vehicleTypes = [
     { value: 'auto', label: 'Auto', icon: 'directions_car' },
@@ -176,7 +194,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private sourceService: SourceService
+    private sourceService: SourceService,
+    private cdr: ChangeDetectorRef,
+    private http: HttpClient
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -190,7 +210,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.updateNationalities();
     this.updateLicenseTypes();
     this.updateClaimStatuses();
-    
+
     this.subscription = new Subscription();
     this.subscription.add(this.translate.onLangChange.subscribe(() => {
       this.updateVehicleTypes();
@@ -205,7 +225,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }));
 
     this.initializeBirthdateSubscription();
-    
+
+    this.loadExistingConsents();
+
     this.route.queryParams.subscribe((params: any) => {
       if (params['page'] === '2') {
         this.step1Page = 2;
@@ -772,6 +794,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
       },
+      consent: {
+        cguConsent: this.contractConsents.cgu,
+        privacyPolicyConsent: this.contractConsents.privacyPolicy,
+        healthDataConsent: this.contractConsents.healthDataConsent,
+        commercialOffersConsent: this.contractConsents.commercialOffers,
+      },
+      coverageAccepted: this.acceptTerms,
       marque: this.vehicleForm.get('brand')?.value || '',
       modele: this.vehicleForm.get('model')?.value || '',
       typevehicule: this.vehicleForm.get('type')?.value,
@@ -779,7 +808,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       param_n_serie: this.vehicleForm.get('serieNumber')?.value || '',
       param_n_chassis: this.vehicleForm.get('chassisNumber')?.value || '',
       montantganrantie: 0,
-      apporteurId: 5, 
+      apporteurId: 5,
       annual: true,
       clientEntId: 1,
       dateinscriptionRoulage: formatISODate(new Date().toISOString()),
@@ -925,4 +954,72 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  onContractConsentsChange(consents: ContractConsents): void {
+    this.contractConsents = consents;
+  }
+
+  onContractConsentsValidityChange(isValid: boolean): void {
+    this.contractConsentsValid = isValid;
+  }
+
+  isContractConsentsValid(): boolean {
+    return this.hasExistingConsents() || this.contractConsentsValid;
+  }
+
+  loadExistingConsents(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.hasExistingConsentsValue = false;
+      return;
+    }
+
+    this.userService.getAccount().pipe(
+      switchMap((account: any) => {
+        if (!account || !account.id) {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+          return of(null);
+        }
+        return this.userService.getAdherentId().pipe(
+          switchMap((adherentId) => {
+            return this.http.get<any>(`${this.envService.apiUrl}/api/consent/${adherentId}`);
+          })
+        );
+      })
+    ).subscribe({
+      next: (consentDTO) => {
+        if (consentDTO) {
+          const hasConsents = consentDTO.cguConsent !== null ||
+                            consentDTO.privacyPolicyConsent !== null ||
+                            consentDTO.healthDataConsent !== null ||
+                            consentDTO.commercialOffersConsent !== null;
+          if (hasConsents) {
+            this.contractConsents = {
+              cgu: consentDTO.cguConsent || false,
+              privacyPolicy: consentDTO.privacyPolicyConsent || false,
+              healthDataConsent: consentDTO.healthDataConsent || false,
+              commercialOffers: consentDTO.commercialOffersConsent || false
+            };
+            this.hasExistingConsentsValue = true;
+            this.cdr.detectChanges();
+          } else {
+            this.hasExistingConsentsValue = false;
+            this.cdr.detectChanges();
+          }
+        } else {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        this.hasExistingConsentsValue = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  hasExistingConsents(): boolean {
+    return this.hasExistingConsentsValue;
+  }
+
 }
