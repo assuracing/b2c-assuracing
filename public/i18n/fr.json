@@ -1,6 +1,7 @@
 {
   "auth": {
     "login": "Connexion",
+    "loginBlocked": "Réessayez dans",
     "username": "Nom d'utilisateur",
     "password": "Mot de passe",
     "rememberMe": "Rester connecté",
@@ -805,6 +806,7 @@
     "noValidGuaranteeSelected": "Aucune garantie valide sélectionnée. Veuillez sélectionner au moins une garantie.",
     "missingTransactionId": "Identifiant de transaction manquant. Veuillez réessayer.",
     "verificationCodeInvalid": "Code de vérification invalide",
+    "accountBlocked": "Trop de tentatives de connexion échouées. Veuillez réessayer dans 15 minutes.",
     "resetPasswordEmailSent": "Un email de réinitialisation de mot de passe a été envoyé à: {{email}}",
     "resetPasswordError": "Une erreur est survenue lors de la réinitialisation du mot de passe: {{error}}",
     "noContractToDisplay": "Aucun contrat à afficher",
@@ -848,6 +850,11 @@
     "legalProtectionResidenceRestriction": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Continuer sans cette garantie ?",
     "legalProtectionResidenceRestrictionBlocked": "Votre lieu de résidence ne vous permet pas de souscrire à la garantie Protection Juridique. Veuillez sélectionner d'autres garanties.",
     "continueWithoutGuarantee": "Continuer sans cette garantie"
+  },
+  "error": {
+    "blocked": "Trop de tentatives de connexion échouées. Veuillez réessayer dans 15 minutes.",
+    "loginError": "Identifiants invalides. Tentatives restantes: {{remaining}}",
+    "authentication-error": "Erreur lors de l'authentification"
   },
   "footer": {
     "assuracing": "Assuracing",

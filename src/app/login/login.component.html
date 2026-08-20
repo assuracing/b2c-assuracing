@@ -4,7 +4,7 @@
             <label for="username">{{ 'auth.username' | translate }}</label>
             <input [(ngModel)]="username" type="text" id="username" name="username" class="form-control" required>
         </div>
-        
+
         <div class="form-group">
             <label for="password">{{ 'auth.password' | translate }}</label>
             <input [(ngModel)]="password" type="password" id="password" name="password" class="form-control" required>
@@ -18,9 +18,16 @@
         </div>
 
         <div class="actions" style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary" (click)="onLogin()">{{ 'auth.login' | translate }}</button>
+            <button
+                type="submit"
+                class="btn btn-primary"
+                (click)="onLogin()"
+                [disabled]="isBlocked"
+                [class.disabled]="isBlocked">
+                {{ loginButtonText }}
+            </button>
         </div>
-        
+
         <div class="forgot-password">
             <a href="/forgot-password">{{ 'auth.forgotPassword' | translate }}</a>
         </div>
