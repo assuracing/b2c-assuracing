@@ -411,7 +411,7 @@
       "corporateAccident": "Protection Corporelle (Individuelle Accident)",
       "responsabilityRecourse": "Responsabilité / Recours et PJ",
       "responsabilityRecourseNoRc": "Responsabilité / Recours et PJ",
-      "rcIncluded" : "RC incluse",
+      "rcIncluded": "RC incluse via la RC Organisateur de {{ nomApporteur }}"
       "included": "inclus",
       "validateSection": "Valider la section",
       "inscriptionDate": "Date d'inscription à l'événement",
