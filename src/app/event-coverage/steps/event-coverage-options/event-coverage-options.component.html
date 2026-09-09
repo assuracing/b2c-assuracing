@@ -278,7 +278,7 @@
                   </ng-container>
                   <ng-template #montantPJ>
                     <span style="white-space:nowrap; display:inline-flex; align-items:center;">{{ formatPrice(PRIME_RATES.defenseRecours) }}</span>
-                    <span style="font-size:12px;color:#0ba2cf;white-space:nowrap;">({{ 'eventCoverage.guarantees.rcIncluded' | translate }})</span>
+                    <span style="font-size:12px;color:#0ba2cf;white-space:nowrap;">({{ 'eventCoverage.guarantees.rcIncluded' | translate:{ nomApporteur: organizerName } }})</span>
                   </ng-template>
                 </ng-container>
                 <ng-template #rcNonPartner>
