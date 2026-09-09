@@ -417,7 +417,7 @@
       "corporateAccident": "Bodily Injury (Individual Accident)",
       "responsabilityRecourse": "Liability / Recourse (RC - mandatory)",
       "responsabilityRecourseNoRc": "Liability / Recourse",
-      "rcIncluded" : "Civil liability included",
+      "rcIncluded": "Civil liability included via the Organizer's liability insurance of {{ nomApporteur }}",
       "included": "included",
       "validateSection": "Validate section",
       "inscriptionDate": "Event registration date",
