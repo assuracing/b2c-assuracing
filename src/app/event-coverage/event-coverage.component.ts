@@ -41,6 +41,7 @@ import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-licen
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CountryNationalityService } from '../services/country-nationality.service';
 import { SourceService } from '../core/services/source.service';
 
 interface Circuit {
@@ -74,13 +75,13 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
-    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
     numeroPermisB: string;
     ffsaPermisB: string;
     nationalite: string;
+    pays: string;
   };
   consent: {
     cguConsent: boolean;
@@ -207,6 +208,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private translateService: TranslateService,
     private sourceService: SourceService,
+    private countryNationalityService: CountryNationalityService,
     private cdr: ChangeDetectorRef
   ) {
     this.apiUrl = this.envService.apiUrl;
@@ -266,6 +268,14 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
 
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
+  }
+
+  private getFrenchCountryValue(countryKey: string): string {
+    if (!countryKey) {
+      return '';
+    }
+
+    return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
   private atLeastOneGuaranteeSelected(): ValidatorFn {
@@ -1032,13 +1042,13 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
-        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
         numeroPermisA: vehicleData.numeroPermisA || '',
         cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',
         numeroPermisB: vehicleData.numeroPermisB || '',
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
+        pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
       consent: {
         cguConsent: this.contractConsents.cgu,
@@ -1328,6 +1338,4 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.hasExistingConsentsValue;
   }
 }
-
-
 

@@ -33,8 +33,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
+import { CountryNationalityService } from '../services/country-nationality.service';
 import { SourceService } from '../core/services/source.service';
-
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -58,13 +58,13 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
-    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
     numeroPermisB: string;
     ffsaPermisB: string;
     nationalite: string;
+    pays: string;
   };
   consent: {
     cguConsent: boolean;
@@ -195,6 +195,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private translate: TranslateService,
     private sourceService: SourceService,
+    private countryNationalityService: CountryNationalityService,
     private cdr: ChangeDetectorRef,
     private http: HttpClient
   ) {
@@ -297,6 +298,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
 
     return this.nationalitiesFrenchLabels[nationalityValue] || nationalityValue;
+  }
+
+  private getFrenchCountryValue(countryKey: string): string {
+    if (!countryKey) {
+      return '';
+    }
+
+    return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
   private atLeastOneGuaranteeSelected(): ValidatorFn {
@@ -786,13 +795,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
-        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
         numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || '',
         cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
         licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',
         numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || '',
         ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
+        pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
       consent: {
         cguConsent: this.contractConsents.cgu,

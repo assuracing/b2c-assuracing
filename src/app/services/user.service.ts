@@ -159,7 +159,7 @@ export class UserService {
 
   updateUserProfile(profileData: any): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/api/account`, 
+      `${this.apiUrl}/api/account/profile`, 
       profileData, 
       getAuthHeaders()
     );
