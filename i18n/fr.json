@@ -66,8 +66,11 @@
     "gender": "Genre",
     "birthDate": "Date de naissance",
     "address": "Adresse",
+    "addressComplement": "Complément d'adresse",
     "city": "Ville",
     "postalCode": "Code postal"
+    ,"nationality": "Nationalité",
+    "countryResidence": "Pays de résidence"
   },
   "representativeLegal": {
     "verificationCodeSent": "Code de vérification envoyé, ce code doit être saisi à la dernière étape",
