@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{ 'guaranties.modal.title' | translate }}</h2>
+
+<mat-dialog-content class="guarantees-content">
+  <div class="monthly-contribution">
+    <span class="contribution-label">{{ 'guaranties.modal.monthlyContribution' | translate }}</span>
+    <span class="contribution-value">{{ formatCurrency(getMonthlyContribution()) }}</span>
+  </div>
+
+  <div class="details-section">
+    <div class="detail-item">
+      <span class="label">{{ 'guaranties.modal.totalContribution' | translate }}</span>
+      <span class="value">{{ formatCurrency(getMainOffer()?.contribution?.contributionAmount || 0) }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">{{ 'guaranties.modal.eightYearsContribution' | translate }}</span>
+      <span class="value">{{ formatCurrency(getMainOffer()?.eightYearsContribution || 0) }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">{{ 'guaranties.modal.taea' | translate }}</span>
+      <span class="value">{{ getMainOffer()?.taea || 0 }} %</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">{{ 'guaranties.modal.averageRate' | translate }}</span>
+      <span class="value">{{ getMainOffer()?.yearlyAverageRate || 0 }} %</span>
+    </div>
+  </div>
+
+  <div class="guarantees-section">
+    <h3>{{ 'guaranties.modal.yourGuarantees' | translate }}</h3>
+    <div class="guarantees-list">
+      <div class="guarantee-item" *ngFor="let guarantee of getGuarantees()">
+        <div class="guarantee-header">
+          <mat-icon class="guarantee-icon">verified_user</mat-icon>
+          <div class="guarantee-info">
+            <span class="guarantee-name">{{ guarantee.label }}</span>
+            <span class="guarantee-coverage">{{ 'guaranties.modal.coverage' | translate }} : {{ guarantee.coveragePercentage }} %</span>
+          </div>
+        </div>
+      </div>
+      <div class="exclusion-item">
+        <mat-icon class="exclusion-icon">cancel</mat-icon>
+        <span class="exclusion-text">{{ 'guaranties.modal.exclusion' | translate }}</span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button class="help-button" (click)="openHelpModal()">
+    <mat-icon>help_outline</mat-icon>
+    {{ 'guaranties.modal.helpUnderstand' | translate }}
+  </button>
+  <button mat-button (click)="onClose()">{{ 'guaranties.modal.close' | translate }}</button>
+</mat-dialog-actions>

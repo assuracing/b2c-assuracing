@@ -1,0 +1,625 @@
+.mortgage-insurance-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+
+  .step-container,
+  .pricing-results,
+  .global-loading {
+    width: 100%;
+  }
+
+  mat-icon {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    font-family: 'Material Icons', 'Material Icons Outlined', sans-serif !important;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .progress-container {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+
+    .progress-bar {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(2, 85, 110, 0.06);
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0a6f8f 0%, #0ba2cf 55%, #33b8e2 100%);
+        transition: width 0.3s ease;
+        border-radius: 999px;
+        box-shadow: 0 0 0 1px rgba(11, 162, 207, 0.18), 0 0 10px rgba(11, 162, 207, 0.18);
+      }
+    }
+
+    .progress-percentage {
+      font-weight: 600;
+      color: #1976d2;
+      min-width: 50px;
+      text-align: right;
+    }
+  }
+
+  .step-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+    }
+  }
+
+  .step-container {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border-radius: 18px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(2, 85, 110, 0.08);
+    margin-bottom: 0;
+  }
+
+  .step-content {
+    padding: 1rem 0 0;
+
+    > * + * {
+      margin-top: 1rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: #555;
+      margin: 1.5rem 0 1rem;
+    }
+  }
+
+  .radio-cards-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .radio-cards {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+
+    &.compact-radio-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+
+      .radio-card {
+        min-width: 0;
+
+        .card-content {
+          min-height: 116px;
+          padding: 1.1rem 0.9rem;
+
+          .card-icon {
+            font-size: 2.1rem;
+            width: 42px;
+            height: 42px;
+          }
+
+          .card-title {
+            font-size: 0.95rem;
+          }
+        }
+      }
+    }
+
+    &.bank-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+
+      .radio-card {
+        min-width: 0;
+
+        .card-content {
+          min-height: 65px;
+          padding: 0.5rem 0.4rem;
+          gap: 0.4rem;
+
+          .bank-logo {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            margin-bottom: 0;
+          }
+
+          .card-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0;
+          }
+
+          .card-title {
+            font-size: 0.7rem;
+            line-height: 1;
+          }
+        }
+      }
+    }
+
+    &.radio-cards-compact {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+
+      .radio-card {
+        min-width: 0;
+        flex: none;
+
+        .card-content {
+          min-height: 132px;
+          padding: 1.5rem 1rem;
+        }
+      }
+    }
+
+    .radio-card {
+      flex: 1;
+      min-width: 200px;
+      cursor: pointer;
+      display: block;
+
+      ::ng-deep .mat-mdc-radio-button {
+        width: 100%;
+        height: 100%;
+        
+        .mdc-form-field {
+          width: 100%;
+          height: 100%;
+        }
+
+        .mdc-label {
+          width: 100%;
+          height: 100%;
+        }
+
+        .mat-mdc-radio-outer-circle,
+        .mat-mdc-radio-inner-circle {
+          display: none;
+        }
+
+        .mdc-radio {
+          padding: 0;
+        }
+      }
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 0.75rem;
+        padding: 1.5rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 132px;
+        background-color: white;
+        box-sizing: border-box;
+        width: 100%;
+
+        .card-icon {
+          font-size: 2.5rem;
+          color: #666;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .card-title {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #333;
+        }
+      }
+
+      &:hover .card-content {
+        border-color: #02556e;
+        background-color: #f0f8ff;
+
+        .card-icon {
+          color: #02556e;
+        }
+      }
+
+      &.selected .card-content {
+        border-color: #02556e;
+        background-color: #e3f2fd;
+        box-shadow: 0 2px 8px rgba(2, 85, 110, 0.2);
+
+        .card-icon {
+          color: #02556e;
+        }
+
+        .card-title {
+          color: #02556e;
+          font-weight: 600;
+        }
+      }
+
+      &.other-bank-card {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: min(100%, 420px);
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .half-width {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .half-width,
+    .full-width {
+      .mat-mdc-form-field {
+        width: 100%;
+      }
+    }
+  }
+
+  .civility-selector {
+    margin-bottom: 1rem;
+
+    .civility-label {
+      font-weight: 500;
+      color: #333;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .radio-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+
+      .radio-card {
+        cursor: pointer;
+        display: block;
+
+        .card-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          gap: 0.3rem;
+          padding: 0.6rem;
+          border: 2px solid #e0e0e0;
+          border-radius: 14px;
+          transition: all 0.3s ease;
+          height: 100%;
+          min-height: 50px;
+          background-color: white;
+          box-sizing: border-box;
+          width: 100%;
+
+          .card-icon {
+            font-size: 1.5rem;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+          }
+        }
+
+        &:hover .card-content {
+          border-color: #02556e;
+          background-color: #f0f8ff;
+
+          .card-icon {
+            color: #02556e;
+          }
+        }
+
+        &.selected .card-content {
+          border-color: #02556e;
+          background-color: #e3f2fd;
+          box-shadow: 0 2px 8px rgba(2, 85, 110, 0.2);
+
+          .card-icon {
+            color: #02556e;
+          }
+
+          .card-title {
+            color: #02556e;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .info-box-with-icons {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f0f8ff;
+    border-radius: 12px;
+    border-left: 4px solid #02556e;
+
+    h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #02556e;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-icon {
+        color: #02556e;
+        font-size: 20px;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #333;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .info-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-top: 0;
+    color: #666;
+
+    mat-icon {
+      color: #1976d2;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &.co-borrower-info {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+
+      mat-icon {
+        color: #2e7d32;
+      }
+    }
+  }
+
+  .deferred-toggle {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+
+    mat-slide-toggle {
+      font-size: 1rem;
+    }
+  }
+
+  .info-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .loan-type-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    border-left: 3px solid #02556e;
+    margin-top: -0.5rem;
+
+    .info-icon {
+      color: #02556e;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .info-text {
+      font-size: 0.85rem;
+      color: #333;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  .deferred-fields {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: #fff3e0;
+    border-radius: 8px;
+    border-left: 4px solid #ff9800;
+  }
+
+  .co-borrower-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e0e0e0;
+  }
+
+  .amount-field {
+    margin-top: 1.5rem;
+  }
+
+  .step-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+
+    button {
+      min-width: 120px;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+
+      &.back-button {
+        min-width: auto;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        background-color: #f5f5f5;
+        color: #666;
+
+        mat-icon {
+          font-size: 1.2rem;
+          margin-right: 0.25rem;
+          width: 20px;
+          height: 20px;
+          display: inline-flex !important;
+        }
+
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+
+      &.next-button {
+        background-color: #02556e;
+        color: white;
+        min-width: 200px;
+
+        &:hover:not([disabled]):not(.disabled) {
+          background-color: #047da1;
+          box-shadow: 0 2px 8px rgba(2, 85, 110, 0.3);
+        }
+
+        &[disabled] {
+          background-color: #d1d5db;
+          color: #999;
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &.disabled {
+          background-color: #d1d5db;
+          color: #999;
+          opacity: 0.6;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .loading-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 120px;
+  }
+
+  .global-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+
+    p {
+      margin-top: 1rem;
+      color: #666;
+    }
+  }
+}
