@@ -75,9 +75,16 @@
   line-height: 1.4;
   
   .menu-content {
-    white-space: normal;
+    white-space: pre-line;
     word-break: break-word;
   }
+}
+
+::ng-deep .mat-mdc-tooltip-panel .mat-mdc-tooltip-surface,
+::ng-deep .mat-mdc-tooltip-panel .mdc-tooltip__surface,
+::ng-deep .mat-tooltip {
+  white-space: pre-line;
+  text-align: left;
 }
 
 .blink-tooltip {

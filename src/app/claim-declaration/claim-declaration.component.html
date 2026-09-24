@@ -14,6 +14,7 @@
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
   <mat-stepper #stepper linear class="claim-stepper" [labelPosition]="labelPosition">
+
     <mat-step *ngIf="showContractStep" [editable]="true" [completed]="contractSelected">
       <ng-template matStepLabel>{{ 'claimDeclaration.stepContract' | translate }}</ng-template>
       <app-claim-contract-step
@@ -30,9 +31,9 @@
         </mat-card-header>
         <mat-card-content>
           <div class="type-options">
-            <button 
+            <button
               *ngFor="let type of availableSinistresTypes; trackBy: trackByTypeId"
-              mat-raised-button 
+              mat-raised-button
               [color]="selectedTypeId === type.id ? 'accent' : ''"
               [class.type-button-selected]="selectedTypeId === type.id"
               (click)="onClaimTypeSelected(type.id)"
@@ -45,8 +46,8 @@
         </mat-card-content>
       </mat-card>
       <div class="step-actions">
-      <button mat-button (click)="goBackToContract()">{{ 'common.previous' | translate }}</button>
-      <button mat-button (click)="submitTypeWithValidation()">{{ 'common.next' | translate }}</button>
+        <button mat-button (click)="goBackToContract()">{{ 'common.previous' | translate }}</button>
+        <button mat-button [disabled]="false" (click)="submitTypeWithValidation()">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
@@ -59,15 +60,16 @@
         (reasonSelected)="onReasonSelected($event)">
       </app-claim-reason-step>
       <div class="step-actions">
-      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
-      <button mat-button (click)="submitReason()">{{ 'common.next' | translate }}</button>
+        <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+        <button mat-button [disabled]="false" (click)="submitReason()">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
-    <mat-step>
+    <mat-step [stepControl]="infoForm">
       <ng-template matStepLabel>{{ 'claimDeclaration.stepInfo' | translate }}</ng-template>
       <app-claim-info-step
         #claimInfoStep
+        [form]="infoForm"
         [selectedCause]="selectedTypeCauseSinistre"
         [claimType]="claim.type"
         [minDate]="minDate"
@@ -75,22 +77,23 @@
         (claimInfoSubmitted)="onClaimInfoSubmitted($event)">
       </app-claim-info-step>
       <div class="step-actions">
-      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
-      <button mat-button (click)="submitInfo(claimInfoStep)">{{ 'common.next' | translate }}</button>
+        <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+        <button mat-button (click)="submitInfo(claimInfoStep)">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
-    <mat-step [optional]="claim.type === 'INTEMPERIES'">
+    <mat-step [stepControl]="documentsForm" [optional]="claim.type === 'INTEMPERIES'">
       <ng-template matStepLabel>{{ 'claimDeclaration.stepDocuments' | translate }}</ng-template>
       <app-claim-documents-step
         #claimDocumentsStep
         [claimType]="claim.type"
         [contractProductName]="selectedContract?.nomcontrat"
-        (documentsSubmitted)="onDocumentsSubmitted($event)">
+        (documentsSubmitted)="onDocumentsSubmitted($event)"
+        (documentsStateChanged)="onDocumentsStateChanged($event)">
       </app-claim-documents-step>
       <div class="step-actions">
-      <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
-      <button mat-button (click)="submitDocuments(claimDocumentsStep)">{{ 'common.next' | translate }}</button>
+        <button mat-button matStepperPrevious>{{ 'common.previous' | translate }}</button>
+        <button mat-button (click)="submitDocuments(claimDocumentsStep)">{{ 'common.next' | translate }}</button>
       </div>
     </mat-step>
 
@@ -114,6 +117,4 @@
       </div>
     </mat-step>
   </mat-stepper>
-
-
 </div>

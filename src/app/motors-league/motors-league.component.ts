@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepper } from '@angular/material/stepper';
@@ -8,7 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { PersonalInfoComponent } from '../event-coverage/steps/personal-info/personal-info.component';
 import { VehicleInfoComponent } from '../steps/vehicle-info/vehicle-info.component';
 import { MotorsLeagueCoverageOptionsComponent } from './motors-league-coverage-options/motors-league-coverage-options.component';
@@ -17,6 +19,8 @@ import { CommonModule } from '@angular/common';
 import { RepresentativeLegalComponent } from "../steps/representative-legal/representative-legal.component";
 import { VehicleService } from '../services/vehicle.service';
 import { Subscription } from 'rxjs';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ContractService } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -30,14 +34,18 @@ import { ToastService } from '../services/toast.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AdaptiveTooltipComponent } from "../adaptive-tooltip/adaptive-tooltip.component";
 import { CountryNationalityService } from '../services/country-nationality.service';
+import { SourceService } from '../core/services/source.service';
 import { NoGuaranteeDialogComponent } from '../event-coverage/no-guarantee-dialog.component';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ContractConsentsComponent, ContractConsents } from '../components/contract-consents/contract-consents.component';
 interface Contract {
   selectedCircuit: string;
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: number[];
-  c: {  
+  source?: string;
+  c: {
     adresse: string;
     complementadresse: string;
     civilite: string;
@@ -50,6 +58,7 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
+    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
@@ -58,6 +67,13 @@ interface Contract {
     nationalite: string;
     pays: string;
   };
+  consent: {
+    cguConsent: boolean;
+    privacyPolicyConsent: boolean;
+    healthDataConsent: boolean;
+    commercialOffersConsent: boolean;
+  };
+  coverageAccepted: boolean;
   marque: string;
   modele: string;
   typevehicule: string;
@@ -75,7 +91,7 @@ interface Contract {
 @Component({
   standalone: true,
   selector: 'app-motors-league',
-  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule],
+  imports: [MatStepperModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule, MatTooltipModule, MatCheckboxModule, MatCardModule, PersonalInfoComponent, VehicleInfoComponent, MotorsLeagueCoverageOptionsComponent, PaymentComponent, CommonModule, RepresentativeLegalComponent, FormsModule, MatSelectModule, MatOptionModule, TranslateModule, ContractConsentsComponent],
   templateUrl: './motors-league.component.html',
   styleUrls: ['./motors-league.component.scss', '../app.component.scss', '../app-second.component.scss']
 })
@@ -135,6 +151,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
   personalForm!: FormGroup;
   vehicleForm!: FormGroup;
+  vehicleTypeForm!: FormGroup;
   coverageForm!: FormGroup;
   paymentForm!: FormGroup;
   RepresentativeLegalForm! : FormGroup;
@@ -142,7 +159,14 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   step1Page: number = 1;
   step2Page: number = 1;
   sectionInProgress: boolean = false;
-  
+  contractConsents: ContractConsents = {
+    cgu: false,
+    privacyPolicy: false,
+    healthDataConsent: false,
+    commercialOffers: false
+  };
+  contractConsentsValid: boolean = false;
+  hasExistingConsentsValue: boolean = false;
   vehicles: any[] = [];
   vehicleTypes = [
     { value: 'auto', label: 'Auto', icon: 'directions_car' },
@@ -155,6 +179,8 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   labelPosition: 'end' | 'bottom' = 'end';
   vehicleType: 'auto' | 'moto' | '' = '';
   userAge: number = 0;
+  canResendCode: boolean = true;
+  resendCodeCooldown: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -169,7 +195,10 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private countryNationalityService: CountryNationalityService
+    private sourceService: SourceService,
+    private countryNationalityService: CountryNationalityService,
+    private cdr: ChangeDetectorRef,
+    private http: HttpClient
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -183,7 +212,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     this.updateNationalities();
     this.updateLicenseTypes();
     this.updateClaimStatuses();
-    
+
     this.subscription = new Subscription();
     this.subscription.add(this.translate.onLangChange.subscribe(() => {
       this.updateVehicleTypes();
@@ -198,7 +227,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }));
 
     this.initializeBirthdateSubscription();
-    
+
+    this.loadExistingConsents();
+
     this.route.queryParams.subscribe((params: any) => {
       if (params['page'] === '2') {
         this.step1Page = 2;
@@ -223,6 +254,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         postalCodeControl.setValidators([Validators.required, Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
       }
       postalCodeControl.updateValueAndValidity();
+      this.updateCoverageFormValidity();
     });
   }
 
@@ -277,6 +309,90 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
+  private atLeastOneGuaranteeSelected(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const protectionPilote = group.get('protectionPilote')?.value;
+      const defenseRecours = group.get('defenseRecours')?.value;
+      const responsabiliteCivile = group.get('responsabiliteCivile')?.value;
+
+      const hasGuarantee = (protectionPilote > 0) || defenseRecours || responsabiliteCivile;
+
+      return hasGuarantee ? null : { atLeastOneGuaranteeRequired: true };
+    };
+  }
+
+  private legalProtectionResidenceValidator(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const defenseRecours = !!group.get('defenseRecours')?.value;
+
+      if (!defenseRecours || this.isFrenchResidence()) {
+        return null;
+      }
+
+      return { legalProtectionResidenceRestricted: true };
+    };
+  }
+
+  private updateCoverageFormValidity(): void {
+    this.coverageForm?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private getCountryLabel(key: string): string {
+    if (!key) return '';
+    return this.translate.instant(`countries.${key}`);
+  }
+
+  private isFrenchResidence(): boolean {
+    return this.personalForm?.get('country')?.value === 'france';
+  }
+
+  private isLegalProtectionRestricted(): boolean {
+    return !!this.coverageForm?.get('defenseRecours')?.value && !this.isFrenchResidence();
+  }
+
+  private hasOnlyLegalProtectionSelected(): boolean {
+    const form = this.coverageForm;
+    return !!form?.get('defenseRecours')?.value &&
+      !(form.get('protectionPilote')?.value > 0) &&
+      !form.get('responsabiliteCivile')?.value;
+  }
+
+  private async confirmWithoutLegalProtection(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translate.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translate.instant('messages.legalProtectionResidenceRestriction'),
+        confirmText: this.translate.instant('messages.continueWithoutGuarantee'),
+        cancelText: this.translate.instant('common.cancel')
+      }
+    });
+
+    return (await dialogRef.afterClosed().toPromise()) === true;
+  }
+
+  private clearLegalProtectionSelection(): void {
+    this.coverageOptions?.resetLegalProtectionSelection();
+    this.updateCoverageFormValidity();
+  }
+
+  private async showLegalProtectionBlockedDialog(): Promise<void> {
+    const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translate.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translate.instant('messages.legalProtectionResidenceRestrictionBlocked'),
+        okText: this.translate.instant('common.ok')
+      }
+    });
+
+    await dialogRef.afterClosed().toPromise();
+  }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -290,7 +406,27 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   async onContinueGuaranteeStep(stepper: MatStepper) {
     const form = this.coverageForm;
     const hasGuarantee = (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
-    
+
+    if (this.isLegalProtectionRestricted()) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageForm;
+      const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+    }
+
     if (!hasGuarantee) {
       const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
         width: '400px',
@@ -308,6 +444,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   onVehicleTypeChange(type: 'auto' | 'moto'): void {
     this.vehicleType = type;
     this.vehicleForm?.get('type')?.setValue(type);
+    this.vehicleTypeForm?.get('vehicleType')?.setValue(type);
   }
 
   getVehicleIcon(type: string): string {
@@ -370,6 +507,10 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
   }
 
   private initializeForms() {
+    this.vehicleTypeForm = this.fb.group({
+      vehicleType: ['', Validators.required]
+    });
+
     this.summaryForm = this.fb.group({
       verificationCode: ['', Validators.required]
     });
@@ -436,8 +577,12 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.coverageForm = new FormGroup({
-    });
+    this.coverageForm = this.fb.group({
+      protectionPilote: [0],
+      defenseRecours: [false],
+      responsabiliteCivile: [false],
+      responsabiliteRecours: [false]
+    }, { validators: [this.atLeastOneGuaranteeSelected(), this.legalProtectionResidenceValidator()] });
 
     this.RepresentativeLegalForm = this.fb.group({
       representativeLastname: ['', Validators.required],
@@ -504,6 +649,13 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     };
   }
 
+  getCivilityLabel(value: string): string {
+    if (!value) return '';
+    if (value === 'M') return this.translate.instant('personalInfoStep.men');
+    if (value === 'Mme' || value === 'F') return this.translate.instant('personalInfoStep.women');
+    return value;
+  }
+
   getCoverageAmounts(level: number | null): { death: number; disability: number } | undefined {
     if (!level || !this.coverageOptions) return undefined;
     const levelData = this.coverageOptions.PROTECTION_LEVELS[level];
@@ -545,7 +697,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     return total;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     const forms = [this.personalForm, this.vehicleForm, this.coverageForm];
     const allFormsValid = forms.every(form => form?.valid);
 
@@ -559,6 +711,27 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     if (!allFormsValid) {
       forms.forEach(form => form.markAllAsTouched());
       return;
+    }
+
+    const hasRestrictedLegalProtection = this.isLegalProtectionRestricted();
+    if (hasRestrictedLegalProtection) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageForm;
+      const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
     }
 
     const formatISODate = (date: string | Date): string => {
@@ -599,7 +772,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       productCodes.push(398);
     }
 
-    if (productCodes.length === 0) {
+    if (productCodes.length === 0 && !hasRestrictedLegalProtection) {
       this.toastService.error(this.translate.instant('messages.noValidGuaranteeSelected'));
       return;
     }
@@ -609,6 +782,7 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
       nbrjour: 0,
       datedebutroulage: formatISODate(new Date().toISOString()),
       codeProduit: productCodes,
+      source: this.sourceService.getSource() ?? undefined,
       c: {
         adresse: this.personalForm.get('address')?.value,
         complementadresse: this.personalForm.get('addressComplement')?.value,
@@ -622,22 +796,30 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
-        numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || 'NC',
-        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
-        licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : 'NC',
-        numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || 'NC',
-        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : 'NC',
+        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
+        numeroPermisA: this.vehicleForm.get('numeroPermisA')?.value || '',
+        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
+        licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',
+        numeroPermisB: this.vehicleForm.get('numeroPermisB')?.value || '',
+        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
         pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
-      marque: this.vehicleForm.get('brand')?.value || 'NC',
-      modele: this.vehicleForm.get('model')?.value || 'NC',
+      consent: {
+        cguConsent: this.contractConsents.cgu,
+        privacyPolicyConsent: this.contractConsents.privacyPolicy,
+        healthDataConsent: this.contractConsents.healthDataConsent,
+        commercialOffersConsent: this.contractConsents.commercialOffers,
+      },
+      coverageAccepted: this.acceptTerms,
+      marque: this.vehicleForm.get('brand')?.value || '',
+      modele: this.vehicleForm.get('model')?.value || '',
       typevehicule: this.vehicleForm.get('type')?.value,
-      immatriculation: this.vehicleForm.get('immatNumber')?.value || 'NC',
-      param_n_serie: this.vehicleForm.get('serieNumber')?.value || 'NC',
-      param_n_chassis: this.vehicleForm.get('chassisNumber')?.value || 'NC',
+      immatriculation: this.vehicleForm.get('immatNumber')?.value || '',
+      param_n_serie: this.vehicleForm.get('serieNumber')?.value || '',
+      param_n_chassis: this.vehicleForm.get('chassisNumber')?.value || '',
       montantganrantie: 0,
-      apporteurId: 5, 
+      apporteurId: 5,
       annual: true,
       clientEntId: 1,
       dateinscriptionRoulage: formatISODate(new Date().toISOString()),
@@ -658,7 +840,9 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
 
         window.location.href = paymentUrl;
       },
-      error: (_err) => {
+      error: (err) => {
+        const errorMessage = err.error?.detail || err.error?.response || err.error?.message || this.translate.instant('messages.contractCreationError');
+        this.toastService.error(errorMessage);
       }
     });
   }
@@ -669,7 +853,37 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     }
   }
   
-  goToNextStep(): void {
+  async goToNextStep(): Promise<void> {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
+      const isRestrictedLegalProtection = this.isLegalProtectionRestricted();
+      if (isRestrictedLegalProtection) {
+        if (this.hasOnlyLegalProtectionSelected()) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        const confirmed = await this.confirmWithoutLegalProtection();
+        if (!confirmed) {
+          return;
+        }
+
+        this.clearLegalProtectionSelection();
+        const postForm = this.coverageForm;
+        const hasGuaranteeAfterClear = (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+        if (!hasGuaranteeAfterClear) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        this.advanceFromPersonalStep();
+        return;
+      }
+
+      this.advanceFromPersonalStep();
+    }
+  }
+
+  private advanceFromPersonalStep(): void {
     if (this.stepper && this.stepper.selectedIndex === 2) {
       const birthDate = this.personalForm?.get('birthdate')?.value;
       
@@ -713,17 +927,110 @@ export class MotorsLeagueComponent implements OnInit, OnDestroy {
     });
   }
 
+  resendVerificationCode(): void {
+    if (!this.canResendCode) return;
+
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.summaryForm.get('verificationCode')?.setValue('');
+        this.toastService.success(this.translate.instant('representativeLegal.verificationCodeSent'));
+
+        this.canResendCode = false;
+        this.resendCodeCooldown = 30;
+        const timer = setInterval(() => {
+          this.resendCodeCooldown--;
+          if (this.resendCodeCooldown <= 0) {
+            clearInterval(timer);
+            this.canResendCode = true;
+          }
+        }, 1000);
+      },
+      error: (_err) => {
+        this.toastService.error(this.translate.instant('messages.sendVerificationCodeError'));
+      }
+    });
+  }
+
   verifyCode(): void {
     const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success(this.translate.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
-      error: (_err) => {
-        this.toastService.error(this.translate.instant('messages.verificationCodeInvalid'));
+      error: (err) => {
+        const errorMessage = err.error?.response || this.translate.instant('messages.verificationCodeInvalid');
+        this.toastService.error(errorMessage);
       }
     });
   }
+
+  onContractConsentsChange(consents: ContractConsents): void {
+    this.contractConsents = consents;
+  }
+
+  onContractConsentsValidityChange(isValid: boolean): void {
+    this.contractConsentsValid = isValid;
+  }
+
+  isContractConsentsValid(): boolean {
+    return this.hasExistingConsents() || this.contractConsentsValid;
+  }
+
+  loadExistingConsents(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.hasExistingConsentsValue = false;
+      return;
+    }
+
+    this.userService.getAccount().pipe(
+      switchMap((account: any) => {
+        if (!account || !account.id) {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+          return of(null);
+        }
+        return this.userService.getAdherentId().pipe(
+          switchMap((adherentId) => {
+            return this.http.get<any>(`${this.envService.apiUrl}/api/consent/${adherentId}`);
+          })
+        );
+      })
+    ).subscribe({
+      next: (consentDTO) => {
+        if (consentDTO) {
+          const hasConsents = consentDTO.cguConsent !== null ||
+                            consentDTO.privacyPolicyConsent !== null ||
+                            consentDTO.healthDataConsent !== null ||
+                            consentDTO.commercialOffersConsent !== null;
+          if (hasConsents) {
+            this.contractConsents = {
+              cgu: consentDTO.cguConsent || false,
+              privacyPolicy: consentDTO.privacyPolicyConsent || false,
+              healthDataConsent: consentDTO.healthDataConsent || false,
+              commercialOffers: consentDTO.commercialOffersConsent || false
+            };
+            this.hasExistingConsentsValue = true;
+            this.cdr.detectChanges();
+          } else {
+            this.hasExistingConsentsValue = false;
+            this.cdr.detectChanges();
+          }
+        } else {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        this.hasExistingConsentsValue = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  hasExistingConsents(): boolean {
+    return this.hasExistingConsentsValue;
+  }
+
 }

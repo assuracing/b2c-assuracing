@@ -236,7 +236,8 @@
     </mat-card-content>
   </mat-card>
 
-  <div class="status-section" *ngIf="areAllDocumentsUploaded() && isDocumentObligatoire()">
+  <!-- <div class="status-section" *ngIf="areAllDocumentsUploaded() && isDocumentObligatoire()"> -->
+  <div class="status-section" *ngIf="areAllDocumentsUploaded()">
     <mat-icon class="success-icon">check_circle</mat-icon>
     <p class="status-text">{{ 'claimDeclaration.allMandatoryDocumentsUploaded' | translate }}</p>
   </div>

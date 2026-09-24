@@ -4,27 +4,17 @@ import { Observable, map, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EnvironmentService } from '../core/services/environment.service';
 
+type PartnerOrganizer = {
+  nom: string;
+  premiumassuracing: boolean;
+  rco: boolean;
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class OrganizerService {
   private apiUrl: string;
-
-  private readonly PRODUCT_CODES = {
-    RC: 1,
-    PROTECTION_1: 30,
-    PROTECTION_2: 31,
-    PROTECTION_3: 32,
-    PROTECTION_4: 33,
-    PROTECTION_5: 34,
-    
-    PROTECTION_1_COMP: 35,
-    PROTECTION_2_COMP: 36,
-    PROTECTION_3_COMP: 37,
-    PROTECTION_4_COMP: 38,
-    PROTECTION_5_COMP: 39,
-    INTEMPERIES: 43,
-  };
 
   constructor(
     private http: HttpClient,
@@ -33,76 +23,24 @@ export class OrganizerService {
     this.apiUrl = this.envService.apiUrl;
   }
 
-  isProductAvailable(organizerName: string, productKey: keyof typeof this.PRODUCT_CODES): Observable<boolean> {
-    const productId = this.PRODUCT_CODES[productKey];
-    if (!productId) {
-      throw new Error(`Code produit invalide: ${productKey}`);
-    }
-
-    return this.http.get<any[]>(`${this.apiUrl}/api/allorganisateursclientent/${productId}`).pipe(
-      map(organizers => {
-        return organizers.some(org => 
-          org.nom && organizerName && 
-          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
-        );
-      }),
-      catchError(_err => {
-        return of(false);
-      })
-    );
-  }
-
-  checkProductsAvailability(organizerName: string, productKeys: Array<keyof typeof this.PRODUCT_CODES>): Observable<Record<string, boolean>> {
-    if (!organizerName || productKeys.length === 0) {
-      return of({});
-    }
-
-    const checks = productKeys.map(productKey => 
-      this.isProductAvailable(organizerName, productKey).pipe(
-        map(isAvailable => ({ [productKey]: isAvailable }))
-      )
-    );
-
-    return forkJoin(checks).pipe(
-      map((results) => {
-        return results.reduce<Record<string, boolean>>((acc, curr) => ({
-          ...acc,
-          ...curr
-        }), {});
-      })
-    );
-  }
-
-  getOrganizersForProduct(productKey: keyof typeof this.PRODUCT_CODES): Observable<Array<{id: string, nom: string}>> {
-    const productId = this.PRODUCT_CODES[productKey];
-    if (!productId) {
-      return of([]);
-    }
-    
-    return this.http.get<Array<{id: string, nom: string}>>(
-      `${this.apiUrl}/api/allorganisateursclientent/${productId}`
-    ).pipe(
-      catchError((error: any) => {
-        return of([]);
-      })
-    );
-  }
-
-  getOrganizerByName(organizerName: string): Observable<any> {
+  getOrganizerByName(organizerName: string): Observable<PartnerOrganizer | null> {
     if (!organizerName) {
       return of(null);
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/api/client-entreprises`).pipe(
-      map(entreprises => {
-        return entreprises.find(org => 
-          org.nom && organizerName && 
-          org.nom.trim().toLowerCase() === organizerName.trim().toLowerCase()
+    const normalizedTarget = organizerName.toLowerCase();
+
+    return this.http.get<PartnerOrganizer[]>(`${this.apiUrl}/api/partners`).pipe(
+      map(partners => {
+        if (!partners || partners.length === 0) {
+          return null;
+        }
+
+        return partners.find(partner =>
+          partner?.nom && partner.nom.toLowerCase() === normalizedTarget
         ) || null;
       }),
-      catchError((error: any) => {
-        return of(null);
-      })
+      catchError(() => of(null))
     );
   }
 }

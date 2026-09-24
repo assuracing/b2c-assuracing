@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../core/services/environment.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,6 +23,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 import { ToastService } from '../services/toast.service';
 import { NoGuaranteeDialogComponent } from './no-guarantee-dialog.component';
 import { VehicleInfoComponent } from './steps/vehicle-info/vehicle-info.component';
@@ -29,14 +32,17 @@ import { RepresentativeLegalComponent } from '../steps/representative-legal/repr
 import { TrackdayComponent } from './steps/trackday/trackday.component';
 import { PaymentComponent } from '../steps/payment/payment.component';
 import { EventCoverageOptionsComponent } from "./steps/event-coverage-options/event-coverage-options.component";
+import { ContractConsentsComponent, ContractConsents } from '../components/contract-consents/contract-consents.component';
 import { VehicleService } from '../services/vehicle.service';
 import { ContractService, PrixDTO } from '../services/contract.service';
 import { UserService } from '../services/user.service';
 import { AgeRestrictionDialogComponent } from '../shared/components/age-restriction-dialog/age-restriction-dialog.component';
 import { DriveLicenseAgeRestrictionDialogComponent } from '../shared/drive-license-age-restriction.component';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CountryNationalityService } from '../services/country-nationality.service';
+import { SourceService } from '../core/services/source.service';
 
 interface Circuit {
   id: number;
@@ -52,6 +58,7 @@ interface Contract {
   nbrjour: number;
   datedebutroulage: string;
   codeProduit: number[];
+  source?: string;
   typeEvenement: string;
   typeAssure: string;
   c: {
@@ -68,6 +75,7 @@ interface Contract {
     nom: string;
     telPortable: string;
     ville: string;
+    pays?: string;
     numeroPermisA: string;
     cacmPermisA: string;
     licencePermisA: string;
@@ -76,6 +84,13 @@ interface Contract {
     nationalite: string;
     pays: string;
   };
+  consent: {
+    cguConsent: boolean;
+    privacyPolicyConsent: boolean;
+    healthDataConsent: boolean;
+    commercialOffersConsent: boolean;
+  };
+  coverageAccepted: boolean;
   marque: string;
   modele: string;
   typevehicule: string;
@@ -118,8 +133,10 @@ interface ContractResponse {
     TrackdayComponent,
     PaymentComponent,
     EventCoverageOptionsComponent,
+    ContractConsentsComponent,
     MatSnackBarModule,
     MatRadioModule,
+    MatCardModule,
     TranslateModule,
   ],
   templateUrl: './event-coverage.component.html',
@@ -178,7 +195,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   public claimStatusesMap: Map<string, string> = new Map();
     private apiUrl: string;
 
-  constructor( 
+  constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private contractService: ContractService,
@@ -191,7 +208,9 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private activatedRoute: ActivatedRoute,
     private translateService: TranslateService,
-    private countryNationalityService: CountryNationalityService
+    private sourceService: SourceService,
+    private countryNationalityService: CountryNationalityService,
+    private cdr: ChangeDetectorRef
   ) {
     this.apiUrl = this.envService.apiUrl;
     this.initializeForms();
@@ -206,7 +225,9 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     this.updateNationalities();
     this.updateLicenseTypes();
     this.updateClaimStatuses();
-    
+
+    this.loadExistingConsents();
+
     const langChangeSub = this.translateService.onLangChange.subscribe(() => {
       this.updateNationalities();
       this.updateLicenseTypes();
@@ -258,7 +279,114 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.countryNationalityService.getFrenchCountryLabelByKey(countryKey);
   }
 
+  private atLeastOneGuaranteeSelected(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const intemperies = group.get('intemperies')?.value;
+      const annulation = group.get('annulation')?.value;
+      const interruption = group.get('interruption')?.value;
+      const protectionPilote = group.get('protectionPilote')?.value;
+      const defenseRecours = group.get('defenseRecours')?.value;
+      const responsabiliteCivile = group.get('responsabiliteCivile')?.value;
+
+      const hasGuarantee = intemperies || annulation || interruption || (protectionPilote > 0) || defenseRecours || responsabiliteCivile;
+
+      return hasGuarantee ? null : { atLeastOneGuaranteeRequired: true };
+    };
+  }
+
+  private legalProtectionResidenceValidator(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const group = formGroup as FormGroup;
+      const defenseRecours = !!group.get('defenseRecours')?.value;
+
+      if (!defenseRecours || this.isFrenchResidence()) {
+        return null;
+      }
+
+      return { legalProtectionResidenceRestricted: true };
+    };
+  }
+
+  private updateCoverageFormValidity(): void {
+    this.coverageOptionsForm?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private isFrenchResidence(): boolean {
+    return this.personalForm?.get('country')?.value === 'france';
+  }
+
+  private isLegalProtectionRestricted(): boolean {
+    return !!this.coverageOptionsForm?.get('defenseRecours')?.value && !this.isFrenchResidence();
+  }
+
+  private hasOnlyLegalProtectionSelected(): boolean {
+    const form = this.coverageOptionsForm;
+    return !!form?.get('defenseRecours')?.value &&
+      !form.get('intemperies')?.value &&
+      !form.get('annulation')?.value &&
+      !form.get('interruption')?.value &&
+      !(form.get('protectionPilote')?.value > 0) &&
+      !form.get('responsabiliteCivile')?.value;
+  }
+
+  private async confirmWithoutLegalProtection(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translateService.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translateService.instant('messages.legalProtectionResidenceRestriction'),
+        confirmText: this.translateService.instant('messages.continueWithoutGuarantee'),
+        cancelText: this.translateService.instant('common.cancel')
+      }
+    });
+
+    return (await dialogRef.afterClosed().toPromise()) === true;
+  }
+
+  private clearLegalProtectionSelection(): void {
+    this.eventCoverageOptions?.resetLegalProtectionSelection();
+    this.updateCoverageFormValidity();
+  }
+
+  private async showLegalProtectionBlockedDialog(): Promise<void> {
+    const dialogRef = this.dialog.open(NoGuaranteeDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: this.translateService.instant('messages.legalProtectionResidenceRestrictionTitle'),
+        message: this.translateService.instant('messages.legalProtectionResidenceRestrictionBlocked'),
+        okText: this.translateService.instant('common.ok')
+      }
+    });
+
+    await dialogRef.afterClosed().toPromise();
+  }
+
   async onContinueGuaranteeStep(stepper: MatStepper) {
+    if (this.isLegalProtectionRestricted()) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageOptionsForm;
+      const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+      stepper.next();
+      return;
+    }
+
     const form = this.coverageOptionsForm;
     const hasGuarantee = form.get('intemperies')?.value || form.get('annulation')?.value || form.get('interruption')?.value || (form.get('protectionPilote')?.value > 0) || form.get('defenseRecours')?.value || form.get('responsabiliteCivile')?.value;
     
@@ -292,8 +420,18 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
   isLoading: boolean = false
   error: string | null = null;
   subscriptions: Subscription[] = [];
+  contractConsents: ContractConsents = {
+    cgu: false,
+    privacyPolicy: false,
+    healthDataConsent: false,
+    commercialOffers: false
+  };
+  contractConsentsValid: boolean = false;
+  hasExistingConsentsValue: boolean = false;
+  canResendCode: boolean = true;
+  resendCodeCooldown: number = 0;
   @ViewChild(VehicleInfoComponent) vehicleInfo!: VehicleInfoComponent;
-  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions!: EventCoverageOptionsComponent;
+  @ViewChild(EventCoverageOptionsComponent) eventCoverageOptions?: EventCoverageOptionsComponent;
 
   circuits: Circuit[] = [];
   isLoadingCircuits = true;
@@ -384,7 +522,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       protectionPilote: [0],
       defenseRecours: [false],
       responsabiliteCivile: [false]
-    });
+    }, { validators: [this.atLeastOneGuaranteeSelected(), this.legalProtectionResidenceValidator()] });
 
     this.coverageOptionsForm.valueChanges.subscribe(() => {
       const intemperiesPrime = this.coverageOptionsForm.get('intemperies')?.value ? 10 : 0;
@@ -395,6 +533,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       const responsabiliteCivilePrime = this.coverageOptionsForm.get('responsabiliteCivile')?.value ? 14 : 0;
       const totalPrime = intemperiesPrime + annulationPrime + interruptionPrime + protectionPrime + defenseRecoursPrime + responsabiliteCivilePrime;
       this.coverageOptionsForm.patchValue({ totalPrime });
+      this.coverageOptionsForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
     });
 
     this.personalForm = this.fb.group({
@@ -420,6 +559,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         postalCodeControl.setValidators([Validators.pattern('^[a-zA-Z0-9]{4,8}$')]);
       }
       postalCodeControl.updateValueAndValidity();
+      this.updateCoverageFormValidity();
     });
 
     this.vehicleForm = this.fb.group({
@@ -490,7 +630,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     RC: 1,
     DEFENSE_RECOURS: 350,
     ANNULATION: 351,
-    INTEMPERIES: 352,
+    INTEMPERIES: 446,
     INTERRUPTION: 353,
     PROTECTION_1: 340,  
     PROTECTION_2: 341, 
@@ -553,9 +693,39 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNextStep(): void {
+  async goToNextStep(): Promise<void> {
     if (this.stepper && this.stepper.selectedIndex === 2) {
 
+      const isRestrictedLegalProtection = this.isLegalProtectionRestricted();
+      if (isRestrictedLegalProtection) {
+        if (this.hasOnlyLegalProtectionSelected()) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        const confirmed = await this.confirmWithoutLegalProtection();
+        if (!confirmed) {
+          return;
+        }
+
+        this.clearLegalProtectionSelection();
+        const postForm = this.coverageOptionsForm;
+        const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+        if (!hasGuaranteeAfterClear) {
+          await this.showLegalProtectionBlockedDialog();
+          return;
+        }
+
+        this.advanceFromPersonalStep();
+        return;
+      }
+
+      this.advanceFromPersonalStep();
+    }
+  }
+
+  private advanceFromPersonalStep(): void {
+    if (this.stepper && this.stepper.selectedIndex === 2) {
       const birthDate = this.personalForm?.get('birthdate')?.value;
       const trackdayForm = this.trackdayForm;
       
@@ -622,6 +792,12 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     this.stepper.next();
   }
 
+  onOrganizerNameChange(organizerName: string): void {
+    if (this.eventCoverageOptions) {
+      this.eventCoverageOptions.onOrganizerNameChange(organizerName);
+    }
+  }
+
   goToEventOrMotorsLeaguePage(): void {
     this.router.navigate(['/guarantee-choice']);
   }
@@ -655,6 +831,28 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return this.isMinor()
       ? this.translateService.instant('summary.legalRepresentative')
       : this.translateService.instant('summary.insured');
+  }
+
+  getCivilityLabel(value: string): string {
+    if (!value) return '';
+    if (value === 'M') return this.translateService.instant('personalInfoStep.men');
+    if (value === 'Mme' || value === 'F') return this.translateService.instant('personalInfoStep.women');
+    return value;
+  }
+
+  getCountryLabel(key: string): string {
+    if (!key) return '';
+    return this.translateService.instant(`countries.${key}`);
+  }
+
+  getNationalityLabel(key: string): string {
+    if (!key) return '';
+    return this.translateService.instant(`nationalities.${key}`);
+  }
+
+  formatPrice(price: number | undefined): string {
+    if (price === undefined) return '-- €';
+    return price % 1 === 0 ? `${price} €` : price.toFixed(2).replace('.', ',') + ' €';
   }
 
   calculateAge(birthDate: Date): number {
@@ -770,7 +968,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     return products;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     const forms = [this.personalForm, this.eventCoverageForm];
     
     if (this.trackdayForm.get('role')?.value === 'PILOTE') {
@@ -787,6 +985,28 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     const trackdayData = this.trackdayForm.value;
     const personalData = this.personalForm.value;
     const vehicleData = this.vehicleForm.value;
+
+    const hasRestrictedLegalProtection = this.isLegalProtectionRestricted();
+    if (hasRestrictedLegalProtection) {
+      if (this.hasOnlyLegalProtectionSelected()) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+
+      const confirmed = await this.confirmWithoutLegalProtection();
+      if (!confirmed) {
+        return;
+      }
+
+      this.clearLegalProtectionSelection();
+      const postForm = this.coverageOptionsForm;
+      const hasGuaranteeAfterClear = postForm.get('intemperies')?.value || postForm.get('annulation')?.value || postForm.get('interruption')?.value || (postForm.get('protectionPilote')?.value > 0) || postForm.get('defenseRecours')?.value || postForm.get('responsabiliteCivile')?.value;
+      if (!hasGuaranteeAfterClear) {
+        await this.showLegalProtectionBlockedDialog();
+        return;
+      }
+    }
+
     const coverageData = this.coverageOptionsForm.value;
     
     const formatISODate = (date: string | Date): string => {
@@ -806,6 +1026,7 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
       nbrjour: trackdayData.duration,
       datedebutroulage: formatISODate(trackdayData.eventDate),
       codeProduit: this.getSelectedProducts(coverageData),
+      source: this.sourceService.getSource() ?? undefined,
       typeEvenement: trackdayData.eventType,
       typeAssure: trackdayData.role,
       c: {
@@ -822,20 +1043,28 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
         nom: this.personalForm.get('lastname')?.value,
         telPortable: this.personalForm.get('phone')?.value,
         ville: this.personalForm.get('city')?.value,
+        pays: this.getCountryLabel(this.personalForm.get('country')?.value),
         numeroPermisA: vehicleData.numeroPermisA || '',
-        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : 'NC',
-        licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : 'NC',
+        cacmPermisA: this.vehicleForm.get('hasCasm')?.value === 'yes' || this.vehicleForm.get('titreConduite')?.value === 'casm' ? 'Oui' : '',
+        licencePermisA: this.vehicleForm.get('type')?.value === 'moto' && this.vehicleForm.get('titreConduite')?.value === 'permis_a' ? 'Oui' : '',
         numeroPermisB: vehicleData.numeroPermisB || '',
-        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : 'NC',
+        ffsaPermisB: this.vehicleForm.get('hasPermisB')?.value === 'yes' ? 'Oui' : '',
         nationalite: this.getFrenchNationalityValue(this.personalForm.get('nationality')?.value),
         pays: this.getFrenchCountryValue(this.personalForm.get('country')?.value),
       },
-      marque: vehicleData.brand || 'ND',
-      modele: vehicleData.model || 'ND',
+      consent: {
+        cguConsent: this.contractConsents.cgu,
+        privacyPolicyConsent: this.contractConsents.privacyPolicy,
+        healthDataConsent: this.contractConsents.healthDataConsent,
+        commercialOffersConsent: this.contractConsents.commercialOffers,
+      },
+      coverageAccepted: this.acceptTerms,
+      marque: vehicleData.brand || '',
+      modele: vehicleData.model || '',
       typevehicule: this.trackdayForm.get('vehicleType')?.value || this.vehicleForm.get('type')?.value,
-      immatriculation: vehicleData.immatNumber || 'ND',
-      param_n_serie: vehicleData.serieNumber || 'ND',
-      param_n_chassis: vehicleData.chassisNumber || 'ND',
+      immatriculation: vehicleData.immatNumber || '',
+      param_n_serie: vehicleData.serieNumber || '',
+      param_n_chassis: vehicleData.chassisNumber || '',
       montantganrantie: coverageData.reservationAmount || 0,
       apporteurId: trackdayData.organizer,
       annual: false,
@@ -853,15 +1082,11 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
 
         window.location.href = paymentUrl;
       },
-      error: (_err) => {
+      error: (err) => {
+        const errorMessage = err.error?.detail || err.error?.response || err.error?.message || this.translateService.instant('messages.contractCreationError');
+        this.toastService.error(errorMessage);
       }
     });
-  }
-
-  onOrganizerNameChange(organizerName: string): void {
-    if (this.eventCoverageOptions) {
-      this.eventCoverageOptions.checkProductsAvailability(organizerName);
-    }
   }
 
   handleVehicleAdded(vehicle: any) {
@@ -890,46 +1115,60 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatCoverageSummary(): string {
+  getSelectedGuarantees(): { name: string; icon: string }[] {
     const coverageForm = this.coverageOptionsForm;
-    const trackdayForm = this.trackdayForm;
-    const selectedGuarantees: string[] = [];
+    const selectedGuarantees: { name: string; icon: string }[] = [];
 
     if (coverageForm.get('intemperies')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.badWeatherRisk'),
+        icon: 'thunderstorm'
+      });
     }
     if (coverageForm.get('annulation')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.weatherCancellationInterruption'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.cancellationRisk'),
+        icon: 'event_busy'
+      });
     }
     if (coverageForm.get('interruption')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.interruptionRisk'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.interruptionRisk'),
+        icon: 'block'
+      });
     }
     if (coverageForm.get('protectionPilote')?.value) {
       const level = coverageForm.get('protectionPilote')?.value;
-      selectedGuarantees.push(`${this.translateService.instant('eventCoverage.guarantees.corporateAccident')} niveau ${level}`);
+      selectedGuarantees.push({
+        name: `${this.translateService.instant('eventCoverage.guarantees.corporateAccident')} niveau ${level}`,
+        icon: 'health_and_safety'
+      });
     }
     if (coverageForm.get('defenseRecours')?.value) {
-      selectedGuarantees.push(this.translateService.instant('eventCoverage.guarantees.legalProtection'));
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.legalProtection'),
+        icon: 'gavel'
+      });
     }
 
-    const eventDate = trackdayForm.get('eventDate')?.value;
-    const duration = trackdayForm.get('duration')?.value;
-    const circuit = this.trackdayForm.get('circuit')?.value || this.translateService.instant('eventContracts.notSpecified');
-    const totalPrime = this.eventCoverageOptions?.totalPrime || 0;
+    if (coverageForm.get('responsabiliteCivile')?.value) {
+      selectedGuarantees.push({
+        name: this.translateService.instant('eventCoverage.guarantees.civilLiability'),
+        icon: 'security'
+      });
+    }
 
-    const formattedDate = new Date(eventDate).toLocaleDateString('fr-FR', {
+    return selectedGuarantees;
+  }
+
+  getFormattedEventDate(): string {
+    const eventDate = this.trackdayForm.get('eventDate')?.value;
+    if (!eventDate) return '';
+    return new Date(eventDate).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
-
-    const summary = this.translateService.instant('eventCoverage.summarySentence', {
-      date: formattedDate,
-      duration: duration,
-      circuit: circuit
-    });
-
-    return `${this.translateService.instant('eventCoverage.selectedGuarantees')} <strong>${selectedGuarantees.join('</strong>, <strong>')}</strong> ${summary}. ${this.translateService.instant('eventCoverage.totalPrime')} <strong>${totalPrime}€</strong>.`;
   }
 
   private calculateGarantiePrice(codeProduit: number): void {
@@ -985,16 +1224,41 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     });
   }
 
+  resendVerificationCode(): void {
+    if (!this.canResendCode) return;
+
+    const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
+    this.userService.sendVerificationEmail(email).subscribe({
+      next: () => {
+        this.summaryForm.get('verificationCode')?.setValue('');
+        this.toastService.success(this.translateService.instant('representativeLegal.verificationCodeSent'));
+
+        this.canResendCode = false;
+        this.resendCodeCooldown = 30;
+        const timer = setInterval(() => {
+          this.resendCodeCooldown--;
+          if (this.resendCodeCooldown <= 0) {
+            clearInterval(timer);
+            this.canResendCode = true;
+          }
+        }, 1000);
+      },
+      error: (err) => {
+        this.toastService.error(this.translateService.instant('messages.sendVerificationCodeError'));
+      }
+    });
+  }
+
   verifyCode(): void {
     const email = this.RepresentativeLegalForm.get('representativeEmail')?.value;
     const code = this.summaryForm.get('verificationCode')?.value;
     this.userService.verifyCode(email, code).subscribe({
       next: () => {
-        this.toastService.success(this.translateService.instant('messages.verificationCodeValid'));
         this.onSubmit();
       },
       error: (err) => {
-        this.toastService.error(this.translateService.instant('messages.verificationCodeInvalid'));
+        const errorMessage = err.error?.response || this.translateService.instant('messages.verificationCodeInvalid');
+        this.toastService.error(errorMessage);
       }
     });
   }
@@ -1007,8 +1271,74 @@ export class EventCoverageComponent implements OnInit, OnDestroy {
     const diffInMs = eventDate.getTime() - now.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
     return diffInDays < 21;
-}
-}
+  }
 
+  onContractConsentsChange(consents: ContractConsents): void {
+    this.contractConsents = consents;
+  }
+
+  onContractConsentsValidityChange(isValid: boolean): void {
+    this.contractConsentsValid = isValid;
+  }
+
+  isContractConsentsValid(): boolean {
+    return this.hasExistingConsents() || this.contractConsentsValid;
+  }
+
+  loadExistingConsents(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.hasExistingConsentsValue = false;
+      return;
+    }
+
+    this.userService.getAccount().pipe(
+      switchMap((account: any) => {
+        if (!account || !account.id) {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+          return of(null);
+        }
+        return this.userService.getAdherentId().pipe(
+          switchMap((adherentId) => {
+            return this.http.get<any>(`${this.envService.apiUrl}/api/consent/${adherentId}`);
+          })
+        );
+      })
+    ).subscribe({
+      next: (consentDTO) => {
+        if (consentDTO) {
+          const hasConsents = consentDTO.cguConsent !== null ||
+                            consentDTO.privacyPolicyConsent !== null ||
+                            consentDTO.healthDataConsent !== null ||
+                            consentDTO.commercialOffersConsent !== null;
+          if (hasConsents) {
+            this.contractConsents = {
+              cgu: consentDTO.cguConsent || false,
+              privacyPolicy: consentDTO.privacyPolicyConsent || false,
+              healthDataConsent: consentDTO.healthDataConsent || false,
+              commercialOffers: consentDTO.commercialOffersConsent || false
+            };
+            this.hasExistingConsentsValue = true;
+            this.cdr.detectChanges();
+          } else {
+            this.hasExistingConsentsValue = false;
+            this.cdr.detectChanges();
+          }
+        } else {
+          this.hasExistingConsentsValue = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        this.hasExistingConsentsValue = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  hasExistingConsents(): boolean {
+    return this.hasExistingConsentsValue;
+  }
+}
 
 

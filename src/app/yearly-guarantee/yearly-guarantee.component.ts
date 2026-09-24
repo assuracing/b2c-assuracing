@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule} from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-yearly-guarantee',
-  imports: [MatIconModule, TranslateModule],
+  imports: [MatIconModule, TranslateModule, MatButtonModule],
   templateUrl: './yearly-guarantee.component.html',
-  styleUrls: ['./yearly-guarantee.component.scss', '../app.component.scss', '../guarantee-choice/guarantee-choice.component.scss']
+  styleUrls: ['./yearly-guarantee.component.scss', '../app.component.scss', '../app-second.component.scss', '../guarantee-choice/guarantee-choice.component.scss',],
 })
 export class YearlyGuaranteeComponent {
   constructor(private router: Router) { }

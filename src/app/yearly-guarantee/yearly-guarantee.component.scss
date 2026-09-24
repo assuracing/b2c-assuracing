@@ -24,4 +24,17 @@
 
 .btn-test mat-icon {
   margin-right: 8px;
-  }
+}
+
+.container-app {
+  position: relative;
+  padding-top: 80px;
+}
+
+.header-actions {
+  position: absolute !important;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px) !important;
+}

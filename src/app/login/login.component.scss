@@ -115,3 +115,13 @@
 .forgot-password a:hover {
     text-decoration: underline;
 }
+
+.btn.disabled {
+    background-color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn.disabled:hover {
+    background-color: #6c757d !important;
+}

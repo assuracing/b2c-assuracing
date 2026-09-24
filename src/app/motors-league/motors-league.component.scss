@@ -109,6 +109,98 @@ li {
   margin-bottom: 1rem !important;
 }
 
+
+.summary-login {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.summary-container {
+  background: #fff !important;
+  border: 1px solid #e6e6e6 !important;
+  padding: 16px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+  margin-bottom: 14px !important;
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #02556e !important;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 6px 0;
+    color: #111 !important;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+.signature-section {
+  background: transparent;
+  padding-top: 8px;
+
+  p {
+    margin: 0 0 8px 0;
+    color: #111;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  mat-checkbox {
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+}
+
+.signature-card {
+  background: #ffffff !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  border-left: 4px solid #047da1 !important;
+  margin-bottom: 1rem !important;
+
+  mat-card-content {
+    padding: 16px !important;
+  }
+
+  .signature-section p {
+    margin: 0 0 8px 0;
+    color: #02556e;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .signature-actions {
+    margin-top: 8px;
+  }
+
+  .agree-checkbox {
+    color: #02556e;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 980px) {
+  .summary-login { padding: 14px; }
+  .summary-container { padding: 12px !important; }
+}
+
+.coverage-summary {
+  background: #e8f7f9;
+  border-left: 4px solid #047da1;
+  padding: 12px 14px;
+  margin: 12px 0;
+  border-radius: 4px;
+  color: #02556e;
+  font-weight: 600;
+}
+
 mat-icon {
   color: #0ba2cf;
 }

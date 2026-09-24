@@ -1,9 +1,11 @@
 <div class="container-app">
-
-    <button class="btn btn-test back-button" (click)="onBack()">
-      <i class="fas fa-arrow-left"></i> {{ 'common.backHome' | translate }}
+  <div class="header-actions">
+    <button mat-stroked-button color="primary" (click)="onBack()" class="back-button">
+      <mat-icon>arrow_back_ios</mat-icon> {{ 'common.back' | translate }}
     </button>
-    <h2 class="text-light">{{ 'guaranties.annualGuaranties' | translate }}</h2>
+  </div>
+
+  <h2 class="text-light">{{ 'guaranties.annualGuaranties' | translate }}</h2>
     <button class="btn btn-test" (click)="navigateToMotorsLeague()">
       {{ 'guaranties.coverSportsPractice' | translate }}
     </button>

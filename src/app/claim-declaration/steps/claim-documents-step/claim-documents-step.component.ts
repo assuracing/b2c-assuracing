@@ -142,6 +142,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
   }
 
   @Output() documentsSubmitted = new EventEmitter<Fichier[]>();
+  @Output() documentsStateChanged = new EventEmitter<{ fichiers: Fichier[]; isValid: boolean }>();
 
   uploadedFiles: Fichier[] = [];
   requiredDocumentTypes: string[] = [];
@@ -295,6 +296,14 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
 
   resetFiles(): void {
     this.uploadedFiles = [];
+    this.notifyDocumentsStateChanged();
+  }
+
+  private notifyDocumentsStateChanged(): void {
+    this.documentsStateChanged.emit({
+      fichiers: this.uploadedFiles,
+      isValid: this.areAllDocumentsUploaded()
+    });
   }
 
   onFileSelected(event: Event, docType: string): void {
@@ -356,6 +365,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
       };
 
       this.uploadedFiles.push(newFile);
+      this.notifyDocumentsStateChanged();
       this.toastService.success(this.translate.instant('messages.fileUploadSuccess', { docType: docType }));
     };
 
@@ -379,6 +389,7 @@ export class ClaimDocumentsStepComponent implements OnInit, OnChanges {
     } else {
       this.uploadedFiles = this.uploadedFiles.filter(f => f.type !== docType);
     }
+    this.notifyDocumentsStateChanged();
   }
 
   isDocumentUploaded(docType: string): boolean {

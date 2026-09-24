@@ -251,6 +251,14 @@ export class MotorsLeagueCoverageOptionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  public resetLegalProtectionSelection(): void {
+    this.form.get('defenseRecours')?.setValue(false);
+    const rcSelected = !!this.form.get('responsabiliteCivile')?.value;
+    this.form.get('responsabiliteRecours')?.setValue(rcSelected);
+    this.validatedSections['responsabiliteRecours'] = rcSelected;
+    this.wasResponsabiliteRecoursValidated = rcSelected;
+  }
+
   onProtectionLevelChange(level: number): void {
     const current = this.form.get('protectionPilote')?.value;
     this.form.patchValue({ protectionPilote: current === level ? 0 : level });

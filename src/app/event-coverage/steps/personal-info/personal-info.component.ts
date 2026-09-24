@@ -66,7 +66,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private _allCountries: string[] = [];
   private checkEmailSub?: Subscription;
   private subscription = new Subscription();
-  private isPrefillingProfile = false;
+  private isFillingFromApi = false;
 
 
   constructor(
@@ -106,7 +106,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
             )
           ).subscribe((adherent: any) => {
             if (adherent) {
-              this.isPrefillingProfile = true;
+              this.isFillingFromApi = true;
               if(adherent.user['login']) this.form.get('email')?.setValue(adherent.user['login']);
               if(adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
               if(adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
@@ -125,7 +125,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
                 const nationalityKey = this.getNationalityKeyByValue(adherent.nationalite);
                 this.form.get('nationality')?.setValue(nationalityKey);
               }
-              this.isPrefillingProfile = false;
+              setTimeout(() => {
+                this.isFillingFromApi = false;
+              }, 0);
             }
           })
         );
@@ -139,13 +141,12 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.setupPostalCodeInput();
 
     this.form.get('country')?.valueChanges.subscribe(country => {
-      if (this.isPrefillingProfile) {
-        return;
+      if (!this.isFillingFromApi) {
+        this.form.get('postalCode')?.setValue('');
+        this.form.get('city')?.setValue('');
+        this.postalCodeSuggestions = [];
+        this.showPostalCodeSuggestions = false;
       }
-      this.form.get('postalCode')?.setValue('');
-      this.form.get('city')?.setValue('');
-      this.postalCodeSuggestions = [];
-      this.showPostalCodeSuggestions = false;
     });
   }
 
@@ -208,7 +209,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
   onPostalCodeInput() {
     const country = this.form.get('country')?.value;
-    if (country !== 'France') {
+    if (country !== 'france') {
       this.postalCodeSuggestions = [];
       this.showPostalCodeSuggestions = false;
       return;
@@ -276,38 +277,31 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
             if (user?.email && user.email.toLowerCase() === email.toLowerCase()) {
               return;
             }
-            const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-              disableClose: true
-            });
-            
-            dialogRef.afterClosed().subscribe((result) => {
-              if (result?.success && result.adherent) {
-                this.updateFormWithAdherentData(result.adherent);
-              }
-              if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
-                this.emailControl?.setValue('');
-              } else if (result && typeof result === 'object' && result.email) {
-                this.emailControl?.setValue(result.email);
-              }
-            });
+            this.openEmailExistsDialog();
           },
           error: () => {
-            const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
-              disableClose: true
-            });
-            
-            dialogRef.afterClosed().subscribe((result) => {
-              if (result?.success && result.adherent) {
-                this.updateFormWithAdherentData(result.adherent);
-              }
-              if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
-                this.emailControl?.setValue('');
-              } else if (result && typeof result === 'object' && result.email) {
-                this.emailControl?.setValue(result.email);
-              }
-            });
+            this.openEmailExistsDialog();
           }
         });
+      }
+    });
+  }
+
+  private openEmailExistsDialog() {
+    const email = this.emailControl?.value;
+    const dialogRef = this.dialog.open(EmailExistsDialogComponent, {
+      disableClose: true,
+      data: { email: email }
+    });
+    
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success && result.adherent) {
+        this.updateFormWithAdherentData(result.adherent);
+      }
+      if (result === 'wrongEmail' || result === 'cancel' || result === undefined) {
+        this.emailControl?.setValue('');
+      } else if (result && typeof result === 'object' && result.email) {
+        this.emailControl?.setValue(result.email);
       }
     });
   }
@@ -351,6 +345,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   private updateFormWithAdherentData(adherent: any): void {
     if (!adherent) return;
 
+    this.isFillingFromApi = true;
     if (adherent.user?.['login']) this.form.get('email')?.setValue(adherent.user['login']);
     if (adherent.nom) this.form.get('lastname')?.setValue(adherent.nom);
     if (adherent.prenom) this.form.get('firstname')?.setValue(adherent.prenom);
@@ -368,5 +363,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.form.get('lastname')?.disable();
     
     this.form.markAllAsTouched();
+    
+    setTimeout(() => {
+      this.isFillingFromApi = false;
+    }, 0);
   }
 }

@@ -37,7 +37,7 @@ export class ClaimInfoStepComponent implements OnInit {
   @Input() maxDate?: Date;
   @Output() claimInfoSubmitted = new EventEmitter<any>();
 
-  form!: FormGroup;
+  @Input() form!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +48,9 @@ export class ClaimInfoStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
-    this.initializeForm();
+    if (!this.form) {
+      this.initializeForm();
+    }
   }
 
   private initializeForm(): void {

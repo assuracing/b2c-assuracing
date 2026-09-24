@@ -218,6 +218,20 @@
       }
     }
 
+    &.drag-over {
+      border-color: #047da1;
+      background-color: #e5eff5;
+      box-shadow: 0 0 0 3px rgba(4, 125, 161, 0.12);
+
+      mat-icon {
+        color: #047da1;
+      }
+
+      .doc-add-label {
+        color: #047da1;
+      }
+    }
+
     mat-icon {
       font-size: 32px;
       width: 32px;

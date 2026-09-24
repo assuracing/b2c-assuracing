@@ -103,6 +103,10 @@ export class TrackdayComponent implements OnInit {
     this.dateLocaleService.bindAdapterLocale(this.dateAdapter);
     this.setupAutocomplete();
     this.loadOrganizers();
+    this.updateVehicleTypeValidator();
+    this.form.get('role')?.valueChanges.subscribe(() => {
+      this.updateVehicleTypeValidator();
+    });
     this.translate.onLangChange.subscribe(() => {
       this.initializeArrays();
     });
@@ -126,7 +130,7 @@ export class TrackdayComponent implements OnInit {
     this.http.get<Organizer[]>(`${this.apiUrl}/api/allapporteurs`).subscribe(
       (organizers) => {
         const filteredOrganizers = organizers
-          .filter(org => org.lastName !== "VAX CONSEILS" && org.lastName !== "GP Explorer" && org.lastName !== "Trackmate")
+          .filter(org => org.lastName !== "VAX CONSEILS" && org.lastName !== "GP Explorer" && org.lastName !== "Trackmate" && org.lastName !== "Tortue Team")
           .sort((a, b) => {
             if (a.lastName === "!Organisateur non référencé") {
               this.unreferencedOrganizer = a;
@@ -201,6 +205,12 @@ export class TrackdayComponent implements OnInit {
         organizer.lastName.toLowerCase().includes(searchValue)
       )
     );
+  }
+
+  onSearchInputKeydown(event: KeyboardEvent) {
+    if (event.key === ' ') {
+      event.stopPropagation();
+    }
   }
   
   getFormControl(controlName: string): FormControl {

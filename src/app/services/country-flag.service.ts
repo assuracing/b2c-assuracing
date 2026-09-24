@@ -18,7 +18,7 @@ export class CountryFlagService {
     'CZ': 'republique-tcheque',
     'BHR': 'bahrain',
     'HR' : 'croatie',
-    'Espagne' : 'espagne'
+    'UK': 'royaume-uni',
   };
 
   getCountryFlagUrl(countryCode: string): string {

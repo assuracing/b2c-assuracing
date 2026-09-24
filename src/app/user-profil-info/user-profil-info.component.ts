@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Inject, OnDestroy, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
@@ -21,9 +21,10 @@ import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angu
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DateLocaleService, provideMomentDatepicker } from '../core/services/date-locale.service';
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CountryNationalityService } from '../services/country-nationality.service';
 import { getAuthHeaders } from '../core/utils/http-utils';
+import { PostalCodeService, PostalCodeInfo } from '../services/postal-code.service';
 
 @Component({
   selector: 'app-user-profil-info',
@@ -48,8 +49,9 @@ import { getAuthHeaders } from '../core/utils/http-utils';
   templateUrl: './user-profil-info.component.html',
   styleUrls: ['./user-profil-info.component.scss']
 })
-export class UserProfilInfoComponent implements OnInit, OnDestroy {
-  @ViewChild('picker') picker: any; 
+export class UserProfilInfoComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('picker') picker: any;
+  @ViewChild('postalCodeInput') postalCodeInput!: ElementRef;
   
   profileForm: FormGroup;
   userInfo: any = null;
@@ -57,6 +59,9 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   isEditing: boolean = false;
   filteredNationalitiesResult: string[] = [];
+  postalCodeSuggestions: PostalCodeInfo[] = [];
+  showPostalCodeSuggestions = false;
+  private postalCodeSubs = new Subscription();
 
   constructor(
     private userService: UserService,
@@ -68,7 +73,8 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     private countryNationalityService: CountryNationalityService,
     private translate: TranslateService,
     private dateLocaleService: DateLocaleService,
-    private dateAdapter: DateAdapter<any>
+    private dateAdapter: DateAdapter<any>,
+    private postalCodeService: PostalCodeService
   ) {
     this.profileForm = this.fb.group({
       civilite: [''],
@@ -101,6 +107,12 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
     this.filteredNationalitiesResult = [...this.countryNationalityService.nationalities];
     
     this.loadUserProfile();
+  }
+
+  ngAfterViewInit() {
+    if (this.postalCodeInput) {
+      this.setupPostalCodeInput();
+    }
   }
 
   get filteredCountries() {
@@ -198,6 +210,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       this.toastService.error(this.translate.instant('messages.loadProfileError'));
     } finally {
       this.loading = false;
+      setTimeout(() => this.setupPostalCodeInput());
     }
   }
 
@@ -221,6 +234,7 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
       });
     } else {
       this.isEditing = true;
+      setTimeout(() => this.setupPostalCodeInput());
     }
   }
   
@@ -254,5 +268,60 @@ export class UserProfilInfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.postalCodeSubs.unsubscribe();
+  }
+
+  private setupPostalCodeInput() {
+    const postalCodeInput = this.postalCodeInput?.nativeElement;
+    if (!postalCodeInput) return;
+
+    this.postalCodeSubs.unsubscribe();
+    this.postalCodeSubs = new Subscription();
+
+    const input$ = fromEvent(postalCodeInput, 'input').pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    );
+
+    this.postalCodeSubs.add(
+      input$.subscribe(() => this.onPostalCodeInput())
+    );
+  }
+
+  onPostalCodeInput() {
+    const country = this.userInfo?.pays;
+    if (country !== 'France' && country !== 'france') {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    const value = String(
+      this.profileForm.get('codepostal')?.value ?? this.postalCodeInput?.nativeElement?.value ?? ''
+    );
+
+    if (!/^\d+$/.test(value)) {
+      this.postalCodeSuggestions = [];
+      this.showPostalCodeSuggestions = false;
+      return;
+    }
+
+    this.postalCodeService.searchPostalCodes(value).subscribe(suggestions => {
+      this.postalCodeSuggestions = suggestions;
+      this.showPostalCodeSuggestions = this.postalCodeSuggestions.length > 0;
+    });
+  }
+
+  onPostalCodeBlur() {
+    setTimeout(() => {
+      this.showPostalCodeSuggestions = false;
+    }, 200);
+  }
+
+  selectPostalCode(postalCodeInfo: PostalCodeInfo) {
+    this.profileForm.get('codepostal')?.setValue(postalCodeInfo.code);
+    this.profileForm.get('ville')?.setValue(postalCodeInfo.city);
+    this.postalCodeSuggestions = [];
+    this.showPostalCodeSuggestions = false;
   }
 }
