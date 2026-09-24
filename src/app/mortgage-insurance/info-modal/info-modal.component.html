@@ -1,0 +1,108 @@
+<h2 mat-dialog-title>{{ 'mortgageInsurance.infoModal.title' | translate }}</h2>
+
+<mat-dialog-content class="info-content">
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.borrowerCount' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(2)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <p class="info-value">{{ data.hasCoBorrower ? ('mortgageInsurance.infoModal.twoBorrowers' | translate) : ('mortgageInsurance.infoModal.oneBorrower' | translate) }}</p>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.project' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(3)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <p class="info-value">{{ getProjectPurposeLabel() }}</p>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.bank' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(4)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <p class="info-value">{{ getBankLabel(data.formValue.bankCode) }}</p>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.loans' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(5)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <div class="info-value">
+      <p><strong>{{ 'mortgageInsurance.infoModal.loanType' | translate }} :</strong> {{ data.formValue.loanType }}</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.borrowedAmount' | translate }} :</strong> {{ data.formValue.borrowedAmount.toLocaleString('fr-FR') }} €</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.duration' | translate }} :</strong> {{ data.formValue.loanDuration }} mois</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.interestRate' | translate }} :</strong> {{ data.formValue.interestRate }} %</p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.borrowers' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(6)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <div class="info-value">
+      <div class="borrower-info">
+        <p class="borrower-name"><strong>{{ 'mortgageInsurance.infoModal.borrower1' | translate }} :</strong></p>
+        <p>{{ 'mortgageInsurance.infoModal.birthDate' | translate }} : {{ data.formValue.borrower1BirthDate }}</p>
+        <p>{{ 'mortgageInsurance.infoModal.profession' | translate }} : {{ getProfessionLabel(data.formValue.borrower1ProfessionalCategory) }}</p>
+      </div>
+      <div class="borrower-info" *ngIf="data.hasCoBorrower">
+        <p class="borrower-name"><strong>{{ 'mortgageInsurance.infoModal.borrower2' | translate }} :</strong></p>
+        <p>{{ 'mortgageInsurance.infoModal.birthDate' | translate }} : {{ data.formValue.borrower2BirthDate }}</p>
+        <p>{{ 'mortgageInsurance.infoModal.profession' | translate }} : {{ getProfessionLabel(data.formValue.borrower2ProfessionalCategory) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.address' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(7)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <div class="info-value">
+      <p>{{ 'mortgageInsurance.infoModal.postalCode' | translate }} : {{ data.formValue.postCode }}</p>
+      <p>{{ 'mortgageInsurance.infoModal.city' | translate }} : {{ data.formValue.city }}</p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-header">
+      <h3>{{ 'mortgageInsurance.infoModal.contact' | translate }}</h3>
+      <button mat-button class="modify-btn" (click)="goToStep(9)">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.infoModal.modify' | translate }}
+      </button>
+    </div>
+    <div class="info-value">
+      <p><strong>{{ 'mortgageInsurance.infoModal.name' | translate }} :</strong> {{ data.formValue.lastName }}</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.firstName' | translate }} :</strong> {{ data.formValue.firstName }}</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.email' | translate }} :</strong> {{ data.formValue.email }}</p>
+      <p><strong>{{ 'mortgageInsurance.infoModal.phone' | translate }} :</strong> {{ data.formValue.phone }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ 'mortgageInsurance.infoModal.close' | translate }}</button>
+</mat-dialog-actions>

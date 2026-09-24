@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ 'mortgageInsurance.quotityModal.title' | translate }}</h2>
+
+<mat-dialog-content class="quotity-content">
+  <div class="question-section">
+    <h3>{{ 'mortgageInsurance.quotityModal.question' | translate }}</h3>
+    <p class="info-text">
+      {{ 'mortgageInsurance.quotityModal.infoText' | translate }}
+    </p>
+  </div>
+
+  <div class="quotity-input-section">
+    <mat-form-field appearance="outline" class="quotity-field">
+      <mat-label>{{ 'mortgageInsurance.quotityModal.quotityLabel' | translate }}</mat-label>
+      <input matInput type="number"
+             formControlName="coveragePercentage"
+             (input)="onInputChange($event)"
+             min="1" max="100"
+             [value]="quotityForm.get('coveragePercentage')?.value">
+      <span matSuffix class="percent-suffix">%</span>
+      <mat-error *ngIf="quotityForm.get('coveragePercentage')?.hasError('required')">
+        {{ 'mortgageInsurance.quotityModal.requiredError' | translate }}
+      </mat-error>
+      <mat-error *ngIf="quotityForm.get('coveragePercentage')?.hasError('min')">
+        {{ 'mortgageInsurance.quotityModal.minError' | translate }}
+      </mat-error>
+      <mat-error *ngIf="quotityForm.get('coveragePercentage')?.hasError('max')">
+        {{ 'mortgageInsurance.quotityModal.maxError' | translate }}
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="explanation-section">
+    <p class="warning-text">
+      {{ 'mortgageInsurance.quotityModal.warningText' | translate }}
+    </p>
+  </div>
+
+  <div class="info-box">
+    <div class="info-box-header">
+      <mat-icon>info</mat-icon>
+      <h4>{{ 'mortgageInsurance.quotityModal.understandTitle' | translate }}</h4>
+    </div>
+    <div class="info-box-content">
+      <p>{{ 'mortgageInsurance.quotityModal.understandDesc' | translate }}</p>
+      <p class="concrete-example">
+        <strong>{{ 'mortgageInsurance.quotityModal.concreteExample' | translate }}</strong>
+      </p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ 'mortgageInsurance.quotityModal.cancel' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="quotityForm.invalid">
+    {{ 'mortgageInsurance.quotityModal.validate' | translate }}
+  </button>
+</mat-dialog-actions>

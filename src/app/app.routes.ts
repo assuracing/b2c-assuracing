@@ -13,6 +13,7 @@ import { UserContractsComponent } from './user-contracts/user-contracts.componen
 import { ContractDetailsComponent } from './contract-details/contract-details.component';
 import { ContractDetailsAnnualComponent } from './contract-details/contract-details-annual.component';
 import { ClaimDeclarationComponent } from './claim-declaration/claim-declaration.component';
+import { MortgageInsuranceComponent } from './mortgage-insurance/mortgage-insurance.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -29,5 +30,6 @@ export const routes: Routes = [
     { path: 'user-profil-info', component: UserProfilInfoComponent },
     { path: 'reset-password', component: ResetPasswordComponent },
     { path: 'declare-claim', component: ClaimDeclarationComponent },
-    { path: 'declare-claim/:contractId', component: ClaimDeclarationComponent }
+    { path: 'declare-claim/:contractId', component: ClaimDeclarationComponent },
+    { path: 'mortgage-insurance', component: MortgageInsuranceComponent }
 ];

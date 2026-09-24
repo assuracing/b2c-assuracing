@@ -21,4 +21,8 @@ export class YearlyGuaranteeComponent {
     this.router.navigate(['/guarantee-choice']);
   }
 
+  goToMortgageInsurance() {
+    this.router.navigate(['/mortgage-insurance']);
+  }
+
 }

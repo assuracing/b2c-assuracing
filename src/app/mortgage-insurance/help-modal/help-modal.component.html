@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>{{ 'mortgageInsurance.helpModal.title' | translate }}</h2>
+
+<mat-dialog-content class="help-content">
+  <div class="help-item">
+    <h3>{{ 'mortgageInsurance.helpModal.totalContribution' | translate }}</h3>
+    <p>{{ 'mortgageInsurance.helpModal.totalContributionDesc' | translate }}</p>
+  </div>
+
+  <div class="help-item">
+    <h3>{{ 'mortgageInsurance.helpModal.eightYearsContribution' | translate }}</h3>
+    <p>{{ 'mortgageInsurance.helpModal.eightYearsContributionDesc' | translate }}</p>
+  </div>
+
+  <div class="help-item">
+    <h3>{{ 'mortgageInsurance.helpModal.taea' | translate }}</h3>
+    <p>{{ 'mortgageInsurance.helpModal.taeaDesc' | translate }}</p>
+  </div>
+
+  <div class="help-item">
+    <h3>{{ 'mortgageInsurance.helpModal.averageRate' | translate }}</h3>
+    <p>{{ 'mortgageInsurance.helpModal.averageRateDesc' | translate }}</p>
+  </div>
+
+  <div class="help-item">
+    <h3>{{ 'mortgageInsurance.helpModal.monthlyContribution' | translate }}</h3>
+    <p>{{ 'mortgageInsurance.helpModal.monthlyContributionDesc' | translate }}</p>
+  </div>
+
+  <div class="info-box">
+    <div class="info-box-header">
+      <mat-icon>info</mat-icon>
+      <h4>{{ 'mortgageInsurance.helpModal.goodToKnow' | translate }}</h4>
+    </div>
+    <div class="info-box-content">
+      <p>{{ 'mortgageInsurance.helpModal.goodToKnowDesc' | translate }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ 'mortgageInsurance.helpModal.close' | translate }}</button>
+</mat-dialog-actions>

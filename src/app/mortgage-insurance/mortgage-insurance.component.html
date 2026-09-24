@@ -1,0 +1,691 @@
+<div class="mortgage-insurance-container">
+  <form [formGroup]="mainForm" class="mortgage-insurance-form">
+  <div class="step-container" *ngIf="currentStep === 1">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.projectType.question' | translate }}</h2>
+      <div class="radio-cards radio-cards-compact">
+        <div class="radio-card" [class.selected]="mainForm.get('projectType')?.value === 'RESIDENCE_PRINCIPALE'" (click)="selectProjectType('RESIDENCE_PRINCIPALE')">
+          <div class="card-content">
+            <mat-icon class="card-icon">home</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.projectType.primaryResidence' | translate }}</span>
+          </div>
+        </div>
+        <div class="radio-card" [class.selected]="mainForm.get('projectType')?.value === 'RESIDENCE_SECONDAIRE'" (click)="selectProjectType('RESIDENCE_SECONDAIRE')">
+          <div class="card-content">
+            <mat-icon class="card-icon">villa</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.projectType.secondaryResidence' | translate }}</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" formControlName="projectType">
+    </div>
+    <div class="step-actions">
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!mainForm.get('projectType')?.value">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 2">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.borrowerCount.question' | translate }}</h2>
+      <div class="radio-cards radio-cards-compact">
+        <div class="radio-card" [class.selected]="mainForm.get('hasCoBorrower')?.value === false" (click)="selectBorrowerCount(false)">
+          <div class="card-content">
+            <mat-icon class="card-icon">person</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.borrowerCount.alone' | translate }}</span>
+          </div>
+        </div>
+        <div class="radio-card" [class.selected]="mainForm.get('hasCoBorrower')?.value === true" (click)="selectBorrowerCount(true)">
+          <div class="card-content">
+            <mat-icon class="card-icon">people</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.borrowerCount.together' | translate }}</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" formControlName="hasCoBorrower">
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!mainForm.get('hasCoBorrower')?.value === null || mainForm.get('hasCoBorrower')?.value === ''">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 3">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.projectPurpose.question' | translate }}</h2>
+      <div class="radio-cards radio-cards-compact">
+        <div class="radio-card" [class.selected]="mainForm.get('projectPurpose')?.value === 'new'" (click)="selectProjectPurpose('new')">
+          <div class="card-content">
+            <mat-icon class="card-icon">add_circle</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.projectPurpose.newLoan' | translate }}</span>
+          </div>
+        </div>
+        <div class="radio-card" [class.selected]="mainForm.get('projectPurpose')?.value === 'lemoine'" (click)="selectProjectPurpose('lemoine')">
+          <div class="card-content">
+            <mat-icon class="card-icon">autorenew</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.projectPurpose.lemoine' | translate }}</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" formControlName="projectPurpose">
+      <div class="loan-type-info" *ngIf="getProjectPurposeDescription()">
+        <mat-icon class="info-icon">info</mat-icon>
+        <span class="info-text">{{ getProjectPurposeDescription() }}</span>
+      </div>
+      <div class="loan-type-info">
+        <mat-icon class="info-icon">info</mat-icon>
+        <span class="info-text">{{ 'mortgageInsurance.projectPurpose.singleLoanInfo' | translate }}</span>
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!mainForm.get('projectPurpose')?.value">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 4">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.bankSelection.question' | translate }}</h2>
+      <p class="info-text">{{ 'mortgageInsurance.bankSelection.infoText' | translate }}</p>
+      <div class="radio-cards bank-options">
+        <div class="radio-card" *ngFor="let bank of banks.slice(0, 9)" [class.selected]="mainForm.get('bankCode')?.value === bank.bankCode" (click)="selectBank(bank.bankCode)">
+          <div class="card-content">
+            <img *ngIf="getBankLogo(bank.bankCode)" [src]="'/' + getBankLogo(bank.bankCode)" [alt]="bank.bankTitle" class="bank-logo">
+            <mat-icon *ngIf="!getBankLogo(bank.bankCode)" class="card-icon">account_balance</mat-icon>
+            <span class="card-title">{{ bank.bankTitle }}</span>
+          </div>
+        </div>
+        <div class="radio-card other-bank-card" [class.selected]="mainForm.get('bankCode')?.value === banks[9].bankCode" (click)="selectBank(banks[9].bankCode)">
+          <div class="card-content">
+            <mat-icon class="card-icon">more_horiz</mat-icon>
+            <span class="card-title">{{ banks[9].bankTitle }}</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" formControlName="bankCode">
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!mainForm.get('bankCode')?.value">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 5">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.loanCharacteristics.title' | translate }}</h2>
+      <p class="info-text">{{ 'mortgageInsurance.loanCharacteristics.infoText' | translate }}</p>
+      
+      <div class="form-row">
+        <div class="half-width">
+          <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>{{ 'mortgageInsurance.loanCharacteristics.loanType' | translate }}</mat-label>
+            <mat-select formControlName="loanType">
+              <mat-option value="Classique">{{ 'mortgageInsurance.loanCharacteristics.loanTypeClassic' | translate }}</mat-option>
+              <mat-option value="Differe">{{ 'mortgageInsurance.loanCharacteristics.loanTypeDeferred' | translate }}</mat-option>
+              <mat-option value="PretRelais">{{ 'mortgageInsurance.loanCharacteristics.loanTypeRelay' | translate }}</mat-option>
+              <mat-option value="TauxZero">{{ 'mortgageInsurance.loanCharacteristics.loanTypeZero' | translate }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="loan-type-info" *ngIf="getLoanTypeDescription()">
+            <mat-icon class="info-icon">info</mat-icon>
+            <span class="info-text">{{ getLoanTypeDescription() }}</span>
+          </div>
+        </div>
+
+        <div class="half-width">
+          <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>{{ 'mortgageInsurance.loanCharacteristics.rateType' | translate }}</mat-label>
+            <mat-select formControlName="rateType">
+              <mat-option value="Fixe">{{ 'mortgageInsurance.loanCharacteristics.rateTypeFixed' | translate }}</mat-option>
+              <mat-option value="Variable">{{ 'mortgageInsurance.loanCharacteristics.rateTypeVariable' | translate }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="loan-type-info" *ngIf="getRateTypeDescription()">
+            <mat-icon class="info-icon">info</mat-icon>
+            <span class="info-text">{{ getRateTypeDescription() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.loanCharacteristics.borrowedAmount' | translate }}</mat-label>
+          <input matInput type="text" inputmode="decimal" formControlName="borrowedAmount" placeholder="{{ 'mortgageInsurance.loanCharacteristics.borrowedAmountPlaceholder' | translate }}" (input)="onNumberInput($event, 'borrowedAmount')" (blur)="onNumberBlur($event, 'borrowedAmount')">
+          <mat-icon matSuffix>euro</mat-icon>
+          <mat-error *ngIf="mainForm.get('borrowedAmount')?.hasError('required') && mainForm.get('borrowedAmount')?.touched">{{ 'mortgageInsurance.errors.borrowedAmountRequired' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('borrowedAmount')?.hasError('min') && mainForm.get('borrowedAmount')?.touched">{{ 'mortgageInsurance.errors.borrowedAmountMin' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('borrowedAmount')?.hasError('max') && mainForm.get('borrowedAmount')?.touched">{{ 'mortgageInsurance.errors.borrowedAmountMax' | translate }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width" *ngIf="!isTauxZero">
+          <mat-label>{{ 'mortgageInsurance.loanCharacteristics.interestRate' | translate }}</mat-label>
+          <input matInput type="text" inputmode="decimal" step="0.01" formControlName="interestRate" placeholder="{{ 'mortgageInsurance.loanCharacteristics.interestRatePlaceholder' | translate }}" (input)="onNumberInput($event, 'interestRate')" (blur)="onNumberBlur($event, 'interestRate')">
+          <mat-icon matSuffix>percent</mat-icon>
+          <mat-error *ngIf="mainForm.get('interestRate')?.hasError('required') && mainForm.get('interestRate')?.touched">{{ 'mortgageInsurance.errors.interestRateRequired' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('interestRate')?.hasError('min') && mainForm.get('interestRate')?.touched">{{ 'mortgageInsurance.errors.interestRateMin' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('interestRate')?.hasError('max') && mainForm.get('interestRate')?.touched">{{ 'mortgageInsurance.errors.interestRateMax' | translate }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>{{ 'mortgageInsurance.loanCharacteristics.loanDuration' | translate }}</mat-label>
+        <input matInput type="text" inputmode="numeric" formControlName="loanDuration" placeholder="Ex: 240" (input)="onNumberInput($event, 'loanDuration')" (blur)="onNumberBlur($event, 'loanDuration')">
+        <mat-icon matSuffix>calendar_today</mat-icon>
+        <mat-error *ngIf="mainForm.get('loanDuration')?.hasError('required') && mainForm.get('loanDuration')?.touched">{{ 'mortgageInsurance.errors.loanDurationRequired' | translate }}</mat-error>
+        <mat-error *ngIf="mainForm.get('loanDuration')?.hasError('min') && mainForm.get('loanDuration')?.touched">{{ 'mortgageInsurance.errors.loanDurationMin' | translate }}</mat-error>
+        <mat-error *ngIf="mainForm.get('loanDuration')?.hasError('max') && mainForm.get('loanDuration')?.touched">{{ 'mortgageInsurance.errors.loanDurationMax' | translate }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>{{ 'mortgageInsurance.loanCharacteristics.repaymentSchedule' | translate }}</mat-label>
+        <mat-select formControlName="repaymentSchedule">
+          <mat-option value="Mensuelle">{{ 'mortgageInsurance.loanCharacteristics.monthly' | translate }}</mat-option>
+          <mat-option value="Trimestrielle">{{ 'mortgageInsurance.loanCharacteristics.quarterly' | translate }}</mat-option>
+          <mat-option value="Semestrielle">{{ 'mortgageInsurance.loanCharacteristics.semiAnnual' | translate }}</mat-option>
+          <mat-option value="Annuelle">{{ 'mortgageInsurance.loanCharacteristics.annual' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="isTauxZero" class="deferred-toggle">
+        <mat-slide-toggle (change)="toggleTauxZeroDeferred($event)">
+          {{ 'mortgageInsurance.loanCharacteristics.addDeferred' | translate }}
+        </mat-slide-toggle>
+      </div>
+
+      <mat-form-field appearance="fill" class="full-width" *ngIf="isTauxZero && showTauxZeroDeferred">
+        <mat-label>{{ 'mortgageInsurance.loanCharacteristics.deferredDuration' | translate }}</mat-label>
+        <input matInput type="number" formControlName="tauxZeroDeferredDuration" placeholder="Ex: 24">
+        <mat-error *ngIf="mainForm.get('tauxZeroDeferredDuration')?.hasError('required') && mainForm.get('tauxZeroDeferredDuration')?.touched">La durée du différé est requise.</mat-error>
+        <mat-error *ngIf="mainForm.get('tauxZeroDeferredDuration')?.hasError('min') && mainForm.get('tauxZeroDeferredDuration')?.touched">La durée du différé doit être supérieure à 1 mois.</mat-error>
+        <mat-error *ngIf="mainForm.get('tauxZeroDeferredDuration')?.hasError('max') && mainForm.get('tauxZeroDeferredDuration')?.touched">La durée du différé ne peut excéder 36 mois.</mat-error>
+      </mat-form-field>
+
+      <div *ngIf="showDeferredFields" class="deferred-fields">
+        <h3>{{ 'mortgageInsurance.loanCharacteristics.deferredInfo' | translate }}</h3>
+        <div class="form-row">
+          <div class="half-width">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>{{ 'mortgageInsurance.loanCharacteristics.deferredRepayment' | translate }}</mat-label>
+              <mat-select formControlName="deferredType">
+                <mat-option value="Total">{{ 'mortgageInsurance.loanCharacteristics.deferredTotal' | translate }}</mat-option>
+                <mat-option value="Partiel">{{ 'mortgageInsurance.loanCharacteristics.deferredPartial' | translate }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="loan-type-info" *ngIf="getDeferredTypeDescription()">
+              <mat-icon class="info-icon">info</mat-icon>
+              <span class="info-text">{{ getDeferredTypeDescription() }}</span>
+            </div>
+          </div>
+
+          <div class="half-width">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>{{ 'mortgageInsurance.loanCharacteristics.deferredDuration' | translate }}</mat-label>
+              <input matInput type="number" formControlName="deferredDuration" placeholder="Ex: 24">
+              <mat-error *ngIf="mainForm.get('deferredDuration')?.hasError('required')">La durée du différé est requise.</mat-error>
+              <mat-error *ngIf="mainForm.get('deferredDuration')?.hasError('min')">La durée du différé doit être supérieure à 1 mois.</mat-error>
+              <mat-error *ngIf="mainForm.get('deferredDuration')?.hasError('max')">La durée du différé ne peut excéder 36 mois.</mat-error>
+              <mat-error *ngIf="mainForm.get('deferredDuration')?.hasError('exceedsLoanDuration')">La durée du différé doit être inférieure à la durée restante du prêt.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="full-width">
+            <div class="loan-type-info">
+              <mat-icon class="info-icon">info</mat-icon>
+              <span class="info-text">{{ getDeferredDurationDescription() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!isStep5Valid()">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 6">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.borrowerInfo.introTitle' | translate }}</h2>
+      <p class="info-text">{{ 'mortgageInsurance.borrowerInfo.introText' | translate }}</p>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.borrowerInfo.birthDate' | translate }}</mat-label>
+          <input matInput type="text" inputmode="numeric" placeholder="{{ 'mortgageInsurance.borrowerInfo.birthDatePlaceholder' | translate }}" formControlName="borrower1BirthDate" (input)="onDateInput($event, 'borrower1BirthDate')">
+          <mat-hint>{{ 'mortgageInsurance.borrowerInfo.birthDateHint' | translate }}</mat-hint>
+          <mat-error *ngIf="mainForm.get('borrower1BirthDate')?.hasError('required') && mainForm.get('borrower1BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateRequired' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('borrower1BirthDate')?.hasError('pattern') && mainForm.get('borrower1BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateInvalid' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('borrower1BirthDate')?.hasError('ageTooYoung') && mainForm.get('borrower1BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateUnderage' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('borrower1BirthDate')?.hasError('ageTooOld') && mainForm.get('borrower1BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateTooOld' | translate }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.borrowerInfo.professionalCategory' | translate }}</mat-label>
+          <mat-select formControlName="borrower1ProfessionalCategory">
+            <mat-option *ngFor="let cat of professionalCategories" [value]="cat.code">
+              {{ cat.title }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="hasCoBorrower" class="co-borrower-section">
+        <h3>{{ 'mortgageInsurance.borrowerInfo.coBorrowerTitle' | translate }}</h3>
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>{{ 'mortgageInsurance.borrowerInfo.birthDate' | translate }}</mat-label>
+            <input matInput type="text" inputmode="numeric" placeholder="{{ 'mortgageInsurance.borrowerInfo.birthDatePlaceholder' | translate }}" formControlName="borrower2BirthDate" (input)="onDateInput($event, 'borrower2BirthDate')">
+            <mat-hint>{{ 'mortgageInsurance.borrowerInfo.birthDateHint' | translate }}</mat-hint>
+            <mat-error *ngIf="mainForm.get('borrower2BirthDate')?.hasError('required') && mainForm.get('borrower2BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateRequired' | translate }}</mat-error>
+            <mat-error *ngIf="mainForm.get('borrower2BirthDate')?.hasError('pattern') && mainForm.get('borrower2BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateInvalid' | translate }}</mat-error>
+            <mat-error *ngIf="mainForm.get('borrower2BirthDate')?.hasError('ageTooYoung') && mainForm.get('borrower2BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateUnderage' | translate }}</mat-error>
+            <mat-error *ngIf="mainForm.get('borrower2BirthDate')?.hasError('ageTooOld') && mainForm.get('borrower2BirthDate')?.touched">{{ 'mortgageInsurance.errors.birthDateTooOld' | translate }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>{{ 'mortgageInsurance.borrowerInfo.professionalCategory' | translate }}</mat-label>
+            <mat-select formControlName="borrower2ProfessionalCategory">
+              <mat-option *ngFor="let cat of professionalCategories" [value]="cat.code">
+                {{ cat.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!isStep6Valid()">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 7">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.location.introTitle' | translate }}</h2>
+      <p class="info-text">{{ 'mortgageInsurance.location.introText' | translate }}</p>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.location.postalCode' | translate }}</mat-label>
+          <input matInput type="text" maxlength="5" formControlName="postCode" placeholder="{{ 'mortgageInsurance.location.postalCodePlaceholder' | translate }}">
+          <mat-icon matSuffix>location_on</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.location.city' | translate }}</mat-label>
+          <mat-select formControlName="city">
+            <mat-option *ngFor="let city of cities" [value]="city.cityTitle">
+              {{ city.cityTitle }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="!isStep7Valid()">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 8 && showSmokingStep">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+         </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.smokingStatus.question' | translate }}</h2>
+      <div class="radio-cards radio-cards-compact">
+        <div class="radio-card" [class.selected]="mainForm.get('borrower1Smoker')?.value === false" (click)="selectBorrower1Smoker(false)">
+          <div class="card-content">
+            <mat-icon class="card-icon">smoke_free</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.smokingStatus.no' | translate }}</span>
+          </div>
+        </div>
+        <div class="radio-card" [class.selected]="mainForm.get('borrower1Smoker')?.value === true" (click)="selectBorrower1Smoker(true)">
+          <div class="card-content">
+            <mat-icon class="card-icon">smoking_rooms</mat-icon>
+            <span class="card-title">{{ 'mortgageInsurance.smokingStatus.yes' | translate }}</span>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" formControlName="borrower1Smoker">
+
+      <div *ngIf="hasCoBorrower" class="co-borrower-section">
+        <h3>{{ 'mortgageInsurance.smokingStatus.coBorrowerTitle' | translate }}</h3>
+        <div class="radio-cards radio-cards-compact">
+          <div class="radio-card" [class.selected]="mainForm.get('borrower2Smoker')?.value === false" (click)="selectBorrower2Smoker(false)">
+            <div class="card-content">
+              <mat-icon class="card-icon">smoke_free</mat-icon>
+              <span class="card-title">{{ 'mortgageInsurance.smokingStatus.no' | translate }}</span>
+            </div>
+          </div>
+          <div class="radio-card" [class.selected]="mainForm.get('borrower2Smoker')?.value === true" (click)="selectBorrower2Smoker(true)">
+            <div class="card-content">
+              <mat-icon class="card-icon">smoking_rooms</mat-icon>
+              <span class="card-title">{{ 'mortgageInsurance.smokingStatus.yes' | translate }}</span>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" formControlName="borrower2Smoker">
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" (click)="nextStep()" [disabled]="mainForm.get('borrower1Smoker')?.value === null || (hasCoBorrower && mainForm.get('borrower2Smoker')?.value === null)">{{ 'mortgageInsurance.buttons.next' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="step-container" *ngIf="currentStep === 9">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.title' | translate }}</h1>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+      <div class="progress-percentage">{{ getProgress() | number:'1.0-0' }}%</div>
+    </div>
+
+    <div class="step-content">
+      <h2>{{ 'mortgageInsurance.contactInfo.introTitle' | translate }}</h2>
+
+      <div class="form-row">
+        <div class="civility-selector full-width">
+          <label class="civility-label">{{ 'mortgageInsurance.contactInfo.civility' | translate }}</label>
+          <div class="radio-cards radio-cards-compact">
+            <div class="radio-card" [class.selected]="mainForm.get('civility')?.value === 'Monsieur'" (click)="selectCivility('Monsieur')">
+              <div class="card-content">
+                <mat-icon class="card-icon">person</mat-icon>
+                <span class="card-title">{{ 'mortgageInsurance.contactInfo.mr' | translate }}</span>
+              </div>
+            </div>
+            <div class="radio-card" [class.selected]="mainForm.get('civility')?.value === 'Madame'" (click)="selectCivility('Madame')">
+              <div class="card-content">
+                <mat-icon class="card-icon">person</mat-icon>
+                <span class="card-title">{{ 'mortgageInsurance.contactInfo.mrs' | translate }}</span>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" formControlName="civility">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.contactInfo.firstName' | translate }}</mat-label>
+          <input matInput formControlName="firstName">
+          <mat-error *ngIf="mainForm.get('firstName')?.hasError('required') && mainForm.get('firstName')?.touched">{{ 'mortgageInsurance.errors.firstNameRequired' | translate }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.contactInfo.lastName' | translate }}</mat-label>
+          <input matInput formControlName="lastName">
+          <mat-error *ngIf="mainForm.get('lastName')?.hasError('required') && mainForm.get('lastName')?.touched">{{ 'mortgageInsurance.errors.lastNameRequired' | translate }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.contactInfo.email' | translate }}</mat-label>
+          <input matInput type="email" formControlName="email">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="mainForm.get('email')?.hasError('required') && mainForm.get('email')?.touched">{{ 'mortgageInsurance.errors.emailRequired' | translate }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>{{ 'mortgageInsurance.contactInfo.phone' | translate }}</mat-label>
+          <input matInput type="tel" formControlName="phone"          placeholder="{{ 'mortgageInsurance.contactInfo.phonePlaceholder' | translate }}" (input)="onPhoneInput($event)" (blur)="onPhoneBlur($event)">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="mainForm.get('phone')?.hasError('required') && mainForm.get('phone')?.touched">{{ 'mortgageInsurance.errors.phoneRequired' | translate }}</mat-error>
+          <mat-error *ngIf="mainForm.get('phone')?.hasError('pattern') && mainForm.get('phone')?.touched">{{ 'mortgageInsurance.errors.phoneInvalid' | translate }}</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="consent-section">
+        <p class="consent-text">{{ 'mortgageInsurance.contactInfo.consentText' | translate }}</p>
+        <div class="checkbox-group">
+          <mat-checkbox formControlName="optInEmail">{{ 'mortgageInsurance.contactInfo.optIn' | translate }}</mat-checkbox>
+          <mat-checkbox formControlName="optInPhone">{{ 'mortgageInsurance.contactInfo.optInPhone' | translate }}</mat-checkbox>
+        </div>
+        <div *ngIf="showContactError" class="consent-error">
+          {{ 'mortgageInsurance.contactInfo.consentError' | translate }}
+        </div>
+      </div>
+    </div>
+    <div class="step-actions">
+      <button mat-button class="back-button" (click)="previousStep()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'mortgageInsurance.buttons.previous' | translate }}
+      </button>
+      <button mat-button class="next-button" [class.disabled]="!isStep9Valid()" (click)="onSubmit()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">{{ 'mortgageInsurance.buttons.calculate' | translate }}</span>
+        <span *ngIf="isLoading">{{ 'mortgageInsurance.buttons.sending' | translate }}</span>
+      </button>
+    </div>
+
+    <div class="info-box-with-icons">
+      <h3>{{ 'mortgageInsurance.contactInfo.whyInfo' | translate }}</h3>
+      <div class="info-item">
+        <mat-icon class="info-icon">email</mat-icon>
+        <p>{{ 'mortgageInsurance.contactInfo.whyEmail' | translate }}</p>
+      </div>
+      <div class="info-item">
+        <mat-icon class="info-icon">headset</mat-icon>
+        <p>{{ 'mortgageInsurance.contactInfo.whyPhone' | translate }}</p>
+      </div>
+      <div class="info-item">
+        <mat-icon class="info-icon">lock</mat-icon>
+        <p>{{ 'mortgageInsurance.contactInfo.whyData' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-container pricing-results" *ngIf="currentStep === 10">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.results.title' | translate }}</h1>
+    </div>
+
+    <div *ngIf="pricingResults.length === 0" class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>{{ 'mortgageInsurance.results.loading' | translate }}</p>
+    </div>
+
+    <div *ngIf="pricingResults.length > 0" class="offers-container">
+      <div class="offer-card">
+        <div class="offer-header">
+          <mat-icon>trending_down</mat-icon>
+          <h2>{{ 'mortgageInsurance.offer.title' | translate }}</h2>
+        </div>
+        <div class="offer-highlight">
+          <span class="highlight-value">{{ formatMonthlyContribution(pricingResults[0]!.contribution?.contributionAmount || 0) }} {{ 'mortgageInsurance.offer.monthly' | translate }}</span>
+        </div>
+        <div class="offer-date">
+          <span class="date-label">{{ 'mortgageInsurance.offer.startDate' | translate }}</span>
+          <span class="date-value">{{ formatStartDate(pricingResults[0]!.contribution?.startDate) }}</span>
+        </div>
+        <div class="offer-details">
+          <div class="detail-item">
+            <span class="label">{{ 'mortgageInsurance.offer.totalContribution' | translate }}</span>
+            <span class="value">{{ formatCurrency(pricingResults[0]!.contribution?.contributionAmount || 0) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">{{ 'mortgageInsurance.offer.eightYearsContribution' | translate }}</span>
+            <span class="value">{{ formatCurrency(pricingResults[0]!.eightYearsContribution || 0) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">{{ 'mortgageInsurance.offer.taea' | translate }}</span>
+            <span class="value">{{ pricingResults[0]!.taea || 0 }} %</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">{{ 'mortgageInsurance.offer.averageRate' | translate }}</span>
+            <span class="value">{{ pricingResults[0]!.yearlyAverageRate || 0 }} %</span>
+          </div>
+        </div>
+        <div class="offer-action">
+          <button mat-button class="help-button" (click)="openGuaranteesModal()">
+            <mat-icon>shield</mat-icon>
+            {{ 'mortgageInsurance.offer.detailGuarantees' | translate }}
+          </button>
+          <button mat-button class="help-button" (click)="openHelpModal()">
+            <mat-icon>help_outline</mat-icon>
+            {{ 'mortgageInsurance.offer.helpUnderstand' | translate }}
+          </button>
+          <button mat-button class="next-button" (click)="onGetQuotation(pricingResults[0])" [disabled]="isSendingQuotation">
+            <mat-icon *ngIf="!isSendingQuotation">email</mat-icon>
+            <span *ngIf="!isSendingQuotation">{{ 'mortgageInsurance.buttons.receiveQuote' | translate }}</span>
+            <span *ngIf="isSendingQuotation">{{ 'mortgageInsurance.buttons.sending' | translate }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-actions" *ngIf="pricingResults.length > 0">
+      <button mat-button class="back-button" (click)="goToModifyQuotity()">
+        <mat-icon>edit</mat-icon>
+        {{ 'mortgageInsurance.buttons.modifyQuotity' | translate }}
+      </button>
+      <button mat-button class="back-button" (click)="goToModifyInformation()">
+        <mat-icon>person</mat-icon>
+        {{ 'mortgageInsurance.buttons.modifyInfo' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="step-container confirmation-screen" *ngIf="currentStep === 11">
+    <div class="step-header">
+      <h1>{{ 'mortgageInsurance.confirmation.title' | translate }}</h1>
+    </div>
+
+    <div class="confirmation-content">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <p class="confirmation-subtitle">{{ 'mortgageInsurance.confirmation.subtitle' | translate }} {{ customerEmail }}</p>
+      
+      <div class="reassurance-block">
+        <h2>{{ 'mortgageInsurance.confirmation.advisorTitle' | translate }}</h2>
+        <p>{{ 'mortgageInsurance.confirmation.advisorText' | translate }}</p>
+        <ul>
+          <li>{{ 'mortgageInsurance.confirmation.verifyOffer' | translate }}</li>
+          <li>{{ 'mortgageInsurance.confirmation.answerQuestions' | translate }}</li>
+          <li>{{ 'mortgageInsurance.confirmation.accompanySubscription' | translate }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="global-loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>{{ 'mortgageInsurance.loading.text' | translate }}</p>
+  </div>
+</form>
+</div>

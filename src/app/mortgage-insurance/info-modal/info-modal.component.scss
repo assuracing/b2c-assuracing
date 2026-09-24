@@ -1,0 +1,97 @@
+.info-content {
+  padding: 20px;
+  max-width: 700px;
+}
+
+.info-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: #333;
+    }
+
+    .modify-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #1976d2;
+      font-size: 13px;
+      padding: 6px 12px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      &:hover {
+        background-color: #e3f2fd;
+      }
+    }
+  }
+
+  .info-value {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+
+    p {
+      margin: 4px 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      strong {
+        color: #333;
+        font-weight: 500;
+      }
+    }
+
+    .borrower-info {
+      margin-bottom: 12px;
+      padding: 12px;
+      background-color: #f5f5f5;
+      border-radius: 6px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .borrower-name {
+        font-weight: 600;
+        color: #1976d2;
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+
+  button {
+    margin-left: 8px;
+  }
+}
